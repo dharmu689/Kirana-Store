@@ -11,8 +11,8 @@ const API = import.meta.env.VITE_API_URL;
 
 const productService = {
   getProducts: async () => {
-    return await axios.get(`${API}/api/products`);
-  },
+      return await axios.get(`${API}/api/products`);
+   },
 
   addProduct: async (data) => {
     return await axios.post(`${API}/api/products`, data);
