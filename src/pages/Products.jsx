@@ -9,23 +9,7 @@ import axios from "axios";
 
 const API = import.meta.env.VITE_API_URL;
 
-const productService = {
-  getProducts: async () => {
-      return await axios.get(`${API}/api/products`);
-   },
 
-  addProduct: async (data) => {
-    return await axios.post(`${API}/api/products`, data);
-  },
-
-  updateProduct: async (id, data) => {
-    return await axios.put(`${API}/api/products/${id}`, data);
-  },
-
-  deleteProduct: async (id) => {
-    return await axios.delete(`${API}/api/products/${id}`);
-  }
-};
 
 
 import {
@@ -123,6 +107,10 @@ const Products = () => {
     const handleAddProduct = () => {
         setCurrentProduct(null);
         setIsProductModalOpen(true);
+         getProducts: async () => {
+      return await axios.get(`${API}/api/products`);
+   },
+
     };
 
     const handleEditProduct = (product) => {
@@ -140,6 +128,9 @@ const Products = () => {
             try {
                 await productService.deleteProduct(product._id);
                 fetchProducts(); // Refresh list
+                deleteProduct: async (id) => {
+             return await axios.delete(`${API}/api/products/${id}`);
+  }
             } catch (err) {
                 alert(err.response?.data?.message || 'Failed to delete product');
             }
