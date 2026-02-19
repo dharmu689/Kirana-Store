@@ -38,6 +38,9 @@ app.use((err, req, res, next) => {
     });
 });
 
+axios.get(`${import.meta.env.VITE_API_URL}/api/products`);
+
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
