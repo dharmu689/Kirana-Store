@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const connectDB = require('../server/config/db');
+const connectDB = require('./config/db');
 
 // Load env vars
 dotenv.config();
@@ -16,12 +16,12 @@ app.use(express.json());
 app.use(cors());
 
 // Routes
-app.use('/api/auth', require('../server/routes/authRoutes'));
-app.use('/api/products', require('../server/routes/productRoutes'));
-app.use('/api/categories', require('../server/routes/categoryRoutes'));
-app.use('/api/dashboard', require('../server/routes/dashboardRoutes'));
-app.use('/api/sales', require('../server/routes/salesRoutes'));
-app.use('/api/reorder', require('../server/routes/reorderRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
+app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/categories', require('./routes/categoryRoutes'));
+app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/sales', require('./routes/salesRoutes'));
+app.use('/api/reorder', require('./routes/reorderRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {
