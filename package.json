@@ -7,8 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node src/server.js"
   },
+ 
+
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "axios": "^1.13.5",
