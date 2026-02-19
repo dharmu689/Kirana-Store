@@ -5,6 +5,29 @@ import StockAdjustmentModal from '../components/StockAdjustmentModal';
 import CategoryManager from '../components/CategoryManager';
 import productService from '../services/productService';
 import authService from '../services/authService';
+import axios from "axios";
+
+const API = import.meta.env.VITE_API_URL;
+
+const productService = {
+  getProducts: async () => {
+    return await axios.get(`${API}/api/products`);
+  },
+
+  addProduct: async (data) => {
+    return await axios.post(`${API}/api/products`, data);
+  },
+
+  updateProduct: async (id, data) => {
+    return await axios.put(`${API}/api/products/${id}`, data);
+  },
+
+  deleteProduct: async (id) => {
+    return await axios.delete(`${API}/api/products/${id}`);
+  }
+};
+
+
 import {
     PlusIcon,
     MagnifyingGlassIcon,
