@@ -5,12 +5,6 @@ import StockAdjustmentModal from '../components/StockAdjustmentModal';
 import CategoryManager from '../components/CategoryManager';
 import productService from '../services/productService';
 import authService from '../services/authService';
-import axios from "axios";
-
-
-
-
-
 
 import {
     PlusIcon,
@@ -107,9 +101,6 @@ const Products = () => {
     const handleAddProduct = () => {
         setCurrentProduct(null);
         setIsProductModalOpen(true);
-         
-   },
-
     };
 
     const handleEditProduct = (product) => {
@@ -127,7 +118,6 @@ const Products = () => {
             try {
                 await productService.deleteProduct(product._id);
                 fetchProducts(); // Refresh list
-                
             } catch (err) {
                 alert(err.response?.data?.message || 'Failed to delete product');
             }
