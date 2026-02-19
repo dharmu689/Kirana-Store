@@ -7,7 +7,7 @@ import productService from '../services/productService';
 import authService from '../services/authService';
 import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL;
+
 
 
 
@@ -107,8 +107,7 @@ const Products = () => {
     const handleAddProduct = () => {
         setCurrentProduct(null);
         setIsProductModalOpen(true);
-         getProducts: async () => {
-      return await axios.get(`${API}/api/products`);
+         
    },
 
     };
@@ -128,9 +127,7 @@ const Products = () => {
             try {
                 await productService.deleteProduct(product._id);
                 fetchProducts(); // Refresh list
-                deleteProduct: async (id) => {
-             return await axios.delete(`${API}/api/products/${id}`);
-  }
+                
             } catch (err) {
                 alert(err.response?.data?.message || 'Failed to delete product');
             }
