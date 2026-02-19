@@ -5,7 +5,6 @@ import StockAdjustmentModal from '../components/StockAdjustmentModal';
 import CategoryManager from '../components/CategoryManager';
 import productService from '../services/productService';
 import authService from '../services/authService';
-
 import {
     PlusIcon,
     MagnifyingGlassIcon,
