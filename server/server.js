@@ -5,10 +5,7 @@ const connectDB = require('./config/db');
 
 
 
-app.use(cors({
-  origin: "https://kirana-store-tau.vercel.app",
-  credentials: true
-}));
+
 
 // Load env vars
 dotenv.config();
@@ -21,6 +18,10 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
+app.use(cors({
+  origin: "https://kirana-store-tau.vercel.app",
+  credentials: true
+}));
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
