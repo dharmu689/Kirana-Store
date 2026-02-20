@@ -3,6 +3,13 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
+
+
+app.use(cors({
+  origin: "https://kirana-store-tau.vercel.app",
+  credentials: true
+}));
+
 // Load env vars
 dotenv.config();
 
