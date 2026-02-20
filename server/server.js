@@ -2,9 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
-import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL;
 
 
 
