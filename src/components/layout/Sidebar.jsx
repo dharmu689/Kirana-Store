@@ -26,6 +26,14 @@ const Sidebar = () => {
             {/* Navigation Menu */}
             <nav className="flex-1 overflow-y-auto py-6 px-3 space-y-1">
                 {SIDEBAR_ITEMS.map((item) => {
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    const isAdmin = user && user.role === 'admin';
+
+                    // Hide Vendor Orders from non-admins
+                    if (item.path === '/vendor-orders' && !isAdmin) {
+                        return null;
+                    }
+
                     const isActive = location.pathname === item.path;
                     const Icon = item.icon;
 

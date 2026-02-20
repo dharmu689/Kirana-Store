@@ -39,7 +39,7 @@ const StockStatus = ({ lowStockItems }) => {
                                     onClick={() => navigate('/reorder')}
                                     className="text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
                                 >
-                                    Restock
+                                    Order from Vendor
                                 </button>
                             </div>
                         ))}

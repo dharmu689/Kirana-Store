@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import ReorderTable from '../components/ReorderTable';
 import reorderService from '../services/reorderService';
-import RestockModal from '../components/RestockModal';
+import VendorOrderModal from '../components/VendorOrderModal';
+
+import vendorOrderService from '../services/vendorOrderService';
 
 const Reorder = () => {
     const [products, setProducts] = useState([]);
@@ -9,6 +11,7 @@ const Reorder = () => {
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+    const [successMsg, setSuccessMsg] = useState('');
 
     const fetchReorderItems = async () => {
         setLoading(true);
@@ -34,15 +37,21 @@ const Reorder = () => {
         setIsModalOpen(true);
     };
 
-    const handleRestockConfirm = async (id, quantity) => {
+    const handlePlaceOrder = async (orderData) => {
         try {
-            const user = JSON.parse(localStorage.getItem('user'));
-            await reorderService.restockProduct(id, quantity, user.token);
+            await vendorOrderService.placeOrder({
+                product: orderData.productId,
+                vendor: orderData.vendorId,
+                quantity: orderData.quantity,
+                deliveryAddress: orderData.deliveryAddress
+            });
             setIsModalOpen(false);
-            fetchReorderItems(); // Refresh list after restock
+            setSuccessMsg(`Successfully placed order for ${selectedProduct.name}!`);
+            setTimeout(() => setSuccessMsg(''), 5000);
+            fetchReorderItems(); // Refresh list
         } catch (err) {
-            console.error("Restock failed", err);
-            alert("Failed to restock product. Please try again.");
+            console.error("Order failed", err);
+            alert("Failed to place vendor order. Please try again.");
         }
     };
 
@@ -69,6 +78,13 @@ const Reorder = () => {
                     </div>
                 )}
 
+                {successMsg && (
+                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 relative" role="alert">
+                        <strong className="font-bold">Success!</strong>
+                        <span className="block sm:inline"> {successMsg}</span>
+                    </div>
+                )}
+
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -77,11 +93,11 @@ const Reorder = () => {
                     <ReorderTable products={products} onRestock={handleRestockClick} />
                 )}
 
-                <RestockModal
+                <VendorOrderModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     product={selectedProduct}
-                    onConfirm={handleRestockConfirm}
+                    onPlaceOrder={handlePlaceOrder}
                 />
             </div>
         </div>

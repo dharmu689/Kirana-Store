@@ -4,6 +4,7 @@ import RevenueChart from '../components/dashboard/RevenueChart';
 import StockStatus from '../components/dashboard/StockStatus';
 import RecentSales from '../components/dashboard/RecentSales';
 import ExpiryAlerts from '../components/dashboard/ExpiryAlerts';
+import RecentVendorOrders from '../components/dashboard/RecentVendorOrders';
 import dashboardService from '../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
 
@@ -91,8 +92,13 @@ const Dashboard = () => {
                 </div>
 
                 {/* Alerts - Takes up 1 column */}
-                <div className="lg:col-span-1">
+                <div className="lg:col-span-1 border-b lg:border-none border-gray-100 pb-6 lg:pb-0">
                     <ExpiryAlerts />
+                </div>
+
+                {/* Recent Vendor Orders - Takes up 2 columns */}
+                <div className="lg:col-span-2">
+                    <RecentVendorOrders orders={summaryData?.recentVendorOrders} />
                 </div>
             </div>
         </div>

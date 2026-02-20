@@ -31,6 +31,8 @@ app.use('/api/categories', require('./routes/categoryRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/sales', require('./routes/salesRoutes'));
 app.use('/api/reorder', require('./routes/reorderRoutes'));
+app.use('/api/vendors', require('./routes/vendorRoutes'));
+app.use('/api/vendor-orders', require('./routes/vendorOrderRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {

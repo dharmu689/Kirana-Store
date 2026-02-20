@@ -66,6 +66,7 @@ export const SIDEBAR_ITEMS = [
     { name: 'Products', icon: Package, path: '/products' },
     { name: 'Sales', icon: ShoppingCart, path: '/sales' },
     { name: 'Reorder', icon: AlertTriangle, path: '/reorder' },
+    { name: 'Vendor Orders', icon: Package, path: '/vendor-orders' },
     { name: 'Forecasting', icon: TrendingUp, path: '/forecasting' },
     { name: 'Reports', icon: FileText, path: '/reports' },
     { name: 'Settings', icon: Settings, path: '/settings' },

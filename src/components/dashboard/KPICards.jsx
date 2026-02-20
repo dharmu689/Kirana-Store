@@ -1,4 +1,4 @@
-import { Package, TrendingUp, ShoppingCart, AlertTriangle } from 'lucide-react';
+import { Package, TrendingUp, ShoppingCart, AlertTriangle, Truck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const KPICards = ({ data }) => {
@@ -30,6 +30,14 @@ const KPICards = ({ data }) => {
             path: '/reorder'
         },
         {
+            title: 'Pending Orders',
+            value: data ? data.pendingVendorOrdersCount : '...',
+            subtext: 'Vendor Restocks',
+            icon: Truck,
+            color: 'bg-purple-100 text-purple-600',
+            path: '/vendor-orders'
+        },
+        {
             title: 'Out of Stock',
             value: data ? data.outOfStockCount : '...',
             subtext: 'Urgent Attention',
@@ -40,7 +48,7 @@ const KPICards = ({ data }) => {
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
             {displayData.map((item, index) => {
                 const Icon = item.icon;
                 return (

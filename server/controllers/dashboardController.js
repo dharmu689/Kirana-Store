@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 const Sale = require('../models/Sale');
+const VendorOrder = require('../models/VendorOrder');
 
 // @desc    Get dashboard summary statistics
 // @route   GET /api/dashboard/summary
@@ -86,6 +87,17 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
 
     const criticalStockCount = await Product.countDocuments({ quantity: 0 });
 
+    // 7. Vendor Orders Statistics
+    const pendingVendorOrdersCount = await VendorOrder.countDocuments({ status: 'Pending' });
+    const deliveredOrdersCount = await VendorOrder.countDocuments({ status: 'Delivered' });
+
+    // 8. Recent Vendor Orders (Top 5)
+    const recentVendorOrders = await VendorOrder.find()
+        .sort({ orderDate: -1 })
+        .limit(5)
+        .populate('product', 'name')
+        .populate('vendor', 'name');
+
     res.json({
         totalProducts,
         totalStockQuantity,
@@ -98,7 +110,10 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
         lowStockItems,
         recentSales,
         reorderAlertCount,
-        criticalStockCount
+        criticalStockCount,
+        pendingVendorOrdersCount,
+        deliveredOrdersCount,
+        recentVendorOrders
     });
 });
 
