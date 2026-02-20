@@ -2,6 +2,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+import axios from "axios";
+
+const API = import.meta.env.VITE_API_URL;
 
 
 
@@ -22,6 +25,8 @@ app.use(cors({
   origin: "https://kirana-store-tau.vercel.app",
   credentials: true
 }));
+
+
 
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
