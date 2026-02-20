@@ -4,6 +4,8 @@ import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 import InputField from '../components/InputField';
 import authService from '../services/authService';
 
+console.log("API:", import.meta.env.VITE_API_URL);
+
 const Login = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
