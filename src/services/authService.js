@@ -1,41 +1,73 @@
-const axios = require("axios");
+import axios from "axios";
 
-const API = process.env.API_URL;
+const API = import.meta.env.VITE_API_URL;
 
 // Create axios instance
 const axiosInstance = axios.create({
     baseURL: `${API}/api`,
 });
 
+// Request interceptor to add token
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user?.token) {
+            config.headers.Authorization = `Bearer ${user.token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// Response interceptor to handle 401 errors
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            logout();
+            window.location.href = "/login";
+        }
+        return Promise.reject(error);
+    }
+);
+
 // Register user
 const register = async (userData) => {
     const response = await axiosInstance.post("/auth/register", userData);
+
+    if (response.data) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+    }
+
     return response.data;
 };
 
 // Login user
 const login = async (userData) => {
     const response = await axiosInstance.post("/auth/login", userData);
+
+    if (response.data) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+    }
+
     return response.data;
 };
 
-// Logout user (no localStorage in backend)
+// Logout user
 const logout = () => {
-    return true;
+    localStorage.removeItem("user");
 };
 
-// Get current user (not used in backend)
+// Get current user
 const getCurrentUser = () => {
-    return null;
+    return JSON.parse(localStorage.getItem("user"));
 };
 
-// Get profile (token required)
-const getProfile = async (token) => {
-    const response = await axiosInstance.get("/auth/profile", {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+// Get profile
+const getProfile = async () => {
+    const response = await axiosInstance.get("/auth/profile");
     return response.data;
 };
 
@@ -47,7 +79,7 @@ const authService = {
     getProfile,
 };
 
-module.exports = authService;
+export default authService;
 
 
 
