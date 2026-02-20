@@ -1,67 +1,53 @@
-import axios from "axios";
+const axios = require("axios");
 
-const API = import.meta.env.VITE_API_URL;
+const API = process.env.API_URL;
 
 // Create axios instance
 const axiosInstance = axios.create({
-  baseURL: `${API}/api`,
+    baseURL: `${API}/api`,
 });
-
-// Request interceptor to add token
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.token) {
-      config.headers.Authorization = `Bearer ${user.token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // Register user
 const register = async (userData) => {
-  const response = await axiosInstance.post("/auth/register", userData);
-
-  if (response.data) {
-    localStorage.setItem("user", JSON.stringify(response.data));
-  }
-
-  return response.data;
+    const response = await axiosInstance.post("/auth/register", userData);
+    return response.data;
 };
 
 // Login user
 const login = async (userData) => {
-  const response = await axiosInstance.post("/auth/login", userData);
-
-  if (response.data) {
-    localStorage.setItem("user", JSON.stringify(response.data));
-  }
-
-  return response.data;
+    const response = await axiosInstance.post("/auth/login", userData);
+    return response.data;
 };
 
-// Logout
+// Logout user (no localStorage in backend)
 const logout = () => {
-  localStorage.removeItem("user");
+    return true;
 };
 
-// Get profile
-const getProfile = async () => {
-  const response = await axiosInstance.get("/auth/profile");
-  return response.data;
+// Get current user (not used in backend)
+const getCurrentUser = () => {
+    return null;
+};
+
+// Get profile (token required)
+const getProfile = async (token) => {
+    const response = await axiosInstance.get("/auth/profile", {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    return response.data;
 };
 
 const authService = {
-  register,
-  login,
-  logout,
-  getProfile,
+    register,
+    login,
+    logout,
+    getCurrentUser,
+    getProfile,
 };
 
-export default authService;
+module.exports = authService;
 
 
 
