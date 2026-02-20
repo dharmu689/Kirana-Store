@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(cors({
-  origin: "https://kirana-store-tau.vercel.app",
+  origin: "https://kirana-store-oq3u.vercel.app",
   credentials: true
 }));
 
