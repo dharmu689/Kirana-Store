@@ -1,96 +1,42 @@
-import axios from "axios";
+import API from "../utils/axiosConfig";
 
-const API = import.meta.env.VITE_API_URL;
-
-// Helper to get auth header
-const getAuthHeader = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.token) {
-        return { Authorization: `Bearer ${user.token}` };
-    }
-    return {};
-};
-
-// Products
 const getProducts = async (params = {}) => {
-    const config = {
-        headers: getAuthHeader(),
-        params: params,
-    };
-
-    const response = await axios.get(
-        `${API}/api/products`,
-        config
-    );
-
+    const response = await API.get("/products", { params });
     return response.data;
 };
 
 const createProduct = async (productData) => {
-    const response = await axios.post(
-        `${API}/api/products`,
-        productData,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.post("/products", productData);
     return response.data;
 };
 
 const updateProduct = async (id, productData) => {
-    const response = await axios.put(
-        `${API}/api/products/${id}`,
-        productData,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.put(`/products/${id}`, productData);
     return response.data;
 };
 
 const deleteProduct = async (id) => {
-    const response = await axios.delete(
-        `${API}/api/products/${id}`,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.delete(`/products/${id}`);
     return response.data;
 };
 
 const adjustStock = async (id, adjustment) => {
-    const response = await axios.put(
-        `${API}/api/products/${id}/adjust`,
-        { adjustment },
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.put(`/products/${id}/adjust`, { adjustment });
     return response.data;
 };
 
-// Categories
 const getCategories = async () => {
-    const response = await axios.get(
-        `${API}/api/categories`,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.get("/categories");
     return response.data;
 };
 
 const createCategory = async (categoryData) => {
-    const response = await axios.post(
-        `${API}/api/categories`,
-        categoryData,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.post("/categories", categoryData);
     return response.data;
 };
 
 const deleteCategory = async (id) => {
-    const response = await axios.delete(
-        `${API}/api/categories/${id}`,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.delete(`/categories/${id}`);
     return response.data;
 };
 

@@ -1,35 +1,12 @@
-import axios from "axios";
+import API from "../utils/axiosConfig";
 
-const API = import.meta.env.VITE_API_URL;
-
-const getReorderItems = async (token) => {
-    const config = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    };
-
-    const response = await axios.get(
-        `${API}/api/reorder`,
-        config
-    );
-
+const getReorderItems = async () => {
+    const response = await API.get("/reorder");
     return response.data;
 };
 
-const restockProduct = async (id, quantity, token) => {
-    const config = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    };
-
-    const response = await axios.put(
-        `${API}/api/reorder/restock/${id}`,
-        { quantity },
-        config
-    );
-
+const restockProduct = async (id, quantity) => {
+    const response = await API.put(`/reorder/restock/${id}`, { quantity });
     return response.data;
 };
 

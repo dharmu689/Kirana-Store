@@ -1,27 +1,7 @@
-
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
-
-// Helper to get auth header
-const getAuthHeader = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.token) {
-        return { Authorization: `Bearer ${user.token}` };
-    }
-    return {};
-};
+import API from "../utils/axiosConfig";
 
 const getSummary = async () => {
-    const config = {
-        headers: getAuthHeader(),
-    };
-
-    const response = await axios.get(
-        `${API}/api/dashboard/summary`,
-        config
-    );
-
+    const response = await API.get("/dashboard/summary");
     return response.data;
 };
 

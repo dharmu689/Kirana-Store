@@ -1,41 +1,8 @@
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
-
-// Create axios instance
-const axiosInstance = axios.create({
-    baseURL: `${API}/api`,
-});
-
-// Request interceptor to add token
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user?.token) {
-            config.headers.Authorization = `Bearer ${user.token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// Response interceptor to handle 401 errors
-axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            logout();
-            window.location.href = "/login";
-        }
-        return Promise.reject(error);
-    }
-);
+import API from "../utils/axiosConfig";
 
 // Register user
 const register = async (userData) => {
-    const response = await axiosInstance.post("/auth/register", userData);
+    const response = await API.post("/auth/register", userData);
 
     if (response.data) {
         localStorage.setItem("user", JSON.stringify(response.data));
@@ -46,7 +13,7 @@ const register = async (userData) => {
 
 // Login user
 const login = async (userData) => {
-    const response = await axiosInstance.post("/auth/login", userData);
+    const response = await API.post("/auth/login", userData);
 
     if (response.data) {
         localStorage.setItem("user", JSON.stringify(response.data));
@@ -67,7 +34,7 @@ const getCurrentUser = () => {
 
 // Get profile
 const getProfile = async () => {
-    const response = await axiosInstance.get("/auth/profile");
+    const response = await API.get("/auth/profile");
     return response.data;
 };
 

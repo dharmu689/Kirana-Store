@@ -1,43 +1,20 @@
-import axios from "axios";
-
-const API = import.meta.env.VITE_API_URL;
-
-// Helper to get token safely
-const getAuthHeader = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    return user?.token
-        ? { Authorization: `Bearer ${user.token}` }
-        : {};
-};
+import API from "../utils/axiosConfig";
 
 // Create new sale
 const createSale = async (saleData) => {
-    const response = await axios.post(
-        `${API}/api/sales`,
-        saleData,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.post("/sales", saleData);
     return response.data;
 };
 
 // Get all sales
 const getSales = async () => {
-    const response = await axios.get(
-        `${API}/api/sales`,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.get("/sales");
     return response.data;
 };
 
 // Get sales summary
 const getSalesSummary = async () => {
-    const response = await axios.get(
-        `${API}/api/sales/summary`,
-        { headers: getAuthHeader() }
-    );
-
+    const response = await API.get("/sales/summary");
     return response.data;
 };
 
