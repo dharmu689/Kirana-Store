@@ -19,6 +19,9 @@ const addVendor = async (req, res) => {
 
         res.status(201).json(vendor);
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'A vendor with this email already exists.' });
+        }
         res.status(400).json({ message: error.message });
     }
 };

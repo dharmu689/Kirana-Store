@@ -20,7 +20,13 @@ const app = express();
 app.use(express.json());
 
 
-app.use(cors());
+// CORS Configuration for Vercel/Production
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || '*',
+    credentials: true,
+    optionSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 
 

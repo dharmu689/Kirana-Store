@@ -70,6 +70,10 @@ const Vendors = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        console.log("API URL:", import.meta.env.VITE_API_URL);
+        console.log("Submitting VendorData:", formData);
+
         try {
             if (isEditing) {
                 await vendorService.updateVendor(currentVendorId, formData);
@@ -81,7 +85,7 @@ const Vendors = () => {
             handleCloseModal();
             fetchVendors();
         } catch (error) {
-            console.error('Failed to save vendor:', error);
+            console.error('Failed to save vendor:', error.response?.data || error.message);
             alert(error.response?.data?.message || 'Error saving vendor');
         }
     };
