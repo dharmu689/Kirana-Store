@@ -21,7 +21,7 @@ const Sidebar = () => {
                     <span className="text-white font-bold text-lg">K</span>
                 </div>
                 <span className="text-xl font-bold text-gray-800 tracking-tight">Kirana<span className="text-blue-600">Pro</span></span> */}
-                <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-10" />
+                <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-20" />
             </div>
 
             {/* Navigation Menu */}
