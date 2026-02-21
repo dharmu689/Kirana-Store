@@ -29,8 +29,8 @@ const Sidebar = () => {
                     const user = JSON.parse(localStorage.getItem('user'));
                     const isAdmin = user && user.role === 'admin';
 
-                    // Hide Vendor Orders from non-admins
-                    if (item.path === '/vendor-orders' && !isAdmin) {
+                    // Hide Vendor Orders and Vendors from non-admins
+                    if ((item.path === '/vendor-orders' || item.path === '/vendors') && !isAdmin) {
                         return null;
                     }
 

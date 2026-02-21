@@ -27,7 +27,7 @@ const vendorOrderSchema = new mongoose.Schema(
         },
         status: {
             type: String,
-            enum: ['Pending', 'Approved', 'Delivered'],
+            enum: ['Pending', 'Delivered'],
             default: 'Pending'
         }
     },

@@ -52,8 +52,48 @@ const getVendorById = async (req, res) => {
     }
 };
 
+// @desc    Update a vendor
+// @route   PUT /api/vendors/:id
+// @access  Private/Admin
+const updateVendor = async (req, res) => {
+    try {
+        const vendor = await Vendor.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!vendor) {
+            return res.status(404).json({ message: 'Vendor not found' });
+        }
+
+        res.json(vendor);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+// @desc    Delete a vendor
+// @route   DELETE /api/vendors/:id
+// @access  Private/Admin
+const deleteVendor = async (req, res) => {
+    try {
+        const vendor = await Vendor.findByIdAndDelete(req.params.id);
+
+        if (!vendor) {
+            return res.status(404).json({ message: 'Vendor not found' });
+        }
+
+        res.json({ message: 'Vendor removed' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     addVendor,
     getVendors,
-    getVendorById
+    getVendorById,
+    updateVendor,
+    deleteVendor
 };

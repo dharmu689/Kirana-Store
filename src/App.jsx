@@ -8,6 +8,7 @@ import Reorder from './pages/Reorder';
 import Sales from './pages/Sales';
 import ProtectedRoute from './components/ProtectedRoute';
 import VendorOrders from './pages/VendorOrders';
+import Vendors from './pages/Vendors';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="sales" element={<Sales />} />
             <Route path="reorder" element={<Reorder />} />
             <Route path="vendor-orders" element={<VendorOrders />} />
+            <Route path="vendors" element={<Vendors />} />
             <Route path="forecasting" element={<div className="p-4 text-gray-500">Forecasting Page (Coming Soon)</div>} />
             <Route path="reports" element={<div className="p-4 text-gray-500">Reports Page (Coming Soon)</div>} />
             <Route path="settings" element={<div className="p-4 text-gray-500">Settings Page (Coming Soon)</div>} />

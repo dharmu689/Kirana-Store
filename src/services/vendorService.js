@@ -18,8 +18,32 @@ const getVendors = async () => {
     return response.data;
 };
 
+const addVendor = async (vendorData) => {
+    const response = await axios.post(`${API}/api/vendors`, vendorData, {
+        headers: getAuthHeader(),
+    });
+    return response.data;
+};
+
+const updateVendor = async (id, vendorData) => {
+    const response = await axios.put(`${API}/api/vendors/${id}`, vendorData, {
+        headers: getAuthHeader(),
+    });
+    return response.data;
+};
+
+const deleteVendor = async (id) => {
+    const response = await axios.delete(`${API}/api/vendors/${id}`, {
+        headers: getAuthHeader(),
+    });
+    return response.data;
+};
+
 const vendorService = {
     getVendors,
+    addVendor,
+    updateVendor,
+    deleteVendor
 };
 
 export default vendorService;

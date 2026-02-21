@@ -13,10 +13,12 @@ const vendorSchema = new mongoose.Schema(
         },
         phone: {
             type: String,
+            required: [true, 'Please add a phone number'],
             trim: true
         },
         email: {
             type: String,
+            required: [true, 'Please add an email'],
             trim: true,
             match: [
                 /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
@@ -25,6 +27,7 @@ const vendorSchema = new mongoose.Schema(
         },
         address: {
             type: String,
+            required: [true, 'Please add an address'],
             trim: true
         },
         productsSupplied: [

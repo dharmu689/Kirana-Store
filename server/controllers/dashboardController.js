@@ -89,7 +89,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
 
     // 7. Vendor Orders Statistics
     const pendingVendorOrdersCount = await VendorOrder.countDocuments({ status: 'Pending' });
-    const deliveredOrdersCount = await VendorOrder.countDocuments({ status: 'Delivered' });
+    const deliveredVendorOrdersCount = await VendorOrder.countDocuments({ status: 'Delivered' });
 
     // 8. Recent Vendor Orders (Top 5)
     const recentVendorOrders = await VendorOrder.find()
@@ -112,7 +112,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
         reorderAlertCount,
         criticalStockCount,
         pendingVendorOrdersCount,
-        deliveredOrdersCount,
+        deliveredVendorOrdersCount,
         recentVendorOrders
     });
 });

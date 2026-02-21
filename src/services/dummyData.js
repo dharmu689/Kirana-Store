@@ -1,5 +1,5 @@
 
-import { LayoutDashboard, Package, ShoppingCart, TrendingUp, FileText, Settings, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, TrendingUp, FileText, Settings, AlertTriangle, CheckCircle, Clock, User } from 'lucide-react';
 
 export const KPIData = [
     {
@@ -67,6 +67,7 @@ export const SIDEBAR_ITEMS = [
     { name: 'Sales', icon: ShoppingCart, path: '/sales' },
     { name: 'Reorder', icon: AlertTriangle, path: '/reorder' },
     { name: 'Vendor Orders', icon: Package, path: '/vendor-orders' },
+    { name: 'Vendors', icon: User, path: '/vendors' },
     { name: 'Forecasting', icon: TrendingUp, path: '/forecasting' },
     { name: 'Reports', icon: FileText, path: '/reports' },
     { name: 'Settings', icon: Settings, path: '/settings' },

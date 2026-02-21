@@ -2,6 +2,9 @@
 const VendorOrder = require('../models/VendorOrder');
 const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
+const { generateInvoicePDF } = require('../utils/pdfService');
+const { sendEmail } = require('../utils/emailService');
+const { sendWhatsAppMessage } = require('../utils/whatsappService');
 
 // @desc    Place Order
 // @route   POST /api/vendor-orders
@@ -27,6 +30,46 @@ const placeOrder = async (req, res) => {
             quantity,
             deliveryAddress
         });
+
+        // Generate PDF Invoice
+        const orderData = {
+            storeName: 'KiranaPro',
+            vendorName: foundVendor.name,
+            productName: foundProduct.name,
+            quantity,
+            unitPrice: foundProduct.price, // Assuming cost price is same as selling or simple price for now
+            total: quantity * foundProduct.price,
+            deliveryAddress: deliveryAddress || 'Store Location',
+            orderDate: vendorOrder.orderDate
+        };
+
+        const pdfPath = await generateInvoicePDF(orderData);
+
+        // Send Email
+        const emailText = `Hello ${foundVendor.name},\n\nPlease find attached the purchase order from KiranaPro.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${orderData.deliveryAddress}\n\nThank you.`;
+
+        // We catch errors independently so the order still succeeds even if notifications fail
+        try {
+            await sendEmail({
+                to: 'rajaravana4@gmail.com', // Sending specifically to the requested email
+                subject: 'New Purchase Order - KiranaPro',
+                text: emailText,
+                attachmentPath: pdfPath
+            });
+        } catch (emailErr) {
+            console.error('Failed to send email:', emailErr);
+        }
+
+        // Send WhatsApp
+        const waMsg = `New Order from KiranaPro\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery: ${orderData.deliveryAddress}`;
+        try {
+            await sendWhatsAppMessage({
+                to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:${foundVendor.phone}`,
+                body: waMsg
+            });
+        } catch (waErr) {
+            console.error('Failed to send WhatsApp:', waErr);
+        }
 
         res.status(201).json(vendorOrder);
     } catch (error) {
@@ -55,7 +98,7 @@ const getOrders = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
     try {
         const { status } = req.body;
-        const validStatuses = ['Pending', 'Approved', 'Delivered'];
+        const validStatuses = ['Pending', 'Delivered'];
 
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ message: 'Invalid status' });

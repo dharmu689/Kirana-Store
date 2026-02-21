@@ -13,7 +13,9 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
         if (isOpen) {
             fetchVendors();
             if (product) {
-                setQuantity(product.suggestedOrderQty || 10); // default to suggested or 10
+                // Determine a smart pre-fill quantity
+                const defaultQty = product.suggestedOrderQty || Math.max(product.reorderLevel * 2 - product.quantity, product.reorderLevel + 10);
+                setQuantity(defaultQty > 0 ? defaultQty : 10);
             }
         } else {
             // Reset form on close
@@ -153,7 +155,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                             required
                         />
                         <p className="mt-1 text-xs text-gray-500">
-                            Suggested quantity is {product.suggestedOrderQty} (Reorder level is {product.reorderLevel})
+                            Suggested quantity is {product.suggestedOrderQty || Math.max(product.reorderLevel * 2 - product.quantity, product.reorderLevel + 10)} (Reorder level is {product.reorderLevel})
                         </p>
                     </div>
 
