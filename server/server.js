@@ -39,6 +39,7 @@ app.use('/api/sales', require('./routes/salesRoutes'));
 app.use('/api/reorder', require('./routes/reorderRoutes'));
 app.use('/api/vendors', require('./routes/vendorRoutes'));
 app.use('/api/vendor-orders', require('./routes/vendorOrderRoutes'));
+app.use('/api/forecast', require('./routes/forecastRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {

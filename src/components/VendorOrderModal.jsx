@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Star, TrendingUp } from 'lucide-react';
 import vendorService from '../services/vendorService';
 
 const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
@@ -29,8 +31,26 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
     const fetchVendors = async () => {
         setLoadingVendors(true);
         try {
-            const data = await vendorService.getVendors();
+            // Fetch all generalized vendors as fallback, but try fetching the SMART optimized list specifically for this product
+            let data = [];
+            if (product && product._id) {
+                try {
+                    data = await vendorService.getBestVendorsForProduct(product._id);
+                } catch (err) {
+                    console.log("Opt vendors failed, falling back to standard list", err);
+                    data = await vendorService.getVendors();
+                }
+            } else {
+                data = await vendorService.getVendors();
+            }
+
             setVendors(data);
+
+            // Auto Select the highly rated Vendor dynamically natively
+            if (data && data.length > 0) {
+                const bestVendor = data[0];
+                setSelectedVendor(bestVendor);
+            }
         } catch (err) {
             console.error('Failed to fetch vendors:', err);
             setError('Failed to fetch vendors. Please try again.');
@@ -113,21 +133,31 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                     </div>
 
                     <div>
-                        <label htmlFor="vendor" className="block text-sm font-medium text-gray-700">Vendor</label>
+                        <div className="flex justify-between items-center">
+                            <label htmlFor="vendor" className="block text-sm font-medium text-gray-700">Vendor</label>
+                            {product && (
+                                <Link to={`/vendor-compare/${product._id}`} className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center mb-1">
+                                    <TrendingUp className="w-3 h-3 mr-1" /> Compare Vendors
+                                </Link>
+                            )}
+                        </div>
                         {loadingVendors ? (
-                            <div className="mt-1 text-sm text-gray-500">Loading vendors...</div>
+                            <div className="mt-1 text-sm text-gray-500 flex items-center">
+                                <span className="animate-spin h-4 w-4 mr-2 border-b-2 border-indigo-500 rounded-full"></span>
+                                Finding optimal vendor...
+                            </div>
                         ) : (
                             <select
                                 id="vendor"
-                                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                                className={`mt-1 block w-full pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm ${selectedVendor?.optimizationMetrics ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-medium' : 'border-gray-300'}`}
                                 onChange={handleVendorChange}
                                 value={selectedVendor ? selectedVendor._id : ''}
                                 required
                             >
                                 <option value="" disabled>Select a vendor</option>
-                                {vendors.map((v) => (
+                                {vendors.map((v, idx) => (
                                     <option key={v._id} value={v._id}>
-                                        {v.name}
+                                        {v.name} {idx === 0 && v.optimizationMetrics ? ' (★ Best Match - AI Recommended)' : ''}
                                     </option>
                                 ))}
                             </select>
@@ -135,7 +165,20 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                     </div>
 
                     {selectedVendor && (
-                        <div className="bg-gray-50 p-3 rounded-md text-sm border border-gray-200">
+                        <div className={`p-4 rounded-md text-sm border ${selectedVendor.optimizationMetrics ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-200'}`}>
+                            {selectedVendor.optimizationMetrics && (
+                                <div className="mb-3 pb-3 border-b border-indigo-100 flex items-start">
+                                    <div className="bg-indigo-100 p-1.5 rounded-full mr-3 mt-0.5">
+                                        <Star className="w-4 h-4 text-indigo-600" fill="currentColor" />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-indigo-900 leading-tight">AI Recommended Supplier</p>
+                                        <p className="text-xs text-indigo-700 mt-1">
+                                            Score: {selectedVendor.optimizationMetrics.finalScore}/100 | ${selectedVendor.pricePerUnit?.toFixed(2) || '0.00'}/unit | {selectedVendor.averageDeliveryDays || '0'} Days
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                             <p className="font-semibold text-gray-800 mb-1">Vendor Contact Info:</p>
                             <p><span className="text-gray-500">Person:</span> {selectedVendor.contactPerson || 'N/A'}</p>
                             <p><span className="text-gray-500">Phone:</span> {selectedVendor.phone || 'N/A'}</p>

@@ -1,104 +1,108 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import KPICards from '../components/dashboard/KPICards';
-import RevenueChart from '../components/dashboard/RevenueChart';
-import StockStatus from '../components/dashboard/StockStatus';
-import RecentSales from '../components/dashboard/RecentSales';
-import ExpiryAlerts from '../components/dashboard/ExpiryAlerts';
-import RecentVendorOrders from '../components/dashboard/RecentVendorOrders';
 import dashboardService from '../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
+import { SalesTrendChart, ForecastAccuracyChart, InventoryHealthChart, VendorPerformanceChart } from '../components/dashboard/BICharts';
+import { SmartInsightsPanel, RiskAlertPanel } from '../components/dashboard/InsightsTracking';
+import { ArrowRight, Activity, TrendingUp } from 'lucide-react';
 
 const Dashboard = () => {
-    const [summaryData, setSummaryData] = useState(null);
+    const [analyticsData, setAnalyticsData] = useState(null);
+    const [salesTrend, setSalesTrend] = useState([]);
+    const [inventoryHealth, setInventoryHealth] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    const fetchSummary = useCallback(async () => {
+    const fetchAllData = useCallback(async () => {
         try {
-            const data = await dashboardService.getSummary();
-            setSummaryData(data);
+            setLoading(true);
+            const [analytics, trend, health] = await Promise.all([
+                dashboardService.getAnalytics(),
+                dashboardService.getSalesTrend(),
+                dashboardService.getInventoryHealth()
+            ]);
+
+            setAnalyticsData(analytics);
+            setSalesTrend(trend);
+            setInventoryHealth(health);
         } catch (error) {
-            console.error("Failed to fetch dashboard summary", error);
+            console.error("Failed to fetch Final BI components", error);
         } finally {
             setLoading(false);
         }
     }, []);
 
     useEffect(() => {
-        fetchSummary();
+        fetchAllData();
 
-        // Add event listener for focus to auto-refresh when coming back to tab/window
-        // This is a simple way to "refresh after sale" if user navigates away and back
         const onFocus = () => {
-            fetchSummary();
+            fetchAllData();
         };
 
         window.addEventListener('focus', onFocus);
-
-        return () => {
-            window.removeEventListener('focus', onFocus);
-        };
-    }, [fetchSummary]);
+        return () => window.removeEventListener('focus', onFocus);
+    }, [fetchAllData]);
 
     if (loading) {
-        return <div className="p-8 text-center text-gray-500">Loading dashboard...</div>;
+        return (
+            <div className="flex flex-col justify-center items-center h-screen bg-gray-50/50">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
+                <h2 className="text-xl font-bold text-gray-700">Loading Business Intelligence Suite...</h2>
+                <p className="text-sm text-gray-500 mt-2">Aggregating Global APIs</p>
+            </div>
+        );
     }
 
     return (
         <div className="space-y-6">
             {/* Page Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-200/60">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Dashboard Overview</h1>
-                    <p className="text-sm text-gray-500 mt-1">Real-time insights for your inventory and sales.</p>
+                    <h1 className="text-2xl font-black text-gray-900 flex items-center">
+                        <Activity className="w-6 h-6 mr-3 text-indigo-600" />
+                        Final AI Intelligence Dashboard
+                    </h1>
+                    <p className="text-sm text-gray-500 mt-1 font-medium">Phase 10: Complete System Overview & Real-time Logistics</p>
                 </div>
                 <div className="mt-4 sm:mt-0 flex space-x-3">
                     <button
-                        onClick={() => navigate('/sales')}
-                        className="px-4 py-2 bg-white border border-gray-200 text-gray-700 font-medium rounded-lg text-sm shadow-sm hover:bg-gray-50"
+                        onClick={() => navigate('/forecasting')}
+                        className="px-4 py-2 bg-indigo-50 border border-indigo-100 text-indigo-700 font-bold rounded-lg text-sm shadow-sm hover:bg-indigo-100 transition-colors flex items-center"
                     >
-                        View Sales
+                        <TrendingUp className="w-4 h-4 mr-2" /> View Forecasts
                     </button>
                     <button
                         onClick={() => navigate('/products')}
-                        className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg text-sm shadow-md hover:bg-blue-700 shadow-blue-200"
+                        className="px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg text-sm shadow-md hover:bg-indigo-700 shadow-indigo-200 transition-colors flex items-center"
                     >
-                        + Manage Stock
+                        Manage Stock <ArrowRight className="w-4 h-4 ml-2" />
                     </button>
                 </div>
             </div>
 
-            {/* KPI Cards */}
-            <KPICards data={summaryData} />
+            {/* KPI Cards section (Phase 10 Grid) */}
+            <KPICards data={analyticsData} />
 
-            {/* Charts & Analytics Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Revenue Chart - Takes up 2 columns */}
-                <div className="lg:col-span-2">
-                    <RevenueChart data={summaryData?.monthlyRevenue} />
-                </div>
-
-                {/* Stock Status - Takes up 1 column */}
-                <div className="lg:col-span-1">
-                    <StockStatus lowStockItems={summaryData?.lowStockItems} />
-                </div>
+            {/* Middle BI Row: Primary Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <SalesTrendChart data={salesTrend} />
+                <InventoryHealthChart data={inventoryHealth} />
             </div>
 
-            {/* Recent Activity Grid */}
+            {/* Bottom BI Row: Intelligence and Risk Alerts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Recent Sales - Takes up 2 columns */}
-                <div className="lg:col-span-2">
-                    <RecentSales sales={summaryData?.recentSales} />
+                {/* 1 col */}
+                <div className="lg:col-span-1">
+                    <RiskAlertPanel lowStockItems={analyticsData?.lowStockItems} />
+                    <div className="mt-6">
+                        <ForecastAccuracyChart data={analyticsData?.averageForecastAccuracy} />
+                    </div>
                 </div>
 
-                {/* Alerts - Takes up 1 column */}
-                <div className="lg:col-span-1 border-b lg:border-none border-gray-100 pb-6 lg:pb-0">
-                    <ExpiryAlerts />
-                </div>
-
-                {/* Recent Vendor Orders - Takes up 2 columns */}
-                <div className="lg:col-span-2">
-                    <RecentVendorOrders orders={summaryData?.recentVendorOrders} />
+                {/* 2 cols */}
+                <div className="lg:col-span-2 space-y-6">
+                    <VendorPerformanceChart />
+                    <SmartInsightsPanel data={analyticsData} />
                 </div>
             </div>
         </div>

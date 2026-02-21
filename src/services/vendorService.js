@@ -20,11 +20,17 @@ const deleteVendor = async (id) => {
     return response.data;
 };
 
+const getBestVendorsForProduct = async (productId) => {
+    const response = await API.get(`/vendors/best/${productId}`);
+    return response.data;
+};
+
 const vendorService = {
     getVendors,
     addVendor,
     updateVendor,
-    deleteVendor
+    deleteVendor,
+    getBestVendorsForProduct
 };
 
 export default vendorService;

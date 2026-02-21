@@ -2,7 +2,7 @@
   "name": "kirana-store",
   "private": true,
   "version": "0.0.0",
-  "type":"module",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,8 +10,6 @@
     "preview": "vite preview",
     "start": "node src/server.js"
   },
- 
-
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "axios": "^1.13.5",

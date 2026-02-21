@@ -69,6 +69,7 @@ export const SIDEBAR_ITEMS = [
     { name: 'Vendor Orders', icon: Package, path: '/vendor-orders' },
     { name: 'Vendors', icon: User, path: '/vendors' },
     { name: 'Forecasting', icon: TrendingUp, path: '/forecasting' },
+    { name: 'Auto Reorder (AI)', icon: CheckCircle, path: '/auto-reorder' },
     { name: 'Reports', icon: FileText, path: '/reports' },
     { name: 'Settings', icon: Settings, path: '/settings' },
 ];

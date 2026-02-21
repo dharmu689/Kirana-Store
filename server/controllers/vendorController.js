@@ -93,10 +93,88 @@ const deleteVendor = async (req, res) => {
     }
 };
 
+// @desc    Get top optimized vendor for a specific product natively based on custom Scoring Algorithm
+// @route   GET /api/vendors/best/:productId
+// @access  Private
+const getBestVendorForProduct = async (req, res) => {
+    try {
+        const { productId } = req.params;
+
+        // Find all vendors supplying the product explicitly
+        const vendors = await Vendor.find({ productsSupplied: productId }).populate('productsSupplied', 'name price');
+
+        if (!vendors || vendors.length === 0) {
+            return res.status(404).json({ message: 'No vendors found supplying this target product.' });
+        }
+
+        // 1. Array scanning mapping limits
+        let minPrice = Infinity;
+        let maxPrice = -Infinity;
+        let minDelivery = Infinity;
+        let maxDelivery = -Infinity;
+
+        vendors.forEach(v => {
+            const price = v.pricePerUnit || 1;
+            const delivery = v.averageDeliveryDays || 1;
+
+            if (price < minPrice) minPrice = price;
+            if (price > maxPrice) maxPrice = price;
+
+            if (delivery < minDelivery) minDelivery = delivery;
+            if (delivery > maxDelivery) maxDelivery = delivery;
+        });
+
+        // Resolve single-vendor overlap issues dynamically forcing equal spreads internally
+        if (minPrice === maxPrice) maxPrice = minPrice + 1;
+        if (minDelivery === maxDelivery) maxDelivery = minDelivery + 1;
+
+        // 2. Compute Individual algorithmic logic bounds
+        // Formulas parse a max weight 100 limit returning dynamically generated totals mapping logic limits
+
+        const scoredVendors = vendors.map(v => {
+            const currentPrice = v.pricePerUnit || minPrice;
+            const currentDelivery = v.averageDeliveryDays || minDelivery;
+            const rating = v.vendorRating || 3;
+
+            // Note: Lower Price = Higher Score natively (Inverse mapping limits)
+            const priceScore = 100 - (((currentPrice - minPrice) / (maxPrice - minPrice)) * 100);
+
+            // Note: Lower Delivery = Higher Score natively 
+            const deliveryScore = 100 - (((currentDelivery - minDelivery) / (maxDelivery - minDelivery)) * 100);
+
+            // Rating maps directly: scale 1-5 to 100
+            const ratingScore = (rating / 5) * 100;
+
+            // Master Weight Allocation (50% Price + 30% Delivery + 20% Rating)
+            const finalVendorScore = (0.5 * priceScore) + (0.3 * deliveryScore) + (0.2 * ratingScore);
+
+            // Pass the pure Mongoose Object back binding standard variables securely attached
+            return {
+                ...v.toObject(),
+                optimizationMetrics: {
+                    priceScore: Number(priceScore.toFixed(2)),
+                    deliveryScore: Number(deliveryScore.toFixed(2)),
+                    ratingScore: Number(ratingScore.toFixed(2)),
+                    finalScore: Number(finalVendorScore.toFixed(2))
+                }
+            };
+        });
+
+        // 3. Sort arrays mapping dynamically descending bounds optimizing returns
+        scoredVendors.sort((a, b) => b.optimizationMetrics.finalScore - a.optimizationMetrics.finalScore);
+
+        res.status(200).json(scoredVendors);
+    } catch (error) {
+        console.error('Error calculating best vendor:', error);
+        res.status(500).json({ message: 'Server logic failed allocating dynamic optimization scales natively.' });
+    }
+};
+
 module.exports = {
     addVendor,
     getVendors,
     getVendorById,
     updateVendor,
-    deleteVendor
+    deleteVendor,
+    getBestVendorForProduct
 };

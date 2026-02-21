@@ -36,7 +36,29 @@ const vendorSchema = new mongoose.Schema(
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product'
             }
-        ]
+        ],
+        pricePerUnit: {
+            type: Number,
+            default: 0
+        },
+        averageDeliveryDays: {
+            type: Number,
+            default: 1
+        },
+        vendorRating: {
+            type: Number,
+            min: 1,
+            max: 5,
+            default: 3
+        },
+        reliabilityScore: {
+            type: Number,
+            default: 100 // Scale 0-100
+        },
+        totalOrdersCompleted: {
+            type: Number,
+            default: 0
+        }
     },
     {
         timestamps: true

@@ -1,4 +1,4 @@
-import { Package, TrendingUp, ShoppingCart, AlertTriangle, Truck, CheckCircle } from 'lucide-react';
+import { Package, TrendingUp, ShoppingCart, AlertTriangle, Truck, CheckCircle, Star, DollarSign, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const KPICards = ({ data }) => {
@@ -6,57 +6,73 @@ const KPICards = ({ data }) => {
 
     const displayData = [
         {
-            title: 'Total Products',
-            value: data ? data.totalProducts : '...',
-            subtext: 'In Inventory',
-            icon: Package,
-            color: 'bg-blue-100 text-blue-600',
-            path: '/products'
-        },
-        {
-            title: 'Total Stock Value',
-            value: data ? `₹${data.inventoryValue?.toLocaleString()}` : '...',
+            title: 'Total Revenue',
+            value: data ? `₹${data.totalRevenue?.toLocaleString()}` : '...',
             subtext: 'Asset Value',
-            icon: TrendingUp,
+            icon: DollarSign,
             color: 'bg-green-100 text-green-600',
-            path: '/reports'
+            path: '/sales'
         },
         {
-            title: 'Reorder Alerts',
-            value: data ? (data.reorderAlertCount || data.lowStockCount) : '...',
-            subtext: 'Action needed',
+            title: 'Forecast Accuracy',
+            value: data ? `${data.averageForecastAccuracy}%` : '...',
+            subtext: 'AI Confidence',
+            icon: TrendingUp,
+            color: 'bg-blue-100 text-blue-600',
+            path: '/forecasting'
+        },
+        {
+            title: 'High Risk Products',
+            value: data ? data.highRiskProductsCount : '...',
+            subtext: 'Critical Attention',
             icon: AlertTriangle,
-            color: 'bg-yellow-100 text-yellow-600',
-            path: '/reorder'
-        },
-        {
-            title: 'Pending Orders',
-            value: data ? data.pendingVendorOrdersCount : '...',
-            subtext: 'Vendor Restocks',
-            icon: Truck,
-            color: 'bg-purple-100 text-purple-600',
-            path: '/vendor-orders'
-        },
-        {
-            title: 'Out of Stock',
-            value: data ? data.outOfStockCount : '...',
-            subtext: 'Urgent Attention',
-            icon: ShoppingCart,
             color: 'bg-red-100 text-red-600',
             path: '/reorder'
         },
         {
-            title: 'Delivered Orders',
-            value: data ? data.deliveredVendorOrdersCount : '...',
-            subtext: 'Completed Restocks',
+            title: 'Auto Reorders',
+            value: data ? data.autoReordersTriggeredCount : '...',
+            subtext: 'Sys Triggered',
+            icon: Truck,
+            color: 'bg-purple-100 text-purple-600',
+            path: '/auto-reorder'
+        },
+        {
+            title: 'Low Stock Items',
+            value: data ? data.lowStockItemsCount : '...',
+            subtext: 'Needs Review',
+            icon: ShoppingCart,
+            color: 'bg-orange-100 text-orange-600',
+            path: '/products'
+        },
+        {
+            title: 'Total Sales (30d)',
+            value: data ? data.totalSales30d : '...',
+            subtext: 'Monthly Volume',
+            icon: Package,
+            color: 'bg-cyan-100 text-cyan-600',
+            path: '/sales'
+        },
+        {
+            title: 'Best Vendor',
+            value: data ? data.bestPerformingVendor : '...',
+            subtext: 'Cost-Effective',
+            icon: Star,
+            color: 'bg-indigo-100 text-indigo-600',
+            path: '/vendors'
+        },
+        {
+            title: 'System Health',
+            value: data && data.inventoryHealth && data.inventoryHealth[0] ? `${data.inventoryHealth[0].value}%` : '...',
+            subtext: 'Safe Stock Ratio',
             icon: CheckCircle,
             color: 'bg-emerald-100 text-emerald-600',
-            path: '/vendor-orders'
-        },
+            path: '/reports'
+        }
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {displayData.map((item, index) => {
                 const Icon = item.icon;
                 return (

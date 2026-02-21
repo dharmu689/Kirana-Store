@@ -5,8 +5,26 @@ const getSummary = async () => {
     return response.data;
 };
 
+const getAnalytics = async () => {
+    const response = await API.get("/dashboard/analytics");
+    return response.data;
+};
+
+const getSalesTrend = async () => {
+    const response = await API.get("/dashboard/sales-trend");
+    return response.data;
+};
+
+const getInventoryHealth = async () => {
+    const response = await API.get("/dashboard/inventory-health");
+    return response.data;
+};
+
 const dashboardService = {
     getSummary,
+    getAnalytics,
+    getSalesTrend,
+    getInventoryHealth,
 };
 
 export default dashboardService;
