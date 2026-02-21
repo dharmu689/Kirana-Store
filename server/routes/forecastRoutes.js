@@ -6,9 +6,7 @@ const {
     regenerateForecast,
     getProductTrend,
     evaluateForecast,
-    evaluateAllForecasts,
-    getAutoReorder,
-    toggleAutoReorder
+    evaluateAllForecasts
 } = require('../controllers/forecastController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -20,14 +18,6 @@ router.route('/evaluate-all').post(protect, admin, evaluateAllForecasts);
 
 // Evaluate specific forecast
 router.route('/:id/evaluate').put(protect, admin, evaluateForecast);
-
-// --- Auto Reorder Smart System ---
-
-// Get smart reorder tracking metrics
-router.route('/auto-reorder').get(protect, admin, getAutoReorder);
-
-// Toggle auto-reorder boolean per product
-router.route('/auto-reorder/toggle/:productId').put(protect, admin, toggleAutoReorder);
 
 // --- Standard Generation ---
 

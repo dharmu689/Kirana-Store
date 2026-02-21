@@ -41,18 +41,6 @@ const productSchema = mongoose.Schema(
             type: Number,
             default: 0
         },
-        safetyStock: {
-            type: Number,
-            default: 10
-        },
-        leadTimeDays: {
-            type: Number,
-            default: 7
-        },
-        autoReorderEnabled: {
-            type: Boolean,
-            default: true
-        },
         createdBy: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,

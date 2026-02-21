@@ -29,14 +29,7 @@ const KPICards = ({ data }) => {
             color: 'bg-red-100 text-red-600',
             path: '/reorder'
         },
-        {
-            title: 'Auto Reorders',
-            value: data ? data.autoReordersTriggeredCount : '...',
-            subtext: 'Sys Triggered',
-            icon: Truck,
-            color: 'bg-purple-100 text-purple-600',
-            path: '/auto-reorder'
-        },
+
         {
             title: 'Low Stock Items',
             value: data ? data.lowStockItemsCount : '...',

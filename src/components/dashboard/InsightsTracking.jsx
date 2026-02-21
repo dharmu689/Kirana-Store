@@ -21,15 +21,6 @@ export const SmartInsightsPanel = ({ data }) => {
             });
         }
 
-        // Auto Reorder Insight
-        if (data.autoReordersTriggeredCount > 0) {
-            insights.push({
-                type: 'info',
-                text: `${data.autoReordersTriggeredCount} automatic restock orders were system-generated.`,
-                icon: <Truck className="text-blue-500 w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-            });
-        }
-
         // Trend Distribution Insight
         if (data.trendDistribution?.upward > data.trendDistribution?.downward * 2) {
             insights.push({

@@ -184,7 +184,6 @@ const getDashboardAnalytics = asyncHandler(async (req, res) => {
     let totalForecastedDemand = 0;
     let totalAccuracy = 0;
     let evaluatedCount = 0;
-    let autoReordersTriggeredCount = 0; // Derived from pending orders for simplicity, or DB query
     let upTrend = 0, downTrend = 0, stableTrend = 0;
 
     latestForecasts.forEach(f => {
@@ -210,12 +209,15 @@ const getDashboardAnalytics = asyncHandler(async (req, res) => {
     const products = await Product.find({});
     products.forEach(p => {
         if (p.quantity <= p.reorderLevel) lowStockCount++;
-        // Fast risk calculation matching Phase 7 logic
+        // Fast risk calculation using simplified static limits
         const f = latestForecasts.find(lf => lf._id.toString() === p._id.toString());
         if (f) {
             const daily = (f.latest.predictedMonthlyDemand || 0) / 30;
-            const reorderPoint = (daily * (p.leadTimeDays || 7)) + (p.safetyStock || 10);
-            if (p.quantity < (reorderPoint * 0.5)) {
+            // Removed leadTimeDays and safetyStock dependency. 
+            // We now just check against standard static reorderLevel + 1 week of predicted demand
+            const dynamicPoint = p.reorderLevel + (daily * 7);
+
+            if (p.quantity < (dynamicPoint * 0.5)) {
                 highRiskCount++;
             }
         }
@@ -253,7 +255,6 @@ const getDashboardAnalytics = asyncHandler(async (req, res) => {
         totalForecastedDemand: Number(totalForecastedDemand.toFixed(0)),
         averageForecastAccuracy,
         highRiskProductsCount: highRiskCount,
-        autoReordersTriggeredCount: pendingVendorOrdersCount, // Using pending as proxy for auto triggers
         bestPerformingVendor: mostCostEffectiveVendor,
         lowStockItemsCount: lowStockCount,
         trendDistribution: {
@@ -320,7 +321,8 @@ const getInventoryHealth = asyncHandler(async (req, res) => {
 
         if (f) {
             const daily = (f.latest.predictedMonthlyDemand || 0) / 30;
-            const reorderPoint = (daily * (p.leadTimeDays || 7)) + (p.safetyStock || 10);
+            // Removed safetyStock & leadTimeDays. Using base reorderLevel + 1 week buffer
+            const reorderPoint = p.reorderLevel + (daily * 7);
 
             if (p.quantity < (reorderPoint * 0.5)) risk = 'High';
             else if (p.quantity < reorderPoint) risk = 'Medium';
