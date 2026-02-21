@@ -17,10 +17,11 @@ const Sidebar = () => {
         <div className="w-64 h-screen bg-white border-r border-gray-100 flex flex-col fixed left-0 top-0 shadow-sm z-50">
             {/* Brand Logo */}
             <div className="h-16 flex items-center px-6 border-b border-gray-50">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-blue-200">
+                {/* <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-blue-200">
                     <span className="text-white font-bold text-lg">K</span>
                 </div>
-                <span className="text-xl font-bold text-gray-800 tracking-tight">Kirana<span className="text-blue-600">Pro</span></span>
+                <span className="text-xl font-bold text-gray-800 tracking-tight">Kirana<span className="text-blue-600">Pro</span></span> */}
+                <img src="Kirana-Store\public\KiranaSmart.svg" alt="" />
             </div>
 
             {/* Navigation Menu */}
