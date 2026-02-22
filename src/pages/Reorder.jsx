@@ -12,12 +12,15 @@ const Reorder = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [successMsg, setSuccessMsg] = useState('');
+// additional state to hold order-specific errors (so they don’t clash with fetch errors)
+const [orderError, setOrderError] = useState('');
 
+    // fetch list of products that require reordering
     const fetchReorderItems = async () => {
         setLoading(true);
         try {
-            const user = JSON.parse(localStorage.getItem('user'));
-            const data = await reorderService.getReorderItems(user.token);
+            // token is taken care of by axios interceptor
+            const data = await reorderService.getReorderItems();
             setProducts(data);
             setError('');
         } catch (err) {
@@ -28,30 +31,39 @@ const Reorder = () => {
         }
     };
 
+
     useEffect(() => {
         fetchReorderItems();
     }, []);
 
     const handleRestockClick = (product) => {
         setSelectedProduct(product);
+        setOrderError(''); // clear previous order errors
         setIsModalOpen(true);
     };
 
     const handlePlaceOrder = async (orderData) => {
         try {
+            // reset any existing errors
+            setOrderError('');
             await vendorOrderService.placeOrder({
                 product: orderData.productId,
                 vendor: orderData.vendorId,
                 quantity: orderData.quantity,
                 deliveryAddress: orderData.deliveryAddress
             });
+
             setIsModalOpen(false);
-            setSuccessMsg(`Successfully placed order for ${selectedProduct.name}!`);
+            setSuccessMsg(`Successfully placed order for ${selectedProduct?.name || 'product'}!`);
             setTimeout(() => setSuccessMsg(''), 5000);
+            setSelectedProduct(null);
             fetchReorderItems(); // Refresh list
         } catch (err) {
-            console.error("Order failed", err);
-            alert("Failed to place vendor order. Please try again.");
+            console.error('Order failed', err);
+            // show specific message if available
+            const msg = err.response?.data?.message || err.message || 'Failed to place vendor order';
+            setOrderError(msg);
+            alert(msg);
         }
     };
 
@@ -75,6 +87,13 @@ const Reorder = () => {
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
                         <strong className="font-bold">Error!</strong>
                         <span className="block sm:inline"> {error}</span>
+                    </div>
+                )}
+                {/* display order-specific errors if modal was open */}
+                {orderError && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
+                        <strong className="font-bold">Order Error!</strong>
+                        <span className="block sm:inline"> {orderError}</span>
                     </div>
                 )}
 
