@@ -159,7 +159,7 @@ const getBestVendorForProduct = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = {
+const exported = {
     addVendor,
     getVendors,
     getVendorById,
@@ -167,3 +167,7 @@ module.exports = {
     deleteVendor,
     getBestVendorForProduct
 };
+
+module.exports = exported;
+// support accidental .default destructuring (e.g. from ES import style)
+module.exports.default = exported;

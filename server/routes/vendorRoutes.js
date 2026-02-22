@@ -7,7 +7,7 @@ const {
     updateVendor,
     deleteVendor,
     getBestVendorForProduct
-} = require('../controllers/vendorController').default;
+} = require('../controllers/vendorController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
 router.route('/')
