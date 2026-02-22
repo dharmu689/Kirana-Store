@@ -33,7 +33,7 @@ const Sidebar = () => {
                     // Hide Vendor Orders and Vendors from non-admins
                     if ((item.path === '/vendor-orders' || item.path === '/vendors') && !isAdmin) {
                         return null;
-                    }
+                    }      
 
                     const isActive = location.pathname === item.path;
                     const Icon = item.icon;

@@ -1,10 +1,10 @@
 // server/controllers/vendorController.js
-import { create, find, findById, findByIdAndUpdate, findByIdAndDelete } from '../models/Vendor';
+const Vendor = require('../models/Vendor');
 
 // @desc    Add a new vendor
 // @route   POST /api/vendors
 // @access  Private/Admin
-const addVendor = async (req, res) => {
+async function addVendor(req, res) {
     try {
         const { name, contactPerson, phone, email, address, productsSupplied } = req.body;
 
@@ -24,7 +24,7 @@ const addVendor = async (req, res) => {
         }
         res.status(400).json({ message: error.message });
     }
-};
+}
 
 // @desc    Get all vendors
 // @route   GET /api/vendors
