@@ -132,14 +132,14 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                         />
                     </div>
 
-                    {/* <div>
+                    <div>
                         <div className="flex justify-between items-center">
                             <label htmlFor="vendor" className="block text-sm font-medium text-gray-700">Vendor</label>
-                            {product && (
+                            {/* {product && (
                                 <Link to={`/vendor-compare/${product._id}`} className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center mb-1">
                                     <TrendingUp className="w-3 h-3 mr-1" /> Compare Vendors
                                 </Link>
-                            )}
+                            )} */}
                         </div>
                         {loadingVendors ? (
                             <div className="mt-1 text-sm text-gray-500 flex items-center">
@@ -162,9 +162,9 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                                 ))}
                             </select>
                         )}
-                    </div> */}
+                    </div>
 
-                    {selectedVendor && (
+                    {/* {selectedVendor && (
                         <div className={`p-4 rounded-md text-sm border ${selectedVendor.optimizationMetrics ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-200'}`}>
                             {selectedVendor.optimizationMetrics && (
                                 <div className="mb-3 pb-3 border-b border-indigo-100 flex items-start">
@@ -184,7 +184,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                             <p><span className="text-gray-500">Phone:</span> {selectedVendor.phone || 'N/A'}</p>
                             <p><span className="text-gray-500">Email:</span> {selectedVendor.email || 'N/A'}</p>
                         </div>
-                    )}
+                    )} */}
 
                     <div>
                         <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Order Quantity</label>
