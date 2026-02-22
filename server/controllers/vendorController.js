@@ -1,5 +1,5 @@
 // server/controllers/vendorController.js
-const Vendor = require('../models/Vendor');
+import { create, find, findById, findByIdAndUpdate, findByIdAndDelete } from '../models/Vendor';
 
 // @desc    Add a new vendor
 // @route   POST /api/vendors
@@ -8,7 +8,7 @@ const addVendor = async (req, res) => {
     try {
         const { name, contactPerson, phone, email, address, productsSupplied } = req.body;
 
-        const vendor = await Vendor.create({
+        const vendor = await create({
             name,
             contactPerson,
             phone,
@@ -31,7 +31,7 @@ const addVendor = async (req, res) => {
 // @access  Private
 const getVendors = async (req, res) => {
     try {
-        const vendors = await Vendor.find({}).populate('productsSupplied', 'name price');
+        const vendors = await find({}).populate('productsSupplied', 'name price');
         res.json(vendors);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -43,7 +43,7 @@ const getVendors = async (req, res) => {
 // @access  Private
 const getVendorById = async (req, res) => {
     try {
-        const vendor = await Vendor.findById(req.params.id).populate('productsSupplied', 'name price');
+        const vendor = await findById(req.params.id).populate('productsSupplied', 'name price');
 
         if (vendor) {
             res.json(vendor);
@@ -60,7 +60,7 @@ const getVendorById = async (req, res) => {
 // @access  Private/Admin
 const updateVendor = async (req, res) => {
     try {
-        const vendor = await Vendor.findByIdAndUpdate(
+        const vendor = await findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true }
@@ -81,7 +81,7 @@ const updateVendor = async (req, res) => {
 // @access  Private/Admin
 const deleteVendor = async (req, res) => {
     try {
-        const vendor = await Vendor.findByIdAndDelete(req.params.id);
+        const vendor = await findByIdAndDelete(req.params.id);
 
         if (!vendor) {
             return res.status(404).json({ message: 'Vendor not found' });
@@ -101,7 +101,7 @@ const getBestVendorForProduct = async (req, res) => {
         const { productId } = req.params;
 
         // Find all vendors supplying the product explicitly
-        const vendors = await Vendor.find({ productsSupplied: productId }).populate('productsSupplied', 'name price');
+        const vendors = await find({ productsSupplied: productId }).populate('productsSupplied', 'name price');
 
         if (!vendors || vendors.length === 0) {
             return res.status(404).json({ message: 'No vendors found supplying this target product.' });
@@ -170,7 +170,7 @@ const getBestVendorForProduct = async (req, res) => {
     }
 };
 
-module.exports = {
+export default {
     addVendor,
     getVendors,
     getVendorById,
