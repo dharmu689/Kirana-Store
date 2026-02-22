@@ -10,6 +10,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
     const [deliveryAddress, setDeliveryAddress] = useState('');
     const [loadingVendors, setLoadingVendors] = useState(false);
     const [error, setError] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
@@ -61,11 +62,11 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
 
     const handleVendorChange = (e) => {
         const vendorId = e.target.value;
-        const vendor = vendors.find((v) => v._id === vendorId);
+        const vendor = vendors.find((v) => String(v._id) === String(vendorId));
         setSelectedVendor(vendor || null);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
@@ -74,17 +75,26 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
             return;
         }
 
-        if (quantity < 1) {
+        if (Number(quantity) < 1) {
             setError('Quantity must be at least 1.');
             return;
         }
 
-        onPlaceOrder({
-            productId: product._id,
-            vendorId: selectedVendor._id,
-            quantity: Number(quantity),
-            deliveryAddress
-        });
+        setSubmitting(true);
+        try {
+            // Wait for parent to complete the order so we can show errors if any
+            await onPlaceOrder({
+                productId: product._id,
+                vendorId: selectedVendor._id,
+                quantity: Number(quantity),
+                deliveryAddress
+            });
+        } catch (err) {
+            const msg = err?.response?.data?.message || err.message || 'Failed to place order';
+            setError(msg);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     if (!isOpen || !product) return null;
@@ -225,9 +235,9 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                         <button
                             type="submit"
                             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 disabled:opacity-50"
-                            disabled={!selectedVendor}
+                            disabled={!selectedVendor || submitting}
                         >
-                            Place Order
+                            {submitting ? 'Placing...' : 'Place Order'}
                         </button>
                     </div>
                 </form>

@@ -64,6 +64,8 @@ const [orderError, setOrderError] = useState('');
             const msg = err.response?.data?.message || err.message || 'Failed to place vendor order';
             setOrderError(msg);
             alert(msg);
+            // rethrow so calling component (modal) can handle/display the error
+            throw err;
         }
     };
 
