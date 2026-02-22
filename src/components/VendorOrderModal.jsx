@@ -132,7 +132,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                         />
                     </div>
 
-                    <div>
+                    {/* <div>
                         <div className="flex justify-between items-center">
                             <label htmlFor="vendor" className="block text-sm font-medium text-gray-700">Vendor</label>
                             {product && (
@@ -162,7 +162,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                                 ))}
                             </select>
                         )}
-                    </div>
+                    </div> */}
 
                     {selectedVendor && (
                         <div className={`p-4 rounded-md text-sm border ${selectedVendor.optimizationMetrics ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-200'}`}>
