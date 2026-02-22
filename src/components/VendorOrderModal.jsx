@@ -164,7 +164,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                         )}
                     </div>
 
-                    {/* {selectedVendor && (
+                    {selectedVendor && (
                         <div className={`p-4 rounded-md text-sm border ${selectedVendor.optimizationMetrics ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-200'}`}>
                             {selectedVendor.optimizationMetrics && (
                                 <div className="mb-3 pb-3 border-b border-indigo-100 flex items-start">
@@ -184,7 +184,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                             <p><span className="text-gray-500">Phone:</span> {selectedVendor.phone || 'N/A'}</p>
                             <p><span className="text-gray-500">Email:</span> {selectedVendor.email || 'N/A'}</p>
                         </div>
-                    )} */}
+                    )}
 
                     <div>
                         <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Order Quantity</label>
