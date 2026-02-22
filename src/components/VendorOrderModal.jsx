@@ -180,7 +180,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                                 </div>
                             )}
                             <p className="font-semibold text-gray-800 mb-1">Vendor Contact Info:</p>
-                            <p><span className="text-gray-500">Person:</span> {selectedVendor.contactPerson || 'N/A'}</p>
+                            <p><span className="text-gray-500">Person:</span> {selectedVendor.name || 'N/A'}</p>
                             <p><span className="text-gray-500">Phone:</span> {selectedVendor.phone || 'N/A'}</p>
                             <p><span className="text-gray-500">Email:</span> {selectedVendor.email || 'N/A'}</p>
                         </div>
