@@ -1,14 +1,15 @@
 // server/controllers/vendorController.js
+const asyncHandler = require('express-async-handler');
 const Vendor = require('../models/Vendor');
 
 // @desc    Add a new vendor
 // @route   POST /api/vendors
 // @access  Private/Admin
-async function addVendor(req, res) {
+const addVendor = asyncHandler(async (req, res) => {
     try {
         const { name, contactPerson, phone, email, address, productsSupplied } = req.body;
 
-        const vendor = await create({
+        const vendor = await Vendor.create({
             name,
             contactPerson,
             phone,
@@ -24,26 +25,26 @@ async function addVendor(req, res) {
         }
         res.status(400).json({ message: error.message });
     }
-}
+});
 
 // @desc    Get all vendors
 // @route   GET /api/vendors
 // @access  Private
-const getVendors = async (req, res) => {
+const getVendors = asyncHandler(async (req, res) => {
     try {
-        const vendors = await find({}).populate('productsSupplied', 'name price');
+        const vendors = await Vendor.find({}).populate('productsSupplied', 'name price');
         res.json(vendors);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+});
 
 // @desc    Get single vendor
 // @route   GET /api/vendors/:id
 // @access  Private
-const getVendorById = async (req, res) => {
+const getVendorById = asyncHandler(async (req, res) => {
     try {
-        const vendor = await findById(req.params.id).populate('productsSupplied', 'name price');
+        const vendor = await Vendor.findById(req.params.id).populate('productsSupplied', 'name price');
 
         if (vendor) {
             res.json(vendor);
@@ -53,14 +54,14 @@ const getVendorById = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+});
 
 // @desc    Update a vendor
 // @route   PUT /api/vendors/:id
 // @access  Private/Admin
-const updateVendor = async (req, res) => {
+const updateVendor = asyncHandler(async (req, res) => {
     try {
-        const vendor = await findByIdAndUpdate(
+        const vendor = await Vendor.findByIdAndUpdate(
             req.params.id,
             req.body,
             { new: true, runValidators: true }
@@ -74,14 +75,14 @@ const updateVendor = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
-};
+});
 
 // @desc    Delete a vendor
 // @route   DELETE /api/vendors/:id
 // @access  Private/Admin
-const deleteVendor = async (req, res) => {
+const deleteVendor = asyncHandler(async (req, res) => {
     try {
-        const vendor = await findByIdAndDelete(req.params.id);
+        const vendor = await Vendor.findByIdAndDelete(req.params.id);
 
         if (!vendor) {
             return res.status(404).json({ message: 'Vendor not found' });
@@ -91,17 +92,17 @@ const deleteVendor = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-};
+});
 
 // @desc    Get top optimized vendor for a specific product natively based on custom Scoring Algorithm
 // @route   GET /api/vendors/best/:productId
 // @access  Private
-const getBestVendorForProduct = async (req, res) => {
+const getBestVendorForProduct = asyncHandler(async (req, res) => {
     try {
         const { productId } = req.params;
 
         // Find all vendors supplying the product explicitly
-        const vendors = await find({ productsSupplied: productId }).populate('productsSupplied', 'name price');
+        const vendors = await Vendor.find({ productsSupplied: productId }).populate('productsSupplied', 'name price');
 
         if (!vendors || vendors.length === 0) {
             return res.status(404).json({ message: 'No vendors found supplying this target product.' });
@@ -124,31 +125,20 @@ const getBestVendorForProduct = async (req, res) => {
             if (delivery > maxDelivery) maxDelivery = delivery;
         });
 
-        // Resolve single-vendor overlap issues dynamically forcing equal spreads internally
         if (minPrice === maxPrice) maxPrice = minPrice + 1;
         if (minDelivery === maxDelivery) maxDelivery = minDelivery + 1;
-
-        // 2. Compute Individual algorithmic logic bounds
-        // Formulas parse a max weight 100 limit returning dynamically generated totals mapping logic limits
 
         const scoredVendors = vendors.map(v => {
             const currentPrice = v.pricePerUnit || minPrice;
             const currentDelivery = v.averageDeliveryDays || minDelivery;
             const rating = v.vendorRating || 3;
 
-            // Note: Lower Price = Higher Score natively (Inverse mapping limits)
             const priceScore = 100 - (((currentPrice - minPrice) / (maxPrice - minPrice)) * 100);
-
-            // Note: Lower Delivery = Higher Score natively 
             const deliveryScore = 100 - (((currentDelivery - minDelivery) / (maxDelivery - minDelivery)) * 100);
-
-            // Rating maps directly: scale 1-5 to 100
             const ratingScore = (rating / 5) * 100;
 
-            // Master Weight Allocation (50% Price + 30% Delivery + 20% Rating)
             const finalVendorScore = (0.5 * priceScore) + (0.3 * deliveryScore) + (0.2 * ratingScore);
 
-            // Pass the pure Mongoose Object back binding standard variables securely attached
             return {
                 ...v.toObject(),
                 optimizationMetrics: {
@@ -160,7 +150,6 @@ const getBestVendorForProduct = async (req, res) => {
             };
         });
 
-        // 3. Sort arrays mapping dynamically descending bounds optimizing returns
         scoredVendors.sort((a, b) => b.optimizationMetrics.finalScore - a.optimizationMetrics.finalScore);
 
         res.status(200).json(scoredVendors);
@@ -168,9 +157,9 @@ const getBestVendorForProduct = async (req, res) => {
         console.error('Error calculating best vendor:', error);
         res.status(500).json({ message: 'Server logic failed allocating dynamic optimization scales natively.' });
     }
-};
+});
 
-export default {
+module.exports = {
     addVendor,
     getVendors,
     getVendorById,
