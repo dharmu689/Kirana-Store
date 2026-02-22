@@ -135,11 +135,11 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                     <div>
                         <div className="flex justify-between items-center">
                             <label htmlFor="vendor" className="block text-sm font-medium text-gray-700">Vendor</label>
-                            {/* {product && (
+                            {product && (
                                 <Link to={`/vendor-compare/${product._id}`} className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center mb-1">
-                                    <TrendingUp className="w-3 h-3 mr-1" /> Compare Vendors
+                                    {/* <TrendingUp className="w-3 h-3 mr-1" /> Compare Vendors */}
                                 </Link>
-                            )} */}
+                            )}
                         </div>
                         {loadingVendors ? (
                             <div className="mt-1 text-sm text-gray-500 flex items-center">
