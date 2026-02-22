@@ -227,7 +227,7 @@ const Vendors = () => {
             </div>
 
             {/* Add/Edit Modal */}
-            {isModalOpen && (
+            {/* {isModalOpen && (
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                     <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                         <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCloseModal}>
@@ -284,7 +284,122 @@ const Vendors = () => {
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
+
+                {/* Add/Edit Modal */}
+{isModalOpen && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+    {/* Background Overlay */}
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50"
+      onClick={handleCloseModal}
+    ></div>
+
+    {/* Modal Box */}
+    <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 z-50">
+
+      <form onSubmit={handleSubmit}>
+
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-lg font-semibold text-gray-900">
+            {isEditing ? 'Edit Vendor' : 'Add New Vendor'}
+          </h3>
+
+          <button
+            type="button"
+            onClick={handleCloseModal}
+            className="text-gray-400 hover:text-gray-600"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Form Fields */}
+        <div className="space-y-4">
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Vendor Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              required
+              value={formData.name}
+              onChange={handleInputChange}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Email Address
+            </label>
+            <input
+              type="email"
+              name="email"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              required
+              value={formData.phone}
+              onChange={handleInputChange}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Physical Address
+            </label>
+            <textarea
+              name="address"
+              rows="3"
+              required
+              value={formData.address}
+              onChange={handleInputChange}
+              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+        </div>
+
+        {/* Footer Buttons */}
+        <div className="mt-6 flex justify-end space-x-3">
+          <button
+            type="button"
+            onClick={handleCloseModal}
+            className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+          >
+            {isEditing ? 'Save Changes' : 'Create Vendor'}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+)}
+
         </div>
     );
 };
