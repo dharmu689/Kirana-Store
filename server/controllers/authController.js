@@ -96,8 +96,48 @@ const getMe = async (req, res) => {
     });
 };
 
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+const updateProfile = async (req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+        user.name = req.body.name || user.name;
+
+        // If password is provided, verify old password before updating
+        if (req.body.newPassword) {
+            if (!req.body.oldPassword) {
+                return res.status(400).json({ message: 'Please provide old password' });
+            }
+
+            const isMatch = await user.matchPassword(req.body.oldPassword);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid old password' });
+            }
+
+            user.password = req.body.newPassword;
+        }
+
+        const updatedUser = await user.save();
+
+        res.json({
+            success: true,
+            user: {
+                _id: updatedUser._id,
+                name: updatedUser.name,
+                email: updatedUser.email,
+                role: updatedUser.role,
+            }
+        });
+    } else {
+        res.status(404).json({ message: 'User not found' });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
     getMe,
+    updateProfile,
 };

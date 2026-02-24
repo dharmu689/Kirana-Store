@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StoreSettings from '../components/settings/StoreSettings';
+import AccountSettings from '../components/settings/AccountSettings';
+import NotificationSettings from '../components/settings/NotificationSettings';
 
 const Settings = () => {
+    const [activeTab, setActiveTab] = useState('account');
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
@@ -13,7 +17,43 @@ const Settings = () => {
                 </div>
             </div>
 
-            <StoreSettings />
+            {/* Tabs */}
+            <div className="flex border-b border-gray-200 overflow-x-auto whitespace-nowrap">
+                <button
+                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'account'
+                            ? 'border-b-2 border-indigo-600 text-indigo-600'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    onClick={() => setActiveTab('account')}
+                >
+                    Account Profile
+                </button>
+                <button
+                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'notifications'
+                            ? 'border-b-2 border-indigo-600 text-indigo-600'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    onClick={() => setActiveTab('notifications')}
+                >
+                    Notification Preferences
+                </button>
+                <button
+                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'store'
+                            ? 'border-b-2 border-indigo-600 text-indigo-600'
+                            : 'text-gray-500 hover:text-gray-700'
+                        }`}
+                    onClick={() => setActiveTab('store')}
+                >
+                    Store Settings
+                </button>
+            </div>
+
+            {/* Content */}
+            <div className="mt-6">
+                {activeTab === 'account' && <AccountSettings />}
+                {activeTab === 'notifications' && <NotificationSettings />}
+                {activeTab === 'store' && <StoreSettings />}
+            </div>
         </div>
     );
 };
