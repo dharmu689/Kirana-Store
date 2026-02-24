@@ -12,6 +12,7 @@ import Vendors from './pages/Vendors';
 import Forecasting from './pages/Forecasting';
 import VendorCompare from './pages/VendorCompare';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -32,7 +33,7 @@ function App() {
             <Route path="forecasting" element={<Forecasting />} />
             <Route path="vendor-compare/:productId" element={<VendorCompare />} />
             <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<div className="p-4 text-gray-500">Settings Page (Coming Soon)</div>} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
       </Routes>
