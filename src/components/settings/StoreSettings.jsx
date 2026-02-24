@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../../utils/api';
 import { toast } from 'react-hot-toast';
 import { FiSave, FiLoader } from 'react-icons/fi';
 
@@ -23,11 +23,7 @@ const StoreSettings = () => {
 
     const fetchSettings = async () => {
         try {
-            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/settings/store`, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
+            const { data } = await API.get('/settings/store');
             if (data && Object.keys(data).length > 0) {
                 setSettings({
                     storeName: data.storeName || '',
@@ -59,15 +55,7 @@ const StoreSettings = () => {
         e.preventDefault();
         setSaving(true);
         try {
-            const { data } = await axios.put(
-                `${import.meta.env.VITE_API_URL}/api/settings/store`,
-                settings,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`,
-                    },
-                }
-            );
+            const { data } = await API.put('/settings/store', settings);
             toast.success('Store settings updated successfully');
             setSettings({
                 storeName: data.storeName || '',

@@ -24,12 +24,12 @@ app.use(express.json());
 
 
 // CORS Configuration for Vercel/Production
-const corsOptions = {
-    origin: process.env.FRONTEND_URL || '*',
-    credentials: true,
-    optionSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+app.use(
+    cors({
+        origin: "https://kirana-store-oq3u.vercel.app",
+        credentials: true,
+    })
+);
 
 
 
