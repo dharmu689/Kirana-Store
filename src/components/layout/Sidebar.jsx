@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { LogOut, User } from 'lucide-react';
 import authService from '../../services/authService';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -14,7 +14,10 @@ const Sidebar = () => {
     };
 
     return (
-        <div className="w-64 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 flex flex-col fixed left-0 top-0 shadow-sm z-50">
+        <div className={clsx(
+            "w-64 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 shadow-xl lg:shadow-sm z-50 transition-transform duration-300 ease-in-out",
+            isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        )}>
             {/* Brand Logo */}
             <div className="h-16 flex items-center px-6 border-b border-gray-50">
                 {/* <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-blue-200">
@@ -42,6 +45,7 @@ const Sidebar = () => {
                         <Link
                             key={item.path}
                             to={item.path}
+                            onClick={() => setIsOpen(false)}
                             className={clsx(
                                 "flex items-center px-4 py-3 rounded-xl transition-all duration-300 group text-sm font-medium hover-mac-folder",
                                 isActive

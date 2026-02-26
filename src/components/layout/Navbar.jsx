@@ -4,7 +4,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
 import API from '../../utils/api';
 
-const Navbar = ({ user }) => {
+const Navbar = ({ user, onMenuClick }) => {
     const { theme, toggleTheme } = useTheme();
     const { language, toggleLanguage, t } = useLanguage();
 
@@ -54,10 +54,14 @@ const Navbar = ({ user }) => {
     };
 
     return (
-        <header className="h-16 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40 ml-64 transition-colors duration-300 shadow-sm">
+        <header className="h-16 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40 lg:ml-64 transition-colors duration-300 shadow-sm w-full lg:w-auto">
             {/* Left Global Search */}
-            <div className="flex items-center w-96">
-                <button className="mr-4 lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <div className="flex items-center flex-1 lg:w-96 mr-4 lg:mr-0">
+                <button
+                    onClick={onMenuClick}
+                    className="mr-3 lg:hidden p-2 -ml-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors flex-shrink-0"
+                    aria-label="Open Menu"
+                >
                     <Menu size={24} />
                 </button>
                 <div className="relative w-full group">
