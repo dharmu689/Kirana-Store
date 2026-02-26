@@ -18,10 +18,17 @@ const getSalesSummary = async () => {
     return response.data;
 };
 
+// Get sales profit summary
+const getProfitSummary = async () => {
+    const response = await API.get("/sales/profit-summary");
+    return response.data;
+};
+
 const salesService = {
     createSale,
     getSales,
     getSalesSummary,
+    getProfitSummary
 };
 
 export default salesService;

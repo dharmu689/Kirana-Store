@@ -20,8 +20,12 @@ const createSale = async (req, res) => {
             throw new Error('Insufficient stock');
         }
 
-        // Calculate total price
-        const totalPrice = quantitySold * productItem.price;
+        // Calculate total price and profit
+        let unitPrice = productItem.sellingPrice || productItem.price;
+        const totalPrice = quantitySold * unitPrice;
+
+        let profitPerUnit = productItem.profitPerUnit || 0;
+        const totalProfit = profitPerUnit * quantitySold;
 
         // Create sale
         const sale = await Sale.create({
@@ -29,8 +33,9 @@ const createSale = async (req, res) => {
             productName: productItem.name,
             category: productItem.category,
             quantitySold,
-            unitPrice: productItem.price,
+            unitPrice,
             totalPrice,
+            profit: totalProfit,
             soldBy: req.user.id,
             paymentMethod
         });
@@ -104,8 +109,40 @@ const getSalesSummary = async (req, res) => {
     }
 };
 
+// @desc    Get Sales Profit Summary
+// @route   GET /api/sales/profit-summary
+// @access  Private (Admin)
+const getProfitSummary = async (req, res) => {
+    try {
+        const totalRevenue = await Sale.aggregate([
+            { $group: { _id: null, total: { $sum: "$totalPrice" } } }
+        ]);
+
+        const totalProfit = await Sale.aggregate([
+            { $group: { _id: null, total: { $sum: "$profit" } } }
+        ]);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const todayProfit = await Sale.aggregate([
+            { $match: { createdAt: { $gte: today } } },
+            { $group: { _id: null, total: { $sum: "$profit" } } }
+        ]);
+
+        res.json({
+            totalRevenue: totalRevenue[0]?.total || 0,
+            totalProfit: totalProfit[0]?.total || 0,
+            todayProfit: todayProfit[0]?.total || 0
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 module.exports = {
     createSale,
     getAllSales,
-    getSalesSummary
+    getSalesSummary,
+    getProfitSummary
 };

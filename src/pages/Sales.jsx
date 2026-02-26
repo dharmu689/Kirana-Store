@@ -37,6 +37,12 @@ const Sales = () => {
         monthlyBreakdown: []
     });
 
+    const [profitSum, setProfitSum] = useState({
+        totalRevenue: 0,
+        totalProfit: 0,
+        todayProfit: 0
+    });
+
     useEffect(() => {
         fetchSalesData();
     }, []);
@@ -45,8 +51,10 @@ const Sales = () => {
         try {
             const salesData = await salesService.getSales();
             const summaryData = await salesService.getSalesSummary();
+            const profitData = await salesService.getProfitSummary();
             setSales(salesData);
             setSummary(summaryData);
+            setProfitSum(profitData);
         } catch (error) {
             console.error('Error fetching sales data:', error);
         }
@@ -87,18 +95,30 @@ const Sales = () => {
         <div className="p-6">
             <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{t?.sales || "Sales Management"}</h1>
 
-            {/* Summary Cards */}
+            {/* Profit Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
-                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t?.totalRevenue || "Total Revenue"}</h3>
-                    <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-2">₹{summary.totalRevenue.toLocaleString()}</p>
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-indigo-500 border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">Total Revenue</h3>
+                    <p className="text-2xl font-bold text-indigo-600 mt-2">₹{profitSum.totalRevenue.toLocaleString()}</p>
                 </div>
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-green-500 border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">Total Profit</h3>
+                    <p className="text-2xl font-bold text-green-600 mt-2">₹{profitSum.totalProfit.toLocaleString()}</p>
+                </div>
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-blue-500 border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">Today's Profit</h3>
+                    <p className="text-2xl font-bold text-blue-600 mt-2">₹{profitSum.todayProfit.toLocaleString()}</p>
+                </div>
+            </div>
+
+            {/* General Overview Summary Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-blue)] border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
                     <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t?.totalSales || "Total Sales Count"}</h3>
                     <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-2">{summary.totalSalesCount}</p>
                 </div>
-                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
-                    <div className="h-24">
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default col-span-1 md:col-span-2">
+                    <div className="h-48">
                         {summary.monthlyBreakdown.length > 0 ? (
                             <Line options={{ ...chartOptions, maintainAspectRatio: false }} data={chartData} />
                         ) : (

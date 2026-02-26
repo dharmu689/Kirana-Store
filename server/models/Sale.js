@@ -28,6 +28,10 @@ const saleSchema = mongoose.Schema(
             type: Number,
             required: true
         },
+        profit: {
+            type: Number,
+            default: 0
+        },
         soldBy: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
