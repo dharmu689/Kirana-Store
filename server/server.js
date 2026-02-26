@@ -60,6 +60,7 @@ app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/settings', require('./routes/storeSettingsRoutes'));
 app.use('/api/settings', require('./routes/systemPreferencesRoutes'));
 app.use('/api/settings/notifications', require('./routes/notificationSettingsRoutes'));
+app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {
