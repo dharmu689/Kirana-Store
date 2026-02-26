@@ -78,7 +78,7 @@ const Dashboard = () => {
             <KPICards data={summaryData} />
 
             {/* Row 2 - Sales Trend Chart */}
-            {/* <div className="w-full h-80 bg-white dark:bg-gray-900 p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50">
+            <div className="w-full h-80 bg-white dark:bg-gray-900 p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50">
                 <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Sales Trend (30 Days)</h3>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={summaryData?.salesTrend || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
@@ -89,31 +89,7 @@ const Dashboard = () => {
                         <Line type="monotone" dataKey="sales" stroke="#4F46E5" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
                     </LineChart>
                 </ResponsiveContainer>
-            </div> */
-            
-
-            <div className="w-full bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 mt-6">
-
-  <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
-    Sales Trend
-  </h2>
-
-  <div className="w-full h-[350px] min-h-[300px]">
-
-    <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={summary?.salesTrend || []}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip />
-        <Line type="monotone" dataKey="sales" stroke="#4f46e5" strokeWidth={2} />
-      </LineChart>
-    </ResponsiveContainer>
-
-  </div>
-
-</div>
-            }
+            </div>
         </div>
     );
 };
