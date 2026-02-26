@@ -1,28 +1,45 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useLayoutEffect, useState } from "react";
 
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
 
-    const [theme, setTheme] = useState(() => {
-        return localStorage.getItem("theme") || "light";
-    });
+    const [theme, setTheme] = useState("light");
 
-    useEffect(() => {
-        const root = window.document.documentElement;
+    useLayoutEffect(() => {
 
-        if (theme === "dark") {
+        const savedTheme = localStorage.getItem("theme");
+
+        const root = document.documentElement;
+
+        if (savedTheme === "dark") {
             root.classList.add("dark");
+            setTheme("dark");
         } else {
             root.classList.remove("dark");
+            setTheme("light");
         }
 
-        localStorage.setItem("theme", theme);
+    }, []);
 
-    }, [theme]);
+    const toggleTheme = () => {
+
+        const root = document.documentElement;
+
+        if (theme === "dark") {
+            root.classList.remove("dark");
+            localStorage.setItem("theme", "light");
+            setTheme("light");
+        } else {
+            root.classList.add("dark");
+            localStorage.setItem("theme", "dark");
+            setTheme("dark");
+        }
+
+    };
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
             {children}
         </ThemeContext.Provider>
     );

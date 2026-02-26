@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
@@ -20,28 +20,26 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <Router>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
-          {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Layout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="products" element={<Products />} />
-              <Route path="sales" element={<Sales />} />
-              <Route path="reorder" element={<Reorder />} />
-              <Route path="vendor-orders" element={<VendorOrders />} />
-              <Route path="vendors" element={<Vendors />} />
-              <Route path="forecasting" element={<Forecasting />} />
-              <Route path="vendor-compare/:productId" element={<VendorCompare />} />
-              <Route path="reports" element={<Reports />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="products" element={<Products />} />
+            <Route path="sales" element={<Sales />} />
+            <Route path="reorder" element={<Reorder />} />
+            <Route path="vendor-orders" element={<VendorOrders />} />
+            <Route path="vendors" element={<Vendors />} />
+            <Route path="forecasting" element={<Forecasting />} />
+            <Route path="vendor-compare/:productId" element={<VendorCompare />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
-        </Routes>
-      </Router>
+        </Route>
+      </Routes>
     </div>
   );
 }
