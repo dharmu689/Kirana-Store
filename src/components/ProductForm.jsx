@@ -6,6 +6,9 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
         name: '',
         category: '',
         price: '',
+        purchasePrice: '',
+        sellingPrice: '',
+        margin: '',
         quantity: '',
         reorderLevel: '',
         expiryDate: '',
@@ -23,6 +26,9 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                 name: initialData.name || '',
                 category: initialData.category || '',
                 price: initialData.price || '',
+                purchasePrice: initialData.purchasePrice || '',
+                sellingPrice: initialData.sellingPrice || '',
+                margin: initialData.margin || '',
                 quantity: initialData.quantity || '',
                 reorderLevel: initialData.reorderLevel || '',
                 expiryDate: formattedDate,
@@ -33,6 +39,9 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                 name: '',
                 category: '',
                 price: '',
+                purchasePrice: '',
+                sellingPrice: '',
+                margin: '',
                 quantity: '',
                 reorderLevel: '',
                 expiryDate: '',
@@ -43,6 +52,33 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
+        if (name === "margin" && formData.purchasePrice) {
+            const pb = parseFloat(formData.purchasePrice) || 0;
+            const marginVal = parseFloat(value) || 0;
+            const calculatedSelling = pb + (pb * marginVal) / 100;
+
+            setFormData(prev => ({
+                ...prev,
+                margin: value,
+                sellingPrice: Math.round(calculatedSelling)
+            }));
+            return;
+        }
+
+        if (name === "purchasePrice" && formData.margin) {
+            const pb = parseFloat(value) || 0;
+            const marginVal = parseFloat(formData.margin) || 0;
+            const calculatedSelling = pb + (pb * marginVal) / 100;
+
+            setFormData(prev => ({
+                ...prev,
+                purchasePrice: value,
+                sellingPrice: Math.round(calculatedSelling)
+            }));
+            return;
+        }
+
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -114,7 +150,42 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                             )}
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Price</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Purchase Price</label>
+                            <input
+                                type="number"
+                                name="purchasePrice"
+                                value={formData.purchasePrice}
+                                onChange={handleChange}
+                                required
+                                min="0"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Margin (%)</label>
+                            <input
+                                type="number"
+                                name="margin"
+                                value={formData.margin}
+                                onChange={handleChange}
+                                min="0"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Selling Price</label>
+                            <input
+                                type="number"
+                                name="sellingPrice"
+                                value={formData.sellingPrice}
+                                onChange={handleChange}
+                                required
+                                min="0"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Old Price / MSRP</label>
                             <input
                                 type="number"
                                 name="price"

@@ -5,12 +5,15 @@ const Product = require('../models/Product');
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime } = req.body;
+    const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime, purchasePrice, sellingPrice, margin } = req.body;
 
     const product = await Product.create({
         name,
         category,
         price,
+        purchasePrice,
+        sellingPrice,
+        margin,
         quantity,
         reorderLevel,
         expiryDate,
@@ -129,6 +132,9 @@ const updateProduct = asyncHandler(async (req, res) => {
         name,
         category,
         price,
+        purchasePrice,
+        sellingPrice,
+        margin,
         quantity,
         reorderLevel,
         expiryDate,
@@ -143,6 +149,9 @@ const updateProduct = asyncHandler(async (req, res) => {
         product.name = name || product.name;
         product.category = category || product.category;
         product.price = price !== undefined ? price : product.price; // Allow 0
+        if (purchasePrice !== undefined) product.purchasePrice = purchasePrice;
+        if (sellingPrice !== undefined) product.sellingPrice = sellingPrice;
+        if (margin !== undefined) product.margin = margin;
         product.quantity = quantity !== undefined ? quantity : product.quantity;
         product.reorderLevel = reorderLevel !== undefined ? reorderLevel : product.reorderLevel;
         product.expiryDate = expiryDate || product.expiryDate;

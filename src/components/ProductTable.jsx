@@ -65,6 +65,7 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                         <SortableHeader label={t?.productName || "Product Name"} sortKey="name" />
                         <SortableHeader label={t?.category || "Category"} sortKey="category" />
                         <SortableHeader label={t?.price || "Price"} sortKey="price" />
+                        <th scope="col" className="py-3 px-6">{t?.profit || "Profit"}</th>
                         <SortableHeader label={t?.stock || "Stock"} sortKey="quantity" />
                         <th scope="col" className="py-3 px-6">{t?.value || "Value"}</th>
                         <th scope="col" className="py-3 px-6">{t?.status || "Status"}</th>
@@ -86,9 +87,10 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                             <tr key={product._id} className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
                                 <td className="py-4 px-6 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{product.name}</td>
                                 <td className="py-4 px-6">{product.category}</td>
-                                <td className="py-4 px-6">₹{product.price}</td>
+                                <td className="py-4 px-6">₹{(product.sellingPrice || product.price)}</td>
+                                <td className="py-4 px-6 font-medium text-emerald-600 dark:text-emerald-400">₹{product.profitPerUnit || 0}</td>
                                 <td className="py-4 px-6 font-semibold">{product.quantity}</td>
-                                <td className="py-4 px-6">₹{(product.price * product.quantity).toLocaleString()}</td>
+                                <td className="py-4 px-6">₹{((product.sellingPrice || product.price) * product.quantity).toLocaleString()}</td>
                                 <td className="py-4 px-6">{getStatusBadge(product.status)}</td>
                                 <td className="py-4 px-6">{product.totalSold || 0}</td>
                                 <td className="py-4 px-6">₹{(product.revenue || 0).toLocaleString()}</td>

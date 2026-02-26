@@ -12,6 +12,22 @@ const productSchema = mongoose.Schema(
             required: [true, 'Please add a category'],
             trim: true
         },
+        purchasePrice: {
+            type: Number,
+            required: true
+        },
+        sellingPrice: {
+            type: Number,
+            required: true
+        },
+        margin: {
+            type: Number,
+            default: 0
+        },
+        profitPerUnit: {
+            type: Number,
+            default: 0
+        },
         price: {
             type: Number,
             required: [true, 'Please add a price'],
@@ -62,5 +78,19 @@ const productSchema = mongoose.Schema(
         timestamps: true
     }
 );
+
+productSchema.pre("save", function (next) {
+    // If margin provided -> calculate selling price
+    if (this.purchasePrice && this.margin > 0) {
+        this.sellingPrice = this.purchasePrice + (this.purchasePrice * this.margin) / 100;
+    }
+
+    // Always calculate profit
+    if (this.purchasePrice && this.sellingPrice) {
+        this.profitPerUnit = this.sellingPrice - this.purchasePrice;
+    }
+
+    next();
+});
 
 module.exports = mongoose.model('Product', productSchema);
