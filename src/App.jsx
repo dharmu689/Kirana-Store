@@ -13,15 +13,13 @@ import Forecasting from './pages/Forecasting';
 import VendorCompare from './pages/VendorCompare';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
-import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 function AppContent() {
   const { language } = useLanguage();
-  const { theme } = useTheme();
 
   return (
-    <div key={language + theme} className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -50,11 +48,9 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider>
-      <LanguageProvider>
-        <AppContent />
-      </LanguageProvider>
-    </ThemeProvider>
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

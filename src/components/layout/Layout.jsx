@@ -32,7 +32,7 @@ const Layout = () => {
     }, []);
 
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-800 font-sans text-gray-900 dark:text-gray-100">
+        <div className="flex h-screen min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300 font-sans">
             <Sidebar />
             <div className="flex-1 flex flex-col min-w-0">
                 <Navbar user={user} />
