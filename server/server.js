@@ -58,6 +58,7 @@ app.use('/api/vendor-orders', require('./routes/vendorOrderRoutes'));
 app.use('/api/forecast', require('./routes/forecastRoutes'));
 app.use('/api/reports', require('./routes/reportRoutes'));
 app.use('/api/settings', require('./routes/storeSettingsRoutes'));
+app.use('/api/settings', require('./routes/systemPreferencesRoutes'));
 app.use('/api/settings/notifications', require('./routes/notificationSettingsRoutes'));
 
 // Basic route
