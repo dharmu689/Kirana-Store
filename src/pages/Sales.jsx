@@ -63,8 +63,8 @@ const Sales = () => {
             {
                 label: 'Monthly Revenue',
                 data: summary.monthlyBreakdown.map(item => item.revenue),
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.5)',
+                borderColor: 'var(--color-brand-blue)',
+                backgroundColor: 'rgba(56, 113, 193, 0.2)',
                 tension: 0.3
             },
         ],
@@ -89,15 +89,15 @@ const Sales = () => {
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md border-l-4 border-green-500">
-                    <h3 className="text-gray-500 text-sm font-medium uppercase">{t.totalRevenue || "Total Revenue"}</h3>
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t.totalRevenue || "Total Revenue"}</h3>
                     <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-2">₹{summary.totalRevenue.toLocaleString()}</p>
                 </div>
-                <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-                    <h3 className="text-gray-500 text-sm font-medium uppercase">{t.totalSales || "Total Sales Count"}</h3>
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-blue)] border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t.totalSales || "Total Sales Count"}</h3>
                     <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-2">{summary.totalSalesCount}</p>
                 </div>
-                <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md">
+                <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
                     <div className="h-24">
                         {summary.monthlyBreakdown.length > 0 ? (
                             <Line options={{ ...chartOptions, maintainAspectRatio: false }} data={chartData} />

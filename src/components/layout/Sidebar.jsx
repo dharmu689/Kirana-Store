@@ -33,7 +33,7 @@ const Sidebar = () => {
                     // Hide Vendor Orders and Vendors from non-admins
                     if ((item.path === '/vendor-orders' || item.path === '/vendors') && !isAdmin) {
                         return null;
-                    }      
+                    }
 
                     const isActive = location.pathname === item.path;
                     const Icon = item.icon;
@@ -43,17 +43,17 @@ const Sidebar = () => {
                             key={item.path}
                             to={item.path}
                             className={clsx(
-                                "flex items-center px-4 py-3 rounded-xl transition-all duration-200 group text-sm font-medium",
+                                "flex items-center px-4 py-3 rounded-xl transition-all duration-300 group text-sm font-medium hover-mac-folder",
                                 isActive
-                                    ? "bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-100"
-                                    : "text-gray-500 hover:bg-gray-50 dark:bg-gray-800 hover:text-gray-900 dark:text-gray-100"
+                                    ? "bg-[var(--color-brand-blue)] text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20"
+                                    : "text-gray-500 hover:bg-blue-50/50 dark:bg-gray-800 hover:text-[var(--color-brand-blue)] dark:text-gray-300 dark:hover:bg-gray-700/50"
                             )}
                         >
                             <Icon
                                 size={20}
                                 className={clsx(
-                                    "mr-3 transition-colors",
-                                    isActive ? "text-blue-600" : "text-gray-400 group-hover:text-gray-600 dark:text-gray-400"
+                                    "mr-3 transition-colors duration-300",
+                                    isActive ? "text-white" : "text-gray-400 group-hover:text-[var(--color-brand-blue)] dark:text-gray-400"
                                 )}
                             />
                             {item.name}

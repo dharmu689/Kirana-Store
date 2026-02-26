@@ -18,12 +18,12 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
     const getStatusBadge = (status) => {
         switch (status) {
             case 'OUT_OF_STOCK':
-                return <span className="bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">Out of Stock</span>;
+                return <span className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-xs font-bold px-2.5 py-0.5 rounded border border-red-200 dark:border-red-800/50">Out of Stock</span>;
             case 'LOW_STOCK':
-                return <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded">Low Stock</span>;
+                return <span className="bg-orange-100 text-[var(--color-brand-orange)] dark:bg-[var(--color-brand-orange)]/20 text-xs font-bold px-2.5 py-0.5 rounded border border-orange-200 dark:border-[var(--color-brand-orange)]/30">Low Stock</span>;
             case 'IN_STOCK':
             default:
-                return <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">In Stock</span>;
+                return <span className="bg-green-100 text-[var(--color-brand-green)] dark:bg-[var(--color-brand-green)]/20 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200 dark:border-[var(--color-brand-green)]/30">In Stock</span>;
         }
     };
 
@@ -48,7 +48,7 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
         >
             <div className="flex items-center space-x-1">
                 <span>{label}</span>
-                <ArrowsUpDownIcon className={`h-4 w-4 ${sortConfig?.key === sortKey ? 'text-blue-600' : 'text-gray-400'}`} />
+                <ArrowsUpDownIcon className={`h-4 w-4 ${sortConfig?.key === sortKey ? 'text-[var(--color-brand-blue)]' : 'text-gray-400'}`} />
             </div>
         </th>
     );

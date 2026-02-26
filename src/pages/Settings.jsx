@@ -14,7 +14,7 @@ const Settings = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-center bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.settings || "Settings"}</h1>
                     <p className="text-gray-500 mt-1 text-sm sm:text-base">
@@ -24,38 +24,38 @@ const Settings = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap">
+            <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap gap-4 px-2">
                 <button
-                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'account'
-                        ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
+                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'account'
+                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                         }`}
                     onClick={() => setActiveTab('account')}
                 >
                     Account Profile
                 </button>
                 <button
-                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'notifications'
-                        ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
+                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'notifications'
+                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                         }`}
                     onClick={() => setActiveTab('notifications')}
                 >
                     Notification Preferences
                 </button>
                 <button
-                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'store'
-                        ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
+                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'store'
+                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                         }`}
                     onClick={() => setActiveTab('store')}
                 >
                     Store Settings
                 </button>
                 <button
-                    className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'system'
-                        ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
+                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'system'
+                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
                         }`}
                     onClick={() => setActiveTab('system')}
                 >

@@ -274,46 +274,46 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-green)]/10 text-[var(--color-brand-green)] rounded-xl border border-[var(--color-brand-green)]/20">
                                 <DollarSign size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Revenue</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{reportData.totalRevenue?.toLocaleString()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-blue)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] rounded-xl border border-[var(--color-brand-blue)]/20">
                                 <ShoppingCart size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Orders</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Orders</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{reportData.totalOrders || 0}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-amber-100 text-amber-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl border border-amber-200 dark:border-amber-800/50">
                                 <Award size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Top Selling Product</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">{t.topSellingProduct || "Top Selling Product"}</p>
                                 <p className="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-1 truncate" title={reportData.topSellingProduct}>
                                     {reportData.topSellingProduct}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800/50">
                                 <TrendingUp size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Sales Growth %</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Sales Growth %</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {reportData.salesGrowthPercentage}%
                                 </p>
@@ -322,37 +322,37 @@ const Reports = () => {
                     </div>
 
                     {/* Sales Trend Chart */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
+                    <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-800 mb-8">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-                            <TrendingUp size={20} className="text-indigo-500" />
+                            <TrendingUp size={20} className="text-[var(--color-brand-blue)]" />
                             Sales Trend
                         </h2>
                         <div className="w-full h-[300px] md:h-[400px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={reportData.salesTrend} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} vertical={false} />
                                     <XAxis
                                         dataKey="date"
                                         tick={{ fill: '#6b7280', fontSize: 12 }}
                                         tickMargin={10}
-                                        axisLine={{ stroke: '#e5e7eb' }}
+                                        axisLine={{ stroke: 'currentColor', opacity: 0.2 }}
                                     />
                                     <YAxis
                                         tick={{ fill: '#6b7280', fontSize: 12 }}
-                                        axisLine={{ stroke: '#e5e7eb' }}
+                                        axisLine={{ stroke: 'currentColor', opacity: 0.2 }}
                                         tickFormatter={(value) => `₹${value}`}
                                     />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                                        contentStyle={{ backgroundColor: 'var(--tw-colors-gray-900)', borderRadius: '12px', border: '1px solid currentColor', opacity: 0.9, color: 'white' }}
                                         formatter={(value) => [`₹${value}`, 'Revenue']}
                                     />
                                     <Line
                                         type="monotone"
                                         dataKey="revenue"
-                                        stroke="#4f46e5"
-                                        strokeWidth={3}
-                                        dot={{ r: 4, fill: '#4f46e5', strokeWidth: 2, stroke: '#fff' }}
-                                        activeDot={{ r: 6 }}
+                                        stroke="var(--color-brand-blue)"
+                                        strokeWidth={4}
+                                        dot={{ r: 4, fill: 'var(--color-brand-blue)', strokeWidth: 2, stroke: '#fff' }}
+                                        activeDot={{ r: 8, strokeWidth: 0 }}
                                     />
                                 </LineChart>
                             </ResponsiveContainer>
@@ -411,7 +411,7 @@ const Reports = () => {
 
             {/* INVENTORY REPORT SECTION */}
             <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Inventory Health Reports</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.inventoryReports || "Inventory Operations"}</h1>
             </div>
 
             {inventoryError && (
@@ -424,44 +424,44 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] rounded-xl border border-[var(--color-brand-blue)]/20">
                                 <Package size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Products</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Products</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{inventoryData.totalProducts}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-emerald-500 border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-200 dark:border-emerald-800/50">
                                 <DollarSign size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Stock Value</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Stock Value</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{inventoryData.totalStockValue?.toLocaleString()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-red-100 text-red-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-orange)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-orange)]/10 text-[var(--color-brand-orange)] rounded-xl border border-[var(--color-brand-orange)]/20">
                                 <AlertTriangle size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Low Stock Items</p>
-                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{inventoryData.lowStockCount}</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Low Stock Items</p>
+                                <p className="text-2xl font-bold text-[var(--color-brand-orange)]">{inventoryData.lowStockCount}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-green)]/10 text-[var(--color-brand-green)] rounded-xl border border-[var(--color-brand-green)]/20">
                                 <CheckCircle size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Safe Stock Items</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Safe Stock Items</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{inventoryData.safeStockCount}</p>
                             </div>
                         </div>
@@ -585,7 +585,7 @@ const Reports = () => {
 
             {/* FINANCIAL REPORT SECTION */}
             <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Financial Reports</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.financialReports || "Financial Overview"}</h1>
             </div>
 
             {/* Financial Filter Panel */}
@@ -630,12 +630,12 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-green)]/10 text-[var(--color-brand-green)] rounded-xl border border-[var(--color-brand-green)]/20">
                                 <Wallet size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Revenue</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{financialData.totalRevenue?.toLocaleString()}
                                 </p>
@@ -680,24 +680,24 @@ const Reports = () => {
                     </div>
 
                     {/* Financial Trend Chart */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
+                    <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-800 mb-8">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-                            <BarChart2 size={20} className="text-green-500" />
+                            <BarChart2 size={20} className="text-[var(--color-brand-green)]" />
                             Monthly Financial Trend
                         </h2>
                         <div className="w-full h-[300px] md:h-[400px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={financialData.monthlyFinancials} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: '#e5e7eb' }} />
-                                    <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: '#e5e7eb' }} tickFormatter={(value) => `₹${value}`} />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
+                                    <XAxis dataKey="month" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: 'currentColor', opacity: 0.2 }} />
+                                    <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: 'currentColor', opacity: 0.2 }} tickFormatter={(value) => `₹${value}`} />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                                        contentStyle={{ backgroundColor: 'var(--tw-colors-gray-900)', borderRadius: '12px', border: '1px solid currentColor', opacity: 0.9, color: 'white' }}
                                         formatter={(value, name) => [`₹${value.toLocaleString()}`, name === 'revenue' ? 'Revenue' : 'Profit']}
                                     />
                                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                                    <Bar dataKey="revenue" name="Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="profit" name="Profit" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="revenue" name="Revenue" fill="var(--color-brand-blue)" radius={[6, 6, 0, 0]} />
+                                    <Bar dataKey="profit" name="Profit" fill="var(--color-brand-green)" radius={[6, 6, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -799,46 +799,46 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-blue)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] rounded-xl border border-[var(--color-brand-blue)]/20">
                                 <Users size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Vendors</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Vendors</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{vendorData.totalVendors}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-amber-500 border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl border border-amber-200 dark:border-amber-800/50">
                                 <Award size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Best Vendor</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Best Vendor</p>
                                 <p className="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-1 truncate" title={vendorData.bestVendor}>
                                     {vendorData.bestVendor}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-xl border border-purple-200 dark:border-purple-800/50">
                                 <Wallet size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Top Spender</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Top Spender</p>
                                 <p className="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-1 truncate" title={vendorData.highestSpendingVendor}>
                                     {vendorData.highestSpendingVendor}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-yellow-100 text-yellow-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-green)]/10 text-[var(--color-brand-green)] rounded-xl border border-[var(--color-brand-green)]/20">
                                 <BarChart2 size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Avg Performance</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Avg Performance</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {vendorData.vendorSummary.length > 0
                                         ? (vendorData.vendorSummary.reduce((acc, curr) => acc + curr.performanceScore, 0) / vendorData.vendorSummary.length).toFixed(1)
@@ -849,7 +849,7 @@ const Reports = () => {
                     </div>
 
                     {/* Vendor Performance Chart */}
-                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
+                    <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 dark:border-gray-800 mb-8">
                         <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <BarChart2 size={20} className="text-purple-500" />
                             Vendor Spend vs Performance
@@ -857,16 +857,16 @@ const Reports = () => {
                         <div className="w-full h-72 md:h-96">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={vendorData.vendorSummary} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-                                    <XAxis dataKey="vendorName" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: '#e5e7eb' }} />
-                                    <YAxis yAxisId="left" orientation="left" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: '#e5e7eb' }} tickFormatter={(value) => `₹${value}`} />
-                                    <YAxis yAxisId="right" orientation="right" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: '#e5e7eb' }} tickFormatter={(value) => `${value}`} />
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" opacity={0.1} />
+                                    <XAxis dataKey="vendorName" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: 'currentColor', opacity: 0.2 }} />
+                                    <YAxis yAxisId="left" orientation="left" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: 'currentColor', opacity: 0.2 }} tickFormatter={(value) => `₹${value}`} />
+                                    <YAxis yAxisId="right" orientation="right" tick={{ fill: '#6b7280', fontSize: 12 }} axisLine={{ stroke: 'currentColor', opacity: 0.2 }} tickFormatter={(value) => `${value}`} />
                                     <Tooltip
-                                        contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
+                                        contentStyle={{ backgroundColor: 'var(--tw-colors-gray-900)', borderRadius: '12px', border: '1px solid currentColor', opacity: 0.9, color: 'white' }}
                                     />
                                     <Legend wrapperStyle={{ paddingTop: '20px' }} />
-                                    <Bar yAxisId="left" dataKey="totalAmountSpent" name="Total Spent (₹)" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                                    <Bar yAxisId="right" dataKey="performanceScore" name="Performance Score" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                                    <Bar yAxisId="left" dataKey="totalAmountSpent" name="Total Spent (₹)" fill="var(--color-brand-blue)" radius={[6, 6, 0, 0]} />
+                                    <Bar yAxisId="right" dataKey="performanceScore" name="Performance Score" fill="var(--color-brand-green)" radius={[6, 6, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -982,47 +982,47 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-blue)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] rounded-xl border border-[var(--color-brand-blue)]/20">
                                 <Activity size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Predicted Demand</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Total Predicted Demand</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{forecastData.totalForecastedDemand?.toLocaleString()}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-green-100 text-green-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-[var(--color-brand-green)]/10 text-[var(--color-brand-green)] rounded-xl border border-[var(--color-brand-green)]/20">
                                 <Target size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Average Accuracy %</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Average Accuracy %</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {forecastData.averageForecastAccuracy}%
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg">
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-200 dark:border-emerald-800/50">
                                 <TrendingUp size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Upward Trend Products</p>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Upward Trend Products</p>
                                 <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {forecastData.upwardTrendCount}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className={`p-3 rounded-lg ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'bg-red-100 text-red-600' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'}`}>
+                        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-orange)] border-gray-100 dark:border-gray-800 flex items-center gap-4 hover-mac-folder cursor-default">
+                            <div className={`p-3 rounded-xl border ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'bg-red-100/50 dark:bg-red-900/20 text-[var(--color-brand-orange)] border-[var(--color-brand-orange)]/30' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200'}`}>
                                 <AlertTriangle size={24} />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Stock Risk Items</p>
-                                <p className={`text-2xl font-bold ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'text-red-600' : 'text-gray-800 dark:text-gray-200'}`}>
+                                <p className="text-sm text-gray-500 font-medium tracking-wide uppercase">Stock Risk Items</p>
+                                <p className={`text-2xl font-bold ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'text-[var(--color-brand-orange)]' : 'text-gray-800 dark:text-gray-200'}`}>
                                     {forecastData.forecastSummary.filter(f => f.riskStatus === 'Stock Risk').length}
                                 </p>
                             </div>

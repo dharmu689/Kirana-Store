@@ -79,13 +79,13 @@ const SystemPreferences = () => {
     }
 
     return (
-        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">System Preferences</h2>
+        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl shadow-sm rounded-2xl p-6 border border-gray-100 dark:border-gray-800">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6">System Preferences</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Dark Mode Toggle */}
-                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
+                    <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800 transition-colors">
                         <div>
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Dark Mode</label>
                             <p className="text-xs text-gray-500 dark:text-gray-400">Toggle dark theme for the dashboard</p>
@@ -98,18 +98,18 @@ const SystemPreferences = () => {
                                 onChange={handleChange}
                                 className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-gray-900 after:border-gray-300 dark:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-600"></div>
+                            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-gray-900 after:border-gray-300 dark:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-[var(--color-brand-blue)]"></div>
                         </label>
                     </div>
 
                     {/* Language Dropdown */}
-                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800 transition-colors">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Language</label>
                         <select
                             name="language"
                             value={formData.language}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[var(--color-brand-blue)]/50 focus:border-[var(--color-brand-blue)] outline-none transition-shadow text-sm text-gray-800 dark:text-gray-200"
                         >
                             <option value="English">English</option>
                             <option value="Hindi">Hindi</option>
@@ -117,13 +117,13 @@ const SystemPreferences = () => {
                     </div>
 
                     {/* Date Format Dropdown */}
-                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800 transition-colors">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Date Format</label>
                         <select
                             name="dateFormat"
                             value={formData.dateFormat}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[var(--color-brand-blue)]/50 focus:border-[var(--color-brand-blue)] outline-none transition-shadow text-sm text-gray-800 dark:text-gray-200"
                         >
                             <option value="DD-MM-YYYY">DD-MM-YYYY</option>
                             <option value="MM-DD-YYYY">MM-DD-YYYY</option>
@@ -131,13 +131,13 @@ const SystemPreferences = () => {
                     </div>
 
                     {/* Time Zone Dropdown */}
-                    <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-100 dark:border-gray-600">
+                    <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800 transition-colors">
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Time Zone</label>
                         <select
                             name="timeZone"
                             value={formData.timeZone}
                             onChange={handleChange}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                            className="w-full px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-[var(--color-brand-blue)]/50 focus:border-[var(--color-brand-blue)] outline-none transition-shadow text-sm text-gray-800 dark:text-gray-200"
                         >
                             <option value="Asia/Kolkata">Asia/Kolkata</option>
                             {/* Add other timezones if needed */}
@@ -145,11 +145,11 @@ const SystemPreferences = () => {
                     </div>
                 </div>
 
-                <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex justify-end pt-4 border-t border-gray-100 dark:border-gray-800">
                     <button
                         type="submit"
                         disabled={saving}
-                        className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center min-w-[160px]"
+                        className="px-6 py-2 bg-[var(--color-brand-blue)] hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-[var(--color-brand-blue)]/30 transition-all flex items-center justify-center min-w-[160px] text-sm hover-mac-folder"
                     >
                         {saving ? (
                             <span className="flex items-center">

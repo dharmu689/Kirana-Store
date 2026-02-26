@@ -1,3 +1,51 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
+
+@theme {
+    --color-brand-blue: #3871c1;
+    --color-brand-blue-hover: #2d5c9e;
+    --color-brand-orange: #f68712;
+    --color-brand-orange-hover: #db760d;
+    --color-brand-green: #42b84a;
+
+    /* Expanding standard spacing for more fluid animations */
+    --animate-mac-bounce: mac-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes mac-bounce {
+    0% {
+        transform: scale(1) translateY(0);
+        filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+    }
+
+    50% {
+        transform: scale(1.15) translateY(-4px);
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+    }
+
+    100% {
+        transform: scale(1.1) translateY(-2px);
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+}
+
+@layer utilities {
+    .hover-mac-folder {
+        @apply transition-all duration-300 ease-in-out;
+    }
+
+    .hover-mac-folder:hover {
+        animation: mac-bounce 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        z-index: 10;
+    }
+
+    .hover-mac-folder:hover svg {
+        @apply text-brand-orange;
+        filter: drop-shadow(0 0 8px rgba(246, 135, 18, 0.4));
+    }
+
+    .dark .hover-mac-folder:hover svg {
+        filter: drop-shadow(0 0 12px rgba(246, 135, 18, 0.7));
+    }
+}

@@ -54,7 +54,7 @@ const Navbar = ({ user }) => {
     };
 
     return (
-        <header className="h-16 bg-white dark:bg-gray-900/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40 ml-64 transition-colors">
+        <header className="h-16 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40 ml-64 transition-colors duration-300 shadow-sm">
             {/* Left Global Search */}
             <div className="flex items-center w-96">
                 <button className="mr-4 lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -161,7 +161,7 @@ const Navbar = ({ user }) => {
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {user ? `${t('welcome')}, ${user.name}` : `${t('welcome')}, ${t('guest')}`}
                     </span>
-                    <span className="text-xs text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full uppercase">
+                    <span className="text-xs text-[var(--color-brand-blue)] dark:text-blue-300 font-bold bg-blue-50/80 dark:bg-[var(--color-brand-blue)]/20 px-2.5 py-0.5 rounded-full uppercase tracking-wide border border-blue-100 dark:border-[var(--color-brand-blue)]/30">
                         {user ? user.role : t('offline')}
                     </span>
                 </div>

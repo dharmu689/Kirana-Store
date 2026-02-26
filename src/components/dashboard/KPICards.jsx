@@ -10,7 +10,7 @@ const KPICards = ({ data }) => {
             value: data ? `₹${data.todayRevenue?.toLocaleString()}` : '...',
             subtext: 'Daily earnings',
             icon: DollarSign,
-            color: 'bg-green-100 text-green-600',
+            color: 'bg-green-100 text-[var(--color-brand-green)] dark:bg-[var(--color-brand-green)]/20',
             path: '/sales'
         },
         {
@@ -18,7 +18,7 @@ const KPICards = ({ data }) => {
             value: data ? `₹${data.monthlyRevenue?.toLocaleString()}` : '...',
             subtext: 'Monthly earnings',
             icon: TrendingUp,
-            color: 'bg-blue-100 text-blue-600',
+            color: 'bg-blue-100 text-[var(--color-brand-blue)] dark:bg-[var(--color-brand-blue)]/20',
             path: '/sales'
         },
         {
@@ -26,7 +26,7 @@ const KPICards = ({ data }) => {
             value: data !== null ? data.totalOrders : '...',
             subtext: 'Total orders placed',
             icon: Package,
-            color: 'bg-indigo-100 text-indigo-600',
+            color: 'bg-blue-50 text-[var(--color-brand-blue-hover)] dark:bg-[var(--color-brand-blue-hover)]/20',
             path: '/sales'
         },
         {
@@ -34,7 +34,7 @@ const KPICards = ({ data }) => {
             value: data !== null ? data.lowStockCount : '...',
             subtext: 'Requires reorder',
             icon: AlertTriangle,
-            color: 'bg-red-100 text-red-600',
+            color: 'bg-orange-100 text-[var(--color-brand-orange)] dark:bg-[var(--color-brand-orange)]/20',
             path: '/reorder'
         }
     ];
@@ -47,7 +47,7 @@ const KPICards = ({ data }) => {
                     <div
                         key={index}
                         onClick={() => item.path && navigate(item.path)}
-                        className={`bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1`}
+                        className={`bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-lg transition-all duration-300 cursor-pointer hover-mac-folder`}
                     >
                         <div className="flex justify-between items-start">
                             <div>

@@ -248,25 +248,25 @@ const Products = () => {
                         />
                         <button
                             onClick={handleImportClick}
-                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-colors text-sm font-medium"
+                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:text-[var(--color-brand-blue)] hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-all duration-300 hover-mac-folder text-sm font-medium"
                         >
                             <ArrowUpTrayIcon className="h-4 w-4 mr-2" /> Import
                         </button>
                         <button
                             onClick={handleExport}
-                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-colors text-sm font-medium"
+                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:text-[var(--color-brand-blue)] hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-all duration-300 hover-mac-folder text-sm font-medium"
                         >
                             <ArrowDownTrayIcon className="h-4 w-4 mr-2" /> Export
                         </button>
                         <button
                             onClick={() => setIsCategoryModalOpen(true)}
-                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-colors text-sm font-medium"
+                            className="flex items-center px-3 py-2 bg-[var(--color-brand-orange)]/10 dark:bg-[var(--color-brand-orange)]/10 border border-[var(--color-brand-orange)]/20 text-[var(--color-brand-orange)] rounded-lg shadow-sm transition-all duration-300 hover-mac-folder text-sm font-bold"
                         >
                             <FolderIcon className="h-4 w-4 mr-2" /> Categories
                         </button>
                         <button
                             onClick={handleAddProduct}
-                            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all text-sm font-medium"
+                            className="flex items-center px-4 py-2 bg-[var(--color-brand-blue)] text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-[var(--color-brand-blue)]/30 transition-all text-sm hover-mac-folder"
                         >
                             <PlusIcon className="h-5 w-5 mr-2" /> {t.addProduct}
                         </button>
@@ -295,17 +295,17 @@ const Products = () => {
             </div>
 
             {/* Detailed Filters & Search */}
-            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full md:w-96">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                        <MagnifyingGlassIcon className="h-5 w-5 text-[var(--color-brand-blue)]" />
                     </div>
                     <input
                         type="text"
                         name="keyword"
                         value={filters.keyword}
                         onChange={handleFilterChange}
-                        placeholder="Search by name or category..."
+                        placeholder={t.searchProducts || "Search products by name, SKU, or category..."}
                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                 </div>
@@ -317,7 +317,7 @@ const Products = () => {
                         onChange={handleFilterChange}
                         className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
                     >
-                        <option value="">All Categories</option>
+                        <option value="">{t.allCategories || "All Categories"}</option>
                         {categories.map(cat => (
                             <option key={cat._id} value={cat.name}>{cat.name}</option>
                         ))}

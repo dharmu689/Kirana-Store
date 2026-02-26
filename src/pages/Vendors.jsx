@@ -132,7 +132,7 @@ const Vendors = () => {
                 <div className="mt-4 sm:mt-0">
                     <button
                         onClick={() => handleOpenModal()}
-                        className="flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg text-sm shadow-md hover:bg-blue-700 transition"
+                        className="flex items-center px-4 py-2 bg-[var(--color-brand-blue)] text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-[var(--color-brand-blue)]/30 transition-all text-sm hover-mac-folder"
                     >
                         <Plus className="mr-2" size={16} />
                         {t.addVendor || "Add Vendor"}
@@ -141,23 +141,23 @@ const Vendors = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="flex items-center space-x-4 bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100/50">
+            <div className="flex items-center space-x-4 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[var(--color-brand-blue)]" size={18} />
                     <input
                         type="text"
-                        placeholder="Search vendors by name or email..."
+                        placeholder={t.searchVendors || "Search vendors by name or email..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        className="pl-10 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[var(--color-brand-blue)] focus:ring-[var(--color-brand-blue)] text-sm font-medium bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
                     />
                 </div>
             </div>
 
             {/* Vendor Table */}
-            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100/50 overflow-hidden">
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
+                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-800">
                         <thead className="bg-gray-50 dark:bg-gray-800">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -192,7 +192,7 @@ const Vendors = () => {
                                     <tr key={vendor._id} className="hover:bg-gray-50 dark:bg-gray-800">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
-                                                <div className="h-10 w-10 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
+                                                <div className="h-10 w-10 flex-shrink-0 bg-blue-50 dark:bg-[var(--color-brand-blue)]/20 rounded-full flex items-center justify-center text-[var(--color-brand-blue)] font-bold text-lg border border-[var(--color-brand-blue)]/30">
                                                     {vendor.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="ml-4">
@@ -210,14 +210,14 @@ const Vendors = () => {
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
                                                 onClick={() => handleOpenModal(vendor)}
-                                                className="text-indigo-600 hover:text-indigo-900 mx-2"
+                                                className="text-[var(--color-brand-blue)] hover:text-blue-900 dark:hover:text-blue-400 mx-2 hover-mac-folder inline-block"
                                                 title="Edit"
                                             >
                                                 <Edit2 size={18} />
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(vendor._id)}
-                                                className="text-red-600 hover:text-red-900 mx-2"
+                                                className="text-[var(--color-brand-orange)] hover:text-red-600 mx-2 hover-mac-folder inline-block"
                                                 title="Delete"
                                             >
                                                 <Trash2 size={18} />
@@ -309,7 +309,7 @@ const Vendors = () => {
                             {/* Header */}
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                                    {isEditing ? 'Edit Vendor' : 'Add New Vendor'}
+                                    {isEditing ? (t.editVendor || 'Edit Vendor') : (t.addNewVendor || 'Add New Vendor')}
                                 </h3>
 
                                 <button
@@ -387,16 +387,16 @@ const Vendors = () => {
                                 <button
                                     type="button"
                                     onClick={handleCloseModal}
-                                    className="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800"
+                                    className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 transition-colors font-medium text-sm"
                                 >
-                                    Cancel
+                                    {t.cancel || 'Cancel'}
                                 </button>
 
                                 <button
                                     type="submit"
-                                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                                    className="px-4 py-2 rounded-lg bg-[var(--color-brand-blue)] text-white hover:bg-[var(--color-brand-blue-hover)] transition-colors font-bold text-sm shadow-md"
                                 >
-                                    {isEditing ? 'Save Changes' : 'Create Vendor'}
+                                    {isEditing ? (t.saveChanges || 'Save Changes') : (t.createVendor || 'Create Vendor')}
                                 </button>
                             </div>
 
