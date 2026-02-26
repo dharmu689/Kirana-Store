@@ -92,15 +92,15 @@ const AccountSettings = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100">
                 <FiLoader className="w-8 h-8 text-indigo-600 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 mb-6">
-            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800 gap-2">
+        <div className="bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6 border border-gray-100 mb-6">
+            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800 dark:text-gray-200 gap-2">
                 <FiUser className="text-indigo-600" />
                 Account Profile
             </h2>
@@ -111,7 +111,7 @@ const AccountSettings = () => {
                     <div className="space-y-4">
                         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Personal Information</h3>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Full Name <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -120,12 +120,12 @@ const AccountSettings = () => {
                                 value={profile.name}
                                 onChange={handleChange}
                                 required
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 placeholder="Enter your full name"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Email Address
                             </label>
                             <input
@@ -133,11 +133,11 @@ const AccountSettings = () => {
                                 name="email"
                                 value={profile.email}
                                 disabled
-                                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 text-gray-500 rounded-lg cursor-not-allowed"
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 rounded-lg cursor-not-allowed"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Role
                             </label>
                             <input
@@ -145,7 +145,7 @@ const AccountSettings = () => {
                                 name="role"
                                 value={profile.role.charAt(0).toUpperCase() + profile.role.slice(1)}
                                 disabled
-                                className="w-full px-4 py-2 bg-gray-50 border border-gray-200 text-gray-500 rounded-lg cursor-not-allowed font-medium"
+                                className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-500 rounded-lg cursor-not-allowed font-medium"
                             />
                         </div>
                     </div>
@@ -157,7 +157,7 @@ const AccountSettings = () => {
                         </h3>
                         <p className="text-xs text-gray-500 italic mb-2">Leave blank if you don't want to change</p>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Old Password
                             </label>
                             <input
@@ -165,12 +165,12 @@ const AccountSettings = () => {
                                 name="oldPassword"
                                 value={profile.oldPassword}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 placeholder="Enter current password"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 New Password
                             </label>
                             <input
@@ -178,12 +178,12 @@ const AccountSettings = () => {
                                 name="newPassword"
                                 value={profile.newPassword}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 placeholder="Enter new password"
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Confirm New Password
                             </label>
                             <input
@@ -191,7 +191,7 @@ const AccountSettings = () => {
                                 name="confirmPassword"
                                 value={profile.confirmPassword}
                                 onChange={handleChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 placeholder="Confirm new password"
                             />
                         </div>
@@ -201,7 +201,7 @@ const AccountSettings = () => {
                 <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
                     <button
                         type="button"
-                        className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                        className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:bg-gray-800 font-medium transition-colors"
                         onClick={() => {
                             fetchProfile();
                             setProfile(prev => ({ ...prev, oldPassword: '', newPassword: '', confirmPassword: '' }));

@@ -72,12 +72,12 @@ const KPICards = ({ data }) => {
                     <div
                         key={index}
                         onClick={() => item.path && navigate(item.path)}
-                        className={`bg-white rounded-xl p-6 shadow-sm border border-gray-100/50 hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1`}
+                        className={`bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100/50 hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1`}
                     >
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-medium text-gray-500 mb-1">{item.title}</p>
-                                <h3 className="text-2xl font-bold text-gray-900">{item.value}</h3>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{item.value}</h3>
                             </div>
                             <div className={`p-2 rounded-lg ${item.color}`}>
                                 <Icon size={20} />

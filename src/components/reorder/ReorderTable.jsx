@@ -2,12 +2,12 @@ import React from 'react';
 
 const ReorderTable = ({ alerts }) => {
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <h2 className="text-xl font-semibold p-4 border-b text-gray-800">Products Needing Attention</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">
+            <h2 className="text-xl font-semibold p-4 border-b text-gray-800 dark:text-gray-200">Products Needing Attention</h2>
             <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="min-w-full w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <tr className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 uppercase text-sm leading-normal">
                             <th className="py-3 px-6">Product</th>
                             <th className="py-3 px-6">Category</th>
                             <th className="py-3 px-6 text-center">Current Stock</th>
@@ -17,15 +17,15 @@ const ReorderTable = ({ alerts }) => {
                             <th className="py-3 px-6 text-center">Action</th>
                         </tr>
                     </thead>
-                    <tbody className="text-gray-600 text-sm font-light">
+                    <tbody className="text-gray-600 dark:text-gray-400 text-sm font-light">
                         {alerts && alerts.length > 0 ? (
                             alerts.map((item) => (
-                                <tr key={item._id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
-                                    <td className="py-3 px-6 font-medium text-gray-800">
+                                <tr key={item._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800 transition duration-150">
+                                    <td className="py-3 px-6 font-medium text-gray-800 dark:text-gray-200">
                                         {item.name}
                                     </td>
                                     <td className="py-3 px-6">
-                                        <span className="bg-gray-100 text-gray-600 py-1 px-3 rounded-full text-xs">
+                                        <span className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 py-1 px-3 rounded-full text-xs">
                                             {item.category}
                                         </span>
                                     </td>

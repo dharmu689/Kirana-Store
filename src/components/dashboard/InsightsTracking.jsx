@@ -60,9 +60,9 @@ export const SmartInsightsPanel = ({ data }) => {
 
             <div className="space-y-4">
                 {insights.map((insight, idx) => (
-                    <div key={idx} className="flex items-start bg-white p-4 rounded-lg shadow-sm border border-indigo-50/50">
+                    <div key={idx} className="flex items-start bg-white dark:bg-gray-900 p-4 rounded-lg shadow-sm border border-indigo-50/50">
                         {insight.icon}
-                        <p className="text-sm font-medium text-gray-700 leading-snug">{insight.text}</p>
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 leading-snug">{insight.text}</p>
                     </div>
                 ))}
             </div>
@@ -72,12 +72,12 @@ export const SmartInsightsPanel = ({ data }) => {
 
 export const RiskAlertPanel = ({ lowStockItems }) => {
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100/50">
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100/50">
             <div className="flex items-center mb-5">
                 <div className="bg-red-50 p-2 rounded-lg mr-3">
                     <AlertTriangle className="w-6 h-6 text-red-600" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900">Immediate Risk Matrix</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">Immediate Risk Matrix</h3>
             </div>
 
             {lowStockItems && lowStockItems.length > 0 ? (
@@ -86,7 +86,7 @@ export const RiskAlertPanel = ({ lowStockItems }) => {
                         {lowStockItems.map((item, idx) => (
                             <li key={item._id || idx} className="py-3 flex justify-between items-center group">
                                 <div>
-                                    <p className="text-sm font-bold text-gray-800">{item.name}</p>
+                                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{item.name}</p>
                                     <p className="text-xs text-gray-500 mt-0.5">Threshold: {item.reorderLevel}</p>
                                 </div>
                                 <div className="text-right">

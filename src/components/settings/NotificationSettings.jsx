@@ -6,7 +6,7 @@ import { FiSave, FiLoader, FiBell } from 'react-icons/fi';
 const ToggleSwitch = ({ checked, onChange, label, description }) => (
     <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
         <div className="pr-4">
-            <h3 className="text-sm font-medium text-gray-800">{label}</h3>
+            <h3 className="text-sm font-medium text-gray-800 dark:text-gray-200">{label}</h3>
             {description && <p className="text-xs text-gray-500 mt-0.5">{description}</p>}
         </div>
         <button
@@ -19,7 +19,7 @@ const ToggleSwitch = ({ checked, onChange, label, description }) => (
         >
             <span
                 aria-hidden="true"
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-gray-900 shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'
                     }`}
             />
         </button>
@@ -100,15 +100,15 @@ const NotificationSettings = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100">
                 <FiLoader className="w-8 h-8 text-indigo-600 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100 mb-6">
-            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800 gap-2">
+        <div className="bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6 border border-gray-100 mb-6">
+            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800 dark:text-gray-200 gap-2">
                 <FiBell className="text-indigo-600" />
                 Notification Preferences
             </h2>
@@ -128,7 +128,7 @@ const NotificationSettings = () => {
                         />
 
                         <div className="mt-4 pt-4 border-t border-gray-100">
-                            <label className={`block text-sm font-medium mb-1 ${settings.enableEmailNotifications ? 'text-gray-700' : 'text-gray-400'}`}>
+                            <label className={`block text-sm font-medium mb-1 ${settings.enableEmailNotifications ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'}`}>
                                 Notification Email Address
                             </label>
                             <input
@@ -137,7 +137,7 @@ const NotificationSettings = () => {
                                 value={settings.notificationEmail}
                                 onChange={handleChange}
                                 disabled={!settings.enableEmailNotifications}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors disabled:bg-gray-50 disabled:text-gray-400"
+                                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors disabled:bg-gray-50 dark:bg-gray-800 disabled:text-gray-400"
                                 placeholder="alerts@yourstore.com"
                             />
                             <p className="text-xs text-gray-500 mt-1">
@@ -150,7 +150,7 @@ const NotificationSettings = () => {
                     <div className="space-y-1">
                         <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Alert Types</h3>
 
-                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-1">
+                        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-xl border border-gray-100 space-y-1">
                             <ToggleSwitch
                                 label="Low Stock Alerts"
                                 description="Be notified when items fall below safety stock"
@@ -176,7 +176,7 @@ const NotificationSettings = () => {
                 <div className="pt-4 border-t border-gray-100 flex justify-end gap-3">
                     <button
                         type="button"
-                        className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                        className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:bg-gray-800 font-medium transition-colors"
                         onClick={() => fetchSettings()}
                     >
                         Reset

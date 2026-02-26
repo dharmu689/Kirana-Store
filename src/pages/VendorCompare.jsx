@@ -32,9 +32,9 @@ const VendorCompare = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center flex-col items-center h-screen bg-gray-50">
+            <div className="flex justify-center flex-col items-center h-screen bg-gray-50 dark:bg-gray-800">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
-                <h2 className="text-xl font-bold text-gray-700">Calculating Optimization Matrix...</h2>
+                <h2 className="text-xl font-bold text-gray-700 dark:text-gray-300">Calculating Optimization Matrix...</h2>
                 <p className="text-gray-500 mt-2">Running supplier logistic algorithms.</p>
             </div>
         );
@@ -70,26 +70,26 @@ const VendorCompare = () => {
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back to Reorder
                 </button>
 
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 flex items-center">
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center">
                     <TrendingUp className="w-8 h-8 text-indigo-600 mr-3" />
                     Vendor Optimization Analysis
                 </h1>
-                <p className="mt-2 text-gray-600">Smart comparison parsing supplier pricing vs delivery speeds organically returning the best ROI trajectory.</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">Smart comparison parsing supplier pricing vs delivery speeds organically returning the best ROI trajectory.</p>
             </div>
 
             {/* Top Recommended Vendor Hero Card */}
             {topVendor && (
                 <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-1 shadow-lg mb-8 animate-fade-in">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between text-white">
+                    <div className="bg-white dark:bg-gray-900/10 backdrop-blur-sm rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between text-white">
                         <div className="flex items-center mb-4 md:mb-0">
-                            <div className="bg-white text-indigo-600 rounded-full p-4 mr-6 shadow-inner hidden md:block">
+                            <div className="bg-white dark:bg-gray-900 text-indigo-600 rounded-full p-4 mr-6 shadow-inner hidden md:block">
                                 <Star fill="currentColor" className="w-10 h-10" />
                             </div>
                             <div>
                                 <div className="text-indigo-100 text-sm font-bold uppercase tracking-wider mb-1 flex items-center">
                                     <span className="flex h-2 w-2 relative mr-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-200 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-white dark:bg-gray-900"></span>
                                     </span>
                                     AI Recommended Vendor
                                 </div>
@@ -100,7 +100,7 @@ const VendorCompare = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white/20 rounded-xl p-4 flex flex-col items-center min-w-[140px] border border-white/30">
+                        <div className="bg-white dark:bg-gray-900/20 rounded-xl p-4 flex flex-col items-center min-w-[140px] border border-white/30">
                             <span className="text-indigo-100 text-xs font-bold uppercase tracking-widest mb-1">Optimizer Score</span>
                             <span className="text-4xl font-black">{topVendor.optimizationMetrics?.finalScore}</span>
                             <span className="text-xs mt-1 opacity-80">out of 100</span>
@@ -110,14 +110,14 @@ const VendorCompare = () => {
             )}
 
             {/* Comparison Table */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-                <div className="px-6 py-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center">
-                    <h3 className="text-lg font-bold text-gray-800">Complete Supplier Matrix</h3>
+            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-100 flex justify-between items-center">
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Complete Supplier Matrix</h3>
                 </div>
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-white">
+                        <thead className="bg-white dark:bg-gray-900">
                             <tr>
                                 <th scope="col" className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
                                     Supplier
@@ -136,11 +136,11 @@ const VendorCompare = () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-100">
+                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100">
                             {vendors.map((vendor, index) => (
                                 <tr
                                     key={vendor._id}
-                                    className={`${index === 0 ? 'bg-indigo-50/50 hover:bg-indigo-50 transition-colors' : 'hover:bg-gray-50 transition-colors'}`}
+                                    className={`${index === 0 ? 'bg-indigo-50/50 hover:bg-indigo-50 transition-colors' : 'hover:bg-gray-50 dark:bg-gray-800 transition-colors'}`}
                                 >
                                     <td className="px-6 py-5 whitespace-nowrap">
                                         <div className="flex items-center">
@@ -153,29 +153,29 @@ const VendorCompare = () => {
                                                 <div className="w-5 mr-3"></div> // Spacer
                                             )}
                                             <div className="ml-0">
-                                                <div className={`text-sm font-bold ${index === 0 ? 'text-indigo-900' : 'text-gray-900'}`}>{vendor.name}</div>
+                                                <div className={`text-sm font-bold ${index === 0 ? 'text-indigo-900' : 'text-gray-900 dark:text-gray-100'}`}>{vendor.name}</div>
                                                 <div className="text-xs text-gray-500">{vendor.email}</div>
                                             </div>
                                         </div>
                                     </td>
 
                                     <td className="px-6 py-5 whitespace-nowrap text-center">
-                                        <div className="flex items-center justify-center text-sm font-medium text-gray-900">
+                                        <div className="flex items-center justify-center text-sm font-medium text-gray-900 dark:text-gray-100">
                                             <DollarSign className={`w-4 h-4 mr-1 ${index === 0 ? 'text-green-600' : 'text-gray-400'}`} />
                                             {vendor.pricePerUnit?.toFixed(2) || 'N/A'}
                                         </div>
                                         <div className="text-xs text-gray-400 mt-1">
-                                            Score: <span className="font-semibold text-gray-600">{vendor.optimizationMetrics?.priceScore}</span>
+                                            Score: <span className="font-semibold text-gray-600 dark:text-gray-400">{vendor.optimizationMetrics?.priceScore}</span>
                                         </div>
                                     </td>
 
                                     <td className="px-6 py-5 whitespace-nowrap text-center">
-                                        <div className="flex items-center justify-center text-sm font-medium text-gray-900">
+                                        <div className="flex items-center justify-center text-sm font-medium text-gray-900 dark:text-gray-100">
                                             <Clock className={`w-4 h-4 mr-1 ${index === 0 ? 'text-indigo-600' : 'text-gray-400'}`} />
                                             {vendor.averageDeliveryDays || 'N/A'} Days
                                         </div>
                                         <div className="text-xs text-gray-400 mt-1">
-                                            Score: <span className="font-semibold text-gray-600">{vendor.optimizationMetrics?.deliveryScore}</span>
+                                            Score: <span className="font-semibold text-gray-600 dark:text-gray-400">{vendor.optimizationMetrics?.deliveryScore}</span>
                                         </div>
                                     </td>
 
@@ -190,12 +190,12 @@ const VendorCompare = () => {
                                             ))}
                                         </div>
                                         <div className="text-xs text-gray-400 mt-1">
-                                            Score: <span className="font-semibold text-gray-600">{vendor.optimizationMetrics?.ratingScore}</span>
+                                            Score: <span className="font-semibold text-gray-600 dark:text-gray-400">{vendor.optimizationMetrics?.ratingScore}</span>
                                         </div>
                                     </td>
 
                                     <td className="px-6 py-5 whitespace-nowrap text-center bg-indigo-50/10">
-                                        <div className={`text-lg font-black ${index === 0 ? 'text-indigo-600' : 'text-gray-700'}`}>
+                                        <div className={`text-lg font-black ${index === 0 ? 'text-indigo-600' : 'text-gray-700 dark:text-gray-300'}`}>
                                             {vendor.optimizationMetrics?.finalScore}
                                         </div>
                                         {index === 0 && (

@@ -4,16 +4,21 @@ import reorderService from '../services/reorderService';
 import VendorOrderModal from '../components/VendorOrderModal';
 
 import vendorOrderService from '../services/vendorOrderService';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const Reorder = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [successMsg, setSuccessMsg] = useState('');
-// additional state to hold order-specific errors (so they don’t clash with fetch errors)
-const [orderError, setOrderError] = useState('');
+    // additional state to hold order-specific errors (so they don’t clash with fetch errors)
+    const [orderError, setOrderError] = useState('');
 
     // fetch list of products that require reordering
     const fetchReorderItems = async () => {
@@ -73,8 +78,8 @@ const [orderError, setOrderError] = useState('');
         <div className="container mx-auto px-4 sm:px-8">
             <div className="py-8">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-semibold leading-tight text-gray-800">
-                        Reorder Management
+                    <h2 className="text-2xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                        {t.reorderList || "Reorder Management"}
                     </h2>
                     <button
                         onClick={fetchReorderItems}

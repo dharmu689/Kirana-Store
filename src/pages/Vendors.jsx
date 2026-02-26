@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import vendorService from '../services/vendorService';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const Vendors = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
@@ -112,16 +117,16 @@ const Vendors = () => {
         return (
             <div className="p-8 text-center">
                 <h2 className="text-2xl font-bold text-red-600">Access Denied</h2>
-                <p className="mt-2 text-gray-600">You do not have permission to view this page.</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">You do not have permission to view this page.</p>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-200 dark:border-gray-700">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Vendor Management</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t.vendors || "Vendor Management"}</h1>
                     <p className="text-sm text-gray-500 mt-1">Manage suppliers, contacts, and delivery locations.</p>
                 </div>
                 <div className="mt-4 sm:mt-0">
@@ -130,13 +135,13 @@ const Vendors = () => {
                         className="flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg text-sm shadow-md hover:bg-blue-700 transition"
                     >
                         <Plus className="mr-2" size={16} />
-                        Add Vendor
+                        {t.addVendor || "Add Vendor"}
                     </button>
                 </div>
             </div>
 
             {/* Search Bar */}
-            <div className="flex items-center space-x-4 bg-white p-4 rounded-xl shadow-sm border border-gray-100/50">
+            <div className="flex items-center space-x-4 bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100/50">
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                     <input
@@ -144,16 +149,16 @@ const Vendors = () => {
                         placeholder="Search vendors by name or email..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                        className="pl-10 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
                     />
                 </div>
             </div>
 
             {/* Vendor Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100/50 overflow-hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100/50 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-gray-50 dark:bg-gray-800">
                             <tr>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Vendor Name
@@ -169,7 +174,7 @@ const Vendors = () => {
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200">
                             {loading ? (
                                 <tr>
                                     <td colSpan="4" className="px-6 py-4 text-center text-gray-500">Loading vendors...</td>
@@ -184,23 +189,23 @@ const Vendors = () => {
                                 </tr>
                             ) : (
                                 filteredVendors.map((vendor) => (
-                                    <tr key={vendor._id} className="hover:bg-gray-50">
+                                    <tr key={vendor._id} className="hover:bg-gray-50 dark:bg-gray-800">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 <div className="h-10 w-10 flex-shrink-0 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
                                                     {vendor.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900">{vendor.name}</div>
+                                                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{vendor.name}</div>
                                                 </div>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">{vendor.email}</div>
+                                            <div className="text-sm text-gray-900 dark:text-gray-100">{vendor.email}</div>
                                             <div className="text-sm text-gray-500">{vendor.phone}</div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm text-gray-900 max-w-xs truncate">{vendor.address}</div>
+                                            <div className="text-sm text-gray-900 dark:text-gray-100 max-w-xs truncate">{vendor.address}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
@@ -231,14 +236,14 @@ const Vendors = () => {
                 <div className="fixed inset-0 z-50 overflow-y-auto">
                     <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                         <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={handleCloseModal}>
-                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                            <div className="absolute inset-0 bg-gray-50 dark:bg-gray-8000 opacity-75"></div>
                         </div>
                         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                        <div className="inline-block align-bottom bg-white dark:bg-gray-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                             <form onSubmit={handleSubmit}>
-                                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-100">
+                                <div className="bg-white dark:bg-gray-900 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b border-gray-100">
                                     <div className="flex justify-between items-center mb-5">
-                                        <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                        <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100">
                                             {isEditing ? 'Edit Vendor' : 'Add New Vendor'}
                                         </h3>
                                         <button type="button" onClick={handleCloseModal} className="text-gray-400 hover:text-gray-500">
@@ -247,36 +252,36 @@ const Vendors = () => {
                                     </div>
                                     <div className="space-y-4">
                                         <div>
-                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Vendor Name</label>
+                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Vendor Name</label>
                                             <input type="text" name="name" id="name" required
                                                 value={formData.name} onChange={handleInputChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
                                         </div>
                                         <div>
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email Address</label>
                                             <input type="email" name="email" id="email" required
                                                 value={formData.email} onChange={handleInputChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
                                         </div>
                                         <div>
-                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone Number</label>
+                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
                                             <input type="tel" name="phone" id="phone" required
                                                 value={formData.phone} onChange={handleInputChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
                                         </div>
                                         <div>
-                                            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Physical Address</label>
+                                            <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Physical Address</label>
                                             <textarea name="address" id="address" rows="3" required
                                                 value={formData.address} onChange={handleInputChange}
-                                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+                                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                                     <button type="submit" className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:ml-3 sm:w-auto sm:text-sm">
                                         {isEditing ? 'Save Changes' : 'Create Vendor'}
                                     </button>
-                                    <button type="button" onClick={handleCloseModal} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                    <button type="button" onClick={handleCloseModal} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-900 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-800 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                                         Cancel
                                     </button>
                                 </div>
@@ -286,119 +291,119 @@ const Vendors = () => {
                 </div>
             )} */}
 
-                {/* Add/Edit Modal */}
-{isModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* Add/Edit Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
 
-    {/* Background Overlay */}
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50"
-      onClick={handleCloseModal}
-    ></div>
+                    {/* Background Overlay */}
+                    <div
+                        className="fixed inset-0 bg-black bg-opacity-50"
+                        onClick={handleCloseModal}
+                    ></div>
 
-    {/* Modal Box */}
-    <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 z-50">
+                    {/* Modal Box */}
+                    <div className="relative bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-lg mx-4 p-6 z-50">
 
-      <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit}>
 
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold text-gray-900">
-            {isEditing ? 'Edit Vendor' : 'Add New Vendor'}
-          </h3>
+                            {/* Header */}
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                                    {isEditing ? 'Edit Vendor' : 'Add New Vendor'}
+                                </h3>
 
-          <button
-            type="button"
-            onClick={handleCloseModal}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X size={20} />
-          </button>
-        </div>
+                                <button
+                                    type="button"
+                                    onClick={handleCloseModal}
+                                    className="text-gray-400 hover:text-gray-600 dark:text-gray-400"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
 
-        {/* Form Fields */}
-        <div className="space-y-4">
+                            {/* Form Fields */}
+                            <div className="space-y-4">
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Vendor Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleInputChange}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-          </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Vendor Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        required
+                                        value={formData.name}
+                                        onChange={handleInputChange}
+                                        className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    />
+                                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-          </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        required
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    />
+                                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              required
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-          </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        name="phone"
+                                        required
+                                        value={formData.phone}
+                                        onChange={handleInputChange}
+                                        className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    />
+                                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Physical Address
-            </label>
-            <textarea
-              name="address"
-              rows="3"
-              required
-              value={formData.address}
-              onChange={handleInputChange}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-          </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        Physical Address
+                                    </label>
+                                    <textarea
+                                        name="address"
+                                        rows="3"
+                                        required
+                                        value={formData.address}
+                                        onChange={handleInputChange}
+                                        className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    />
+                                </div>
 
-        </div>
+                            </div>
 
-        {/* Footer Buttons */}
-        <div className="mt-6 flex justify-end space-x-3">
-          <button
-            type="button"
-            onClick={handleCloseModal}
-            className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-100"
-          >
-            Cancel
-          </button>
+                            {/* Footer Buttons */}
+                            <div className="mt-6 flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    onClick={handleCloseModal}
+                                    className="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800"
+                                >
+                                    Cancel
+                                </button>
 
-          <button
-            type="submit"
-            className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
-          >
-            {isEditing ? 'Save Changes' : 'Create Vendor'}
-          </button>
-        </div>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                                >
+                                    {isEditing ? 'Save Changes' : 'Create Vendor'}
+                                </button>
+                            </div>
 
-      </form>
-    </div>
-  </div>
-)}
+                        </form>
+                    </div>
+                </div>
+            )}
 
         </div>
     );

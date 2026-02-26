@@ -101,9 +101,9 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-            <div className="relative p-8 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div className="relative p-8 border w-full max-w-md shadow-lg rounded-md bg-white dark:bg-gray-900">
                 <div className="flex justify-between items-center mb-5">
-                    <h3 className="text-xl font-semibold text-gray-900 leading-tight">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 leading-tight">
                         Place Vendor Order
                     </h3>
                     <button
@@ -133,18 +133,18 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Product</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Product</label>
                         <input
                             type="text"
                             value={product.name}
                             disabled
-                            className="mt-1 block w-full bg-gray-100 border border-gray-300 rounded-md shadow-sm py-2 px-3 text-gray-500 cursor-not-allowed sm:text-sm"
+                            className="mt-1 block w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 text-gray-500 cursor-not-allowed sm:text-sm"
                         />
                     </div>
 
                     <div>
                         <div className="flex justify-between items-center">
-                            <label htmlFor="vendor" className="block text-sm font-medium text-gray-700">Vendor</label>
+                            <label htmlFor="vendor" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Vendor</label>
                             {product && (
                                 <Link to={`/vendor-compare/${product._id}`} className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center mb-1">
                                     {/* <TrendingUp className="w-3 h-3 mr-1" /> Compare Vendors */}
@@ -159,7 +159,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                         ) : (
                             <select
                                 id="vendor"
-                                className={`mt-1 block w-full pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm ${selectedVendor?.optimizationMetrics ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-medium' : 'border-gray-300'}`}
+                                className={`mt-1 block w-full pl-3 pr-10 py-2 text-base focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm ${selectedVendor?.optimizationMetrics ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-medium' : 'border-gray-300 dark:border-gray-600'}`}
                                 onChange={handleVendorChange}
                                 value={selectedVendor ? selectedVendor._id : ''}
                                 required
@@ -175,7 +175,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                     </div>
 
                     {selectedVendor && (
-                        <div className={`p-4 rounded-md text-sm border ${selectedVendor.optimizationMetrics ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 border-gray-200'}`}>
+                        <div className={`p-4 rounded-md text-sm border ${selectedVendor.optimizationMetrics ? 'bg-indigo-50 border-indigo-100' : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'}`}>
                             {selectedVendor.optimizationMetrics && (
                                 <div className="mb-3 pb-3 border-b border-indigo-100 flex items-start">
                                     <div className="bg-indigo-100 p-1.5 rounded-full mr-3 mt-0.5">
@@ -189,7 +189,7 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                                     </div>
                                 </div>
                             )}
-                            <p className="font-semibold text-gray-800 mb-1">Vendor Contact Info:</p>
+                            <p className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Vendor Contact Info:</p>
                             <p><span className="text-gray-500">Person:</span> {selectedVendor.name || 'N/A'}</p>
                             <p><span className="text-gray-500">Phone:</span> {selectedVendor.phone || 'N/A'}</p>
                             <p><span className="text-gray-500">Email:</span> {selectedVendor.email || 'N/A'}</p>
@@ -197,11 +197,11 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                     )}
 
                     <div>
-                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">Order Quantity</label>
+                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Order Quantity</label>
                         <input
                             type="number"
                             id="quantity"
-                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md py-2 px-3 border"
+                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 border"
                             value={quantity}
                             onChange={(e) => setQuantity(e.target.value)}
                             min="1"
@@ -213,22 +213,22 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                     </div>
 
                     <div>
-                        <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700">Delivery Address</label>
+                        <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Delivery Address</label>
                         <textarea
                             id="deliveryAddress"
                             rows="2"
-                            className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md py-2 px-3 border"
+                            className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 border"
                             value={deliveryAddress}
                             onChange={(e) => setDeliveryAddress(e.target.value)}
                             placeholder="Optional: Store location to deliver to"
                         ></textarea>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-end space-x-3 border-t border-gray-200">
+                    <div className="pt-4 flex items-center justify-end space-x-3 border-t border-gray-200 dark:border-gray-700">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150"
+                            className="bg-white dark:bg-gray-900 py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150"
                         >
                             Cancel
                         </button>

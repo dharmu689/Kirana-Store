@@ -56,9 +56,9 @@ const CategoryManager = ({ isOpen, onClose, onUpdate }) => {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[80vh]">
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl w-full max-w-lg overflow-hidden flex flex-col max-h-[80vh]">
                 <div className="flex justify-between items-center p-6 border-b">
-                    <h3 className="text-xl font-semibold text-gray-900">Manage Categories</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Manage Categories</h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
                         <span className="sr-only">Close</span>
                         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,14 +67,14 @@ const CategoryManager = ({ isOpen, onClose, onUpdate }) => {
                     </button>
                 </div>
 
-                <div className="p-6 border-b bg-gray-50">
+                <div className="p-6 border-b bg-gray-50 dark:bg-gray-800">
                     <form onSubmit={handleAddCategory} className="flex gap-2">
                         <input
                             type="text"
                             value={newCategory}
                             onChange={(e) => setNewCategory(e.target.value)}
                             placeholder="New Category Name"
-                            className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                            className="flex-1 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
                         />
                         <button
                             type="submit"
@@ -93,9 +93,9 @@ const CategoryManager = ({ isOpen, onClose, onUpdate }) => {
                     ) : (
                         <ul className="space-y-2">
                             {categories.map((cat) => (
-                                <li key={cat._id} className="flex justify-between items-center p-3 bg-white border rounded-md hover:bg-gray-50 shadow-sm">
+                                <li key={cat._id} className="flex justify-between items-center p-3 bg-white dark:bg-gray-900 border rounded-md hover:bg-gray-50 dark:bg-gray-800 shadow-sm">
                                     <div className="flex flex-col">
-                                        <span className="font-medium text-gray-700">{cat.name}</span>
+                                        <span className="font-medium text-gray-700 dark:text-gray-300">{cat.name}</span>
                                         <span className="text-xs text-gray-400">{cat.productCount || 0} products</span>
                                     </div>
                                     <button

@@ -3,15 +3,20 @@ import StoreSettings from '../components/settings/StoreSettings';
 import AccountSettings from '../components/settings/AccountSettings';
 import NotificationSettings from '../components/settings/NotificationSettings';
 import SystemPreferences from '../components/settings/SystemPreferences';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const Settings = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     const [activeTab, setActiveTab] = useState('account');
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center bg-white p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
+            <div className="flex justify-between items-center bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-sm border border-gray-100">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Settings</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.settings || "Settings"}</h1>
                     <p className="text-gray-500 mt-1 text-sm sm:text-base">
                         Manage your store configuration and preferences
                     </p>
@@ -19,11 +24,11 @@ const Settings = () => {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-200 overflow-x-auto whitespace-nowrap">
+            <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap">
                 <button
                     className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'account'
                         ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
                         }`}
                     onClick={() => setActiveTab('account')}
                 >
@@ -32,7 +37,7 @@ const Settings = () => {
                 <button
                     className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'notifications'
                         ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
                         }`}
                     onClick={() => setActiveTab('notifications')}
                 >
@@ -41,7 +46,7 @@ const Settings = () => {
                 <button
                     className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'store'
                         ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
                         }`}
                     onClick={() => setActiveTab('store')}
                 >
@@ -50,7 +55,7 @@ const Settings = () => {
                 <button
                     className={`py-2 px-4 font-medium text-sm transition-colors ${activeTab === 'system'
                         ? 'border-b-2 border-indigo-600 text-indigo-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-300'
                         }`}
                     onClick={() => setActiveTab('system')}
                 >

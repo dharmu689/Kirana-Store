@@ -54,7 +54,7 @@ const Navbar = ({ user }) => {
     };
 
     return (
-        <header className="h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40 ml-64 transition-colors">
+        <header className="h-16 bg-white dark:bg-gray-900/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-100 dark:border-gray-800 flex items-center justify-between px-6 sticky top-0 z-40 ml-64 transition-colors">
             {/* Left Global Search */}
             <div className="flex items-center w-96">
                 <button className="mr-4 lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">

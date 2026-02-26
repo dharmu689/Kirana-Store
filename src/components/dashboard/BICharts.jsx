@@ -5,8 +5,8 @@ const COLORS = ['#10B981', '#F59E0B', '#EF4444'];
 
 export const SalesTrendChart = ({ data }) => {
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100/50">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Sales Trend (30 Days)</h3>
+        <div className="bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-100/50">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Sales Trend (30 Days)</h3>
             <div className="h-64 w-full">
                 {data && data.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -19,7 +19,7 @@ export const SalesTrendChart = ({ data }) => {
                         </LineChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex bg-gray-50 h-full w-full items-center justify-center rounded-lg border border-gray-100"><p className="text-gray-400">Loading tracking array natively...</p></div>
+                    <div className="flex bg-gray-50 dark:bg-gray-800 h-full w-full items-center justify-center rounded-lg border border-gray-100"><p className="text-gray-400">Loading tracking array natively...</p></div>
                 )}
             </div>
         </div>
@@ -35,8 +35,8 @@ export const ForecastAccuracyChart = ({ data }) => {
     ];
 
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100/50">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Forecast Accuracy</h3>
+        <div className="bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-100/50">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Forecast Accuracy</h3>
             <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
@@ -54,8 +54,8 @@ export const ForecastAccuracyChart = ({ data }) => {
 
 export const InventoryHealthChart = ({ data }) => {
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100/50">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Inventory Health Tracking</h3>
+        <div className="bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-100/50">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Inventory Health Tracking</h3>
             <div className="h-64 w-full flex items-center justify-center">
                 {data && data.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -79,7 +79,7 @@ export const InventoryHealthChart = ({ data }) => {
                         </PieChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="flex bg-gray-50 h-full w-full items-center justify-center rounded-lg border border-gray-100"><p className="text-gray-400">Calculating Safe Stock bounds...</p></div>
+                    <div className="flex bg-gray-50 dark:bg-gray-800 h-full w-full items-center justify-center rounded-lg border border-gray-100"><p className="text-gray-400">Calculating Safe Stock bounds...</p></div>
                 )}
             </div>
         </div>
@@ -95,8 +95,8 @@ export const VendorPerformanceChart = ({ vendors }) => {
     ];
 
     return (
-        <div className="bg-white p-5 rounded-xl shadow-sm border border-gray-100/50">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Vendor Intelligence</h3>
+        <div className="bg-white dark:bg-gray-900 p-5 rounded-xl shadow-sm border border-gray-100/50">
+            <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Vendor Intelligence</h3>
             <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart layout="vertical" data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>

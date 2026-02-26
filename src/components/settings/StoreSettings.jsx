@@ -76,15 +76,15 @@ const StoreSettings = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm border border-gray-100">
+            <div className="flex justify-center items-center h-64 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100">
                 <FiLoader className="w-8 h-8 text-indigo-600 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800">
+        <div className="bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6 border border-gray-100">
+            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800 dark:text-gray-200">
                 Store Configuration
             </h2>
 
@@ -92,7 +92,7 @@ const StoreSettings = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Store Name */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Store Name <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -101,14 +101,14 @@ const StoreSettings = () => {
                             value={settings.storeName}
                             onChange={handleChange}
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="Enter store name"
                         />
                     </div>
 
                     {/* Owner Name */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Owner Name
                         </label>
                         <input
@@ -116,14 +116,14 @@ const StoreSettings = () => {
                             name="ownerName"
                             value={settings.ownerName}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="Enter owner name"
                         />
                     </div>
 
                     {/* Email */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Email Address
                         </label>
                         <input
@@ -131,14 +131,14 @@ const StoreSettings = () => {
                             name="email"
                             value={settings.email}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="store@example.com"
                         />
                     </div>
 
                     {/* Phone */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Phone Number
                         </label>
                         <input
@@ -146,14 +146,14 @@ const StoreSettings = () => {
                             name="phone"
                             value={settings.phone}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="Enter phone number"
                         />
                     </div>
 
                     {/* GST Number */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             GST Number
                         </label>
                         <input
@@ -161,14 +161,14 @@ const StoreSettings = () => {
                             name="gstNumber"
                             value={settings.gstNumber}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="Enter GST Number"
                         />
                     </div>
 
                     {/* Currency */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Currency Symbol
                         </label>
                         <input
@@ -176,14 +176,14 @@ const StoreSettings = () => {
                             name="currency"
                             value={settings.currency}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="e.g., ₹, $, €"
                         />
                     </div>
 
                     {/* Logo URL */}
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Logo URL
                         </label>
                         <input
@@ -191,11 +191,11 @@ const StoreSettings = () => {
                             name="logo"
                             value={settings.logo}
                             onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                             placeholder="https://example.com/logo.png"
                         />
                         {settings.logo && (
-                            <div className="mt-4 p-4 border border-gray-200 rounded-lg bg-gray-50 flex justify-center">
+                            <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 flex justify-center">
                                 <img
                                     src={settings.logo}
                                     alt="Store Logo Preview"
@@ -213,7 +213,7 @@ const StoreSettings = () => {
 
                     {/* Address */}
                     <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Store Address
                         </label>
                         <textarea
@@ -221,7 +221,7 @@ const StoreSettings = () => {
                             value={settings.address}
                             onChange={handleChange}
                             rows="3"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
                             placeholder="Enter full store address"
                         ></textarea>
                     </div>
@@ -230,7 +230,7 @@ const StoreSettings = () => {
                 <div className="mt-6 flex justify-end gap-3">
                     <button
                         type="button"
-                        className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition-colors"
+                        className="px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:bg-gray-800 font-medium transition-colors"
                         onClick={() => fetchSettings()}
                     >
                         Reset

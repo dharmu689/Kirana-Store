@@ -3,10 +3,10 @@ import { SALES_DATA } from '../../services/dummyData';
 
 const SalesChart = () => {
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
+        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-sm border border-gray-100 mb-8">
             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-bold text-gray-800">Sales Analytics</h3>
-                <select className="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Sales Analytics</h3>
+                <select className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2">
                     <option>Last 6 Months</option>
                     <option>Last Year</option>
                 </select>

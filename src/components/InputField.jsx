@@ -13,7 +13,7 @@ const InputField = ({
     return (
         <div className="mb-4">
             {label && (
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                     {label}
                 </label>
             )}
@@ -29,9 +29,9 @@ const InputField = ({
                     value={value}
                     onChange={onChange}
                     className={clsx(
-                        "block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 transition-colors",
+                        "block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 transition-colors",
                         Icon ? "pl-10" : "pl-3",
-                        error ? "border-red-300 focus:border-red-500 focus:ring-red-500" : "border-gray-300"
+                        error ? "border-red-300 focus:border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"
                     )}
                     placeholder={placeholder}
                 />

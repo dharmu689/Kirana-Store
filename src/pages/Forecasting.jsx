@@ -2,8 +2,13 @@ import React, { useState, useEffect } from 'react';
 import API from '../utils/axiosConfig';
 import ForecastChart from '../components/ForecastChart';
 import SeasonalityChart from '../components/SeasonalityChart';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const Forecasting = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     const [forecastData, setForecastData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -157,12 +162,12 @@ const Forecasting = () => {
         <div className="container mx-auto px-4 py-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Demand Forecasting</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.demandForecast || "Demand Forecasting"}</h1>
                 <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3 items-center">
                     <select
                         value={algorithm}
                         onChange={(e) => setAlgorithm(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg shadow-sm bg-white text-gray-700 font-medium"
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg shadow-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-medium"
                     >
                         <option value="moving_average">Moving Average (Baseline)</option>
                         <option value="regression">Linear Regression (AI)</option>
@@ -206,61 +211,61 @@ const Forecasting = () => {
 
             {/* Content Area */}
             {forecastData.length === 0 ? (
-                <div className="bg-white rounded-xl shadow-lg p-12 text-center border border-gray-100">
+                <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-12 text-center border border-gray-100">
                     <div className="text-gray-400 mb-4">
                         <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
                     </div>
-                    <h3 className="text-xl font-medium text-gray-600 mb-2">No Forecast Data</h3>
+                    <h3 className="text-xl font-medium text-gray-600 dark:text-gray-400 mb-2">No Forecast Data</h3>
                     <p className="text-gray-500">Generate your first AI-driven demand prediction based on recent sales history.</p>
                 </div>
             ) : (
                 <>
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-emerald-500 hover:shadow-xl transition-shadow">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border-l-4 border-emerald-500 hover:shadow-xl transition-shadow">
                             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide flex items-center">
                                 <svg className="w-4 h-4 mr-1 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                                 </svg>
                                 Upward Trend SKU's
                             </h3>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{upwardTrends}</p>
+                            <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{upwardTrends}</p>
                             <p className="text-xs text-emerald-600 font-medium mt-1">Growth detected</p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-rose-500 hover:shadow-xl transition-shadow">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border-l-4 border-rose-500 hover:shadow-xl transition-shadow">
                             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide flex items-center">
                                 <svg className="w-4 h-4 mr-1 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" />
                                 </svg>
                                 Products At Risk
                             </h3>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{downwardTrends}</p>
+                            <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{downwardTrends}</p>
                             <p className="text-xs text-rose-600 font-medium mt-1">Declining demand detected</p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-indigo-500 hover:shadow-xl transition-shadow">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border-l-4 border-indigo-500 hover:shadow-xl transition-shadow">
                             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide flex items-center">
                                 <svg className="w-4 h-4 mr-1 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                                 Universal Peak Day
                             </h3>
-                            <p className="text-3xl font-bold text-gray-800 mt-2">{mostCommonPeak}</p>
+                            <p className="text-3xl font-bold text-gray-800 dark:text-gray-200 mt-2">{mostCommonPeak}</p>
                             <p className="text-xs text-indigo-600 font-medium mt-1">Highest store volume period</p>
                         </div>
                     </div>
 
                     {algorithm === 'hybrid' && (
                         <div className="mb-8 bg-gradient-to-r from-orange-50 to-indigo-50 border border-orange-100 rounded-xl p-6 shadow-sm flex items-center gap-4 animate-fade-in">
-                            <div className="p-3 bg-white rounded-full shadow-sm text-orange-500">
+                            <div className="p-3 bg-white dark:bg-gray-900 rounded-full shadow-sm text-orange-500">
                                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-gray-800">Hybrid AI Matrix Active</h3>
-                                <p className="text-sm text-gray-600 font-medium mt-1">
+                                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Hybrid AI Matrix Active</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">
                                     <span className="text-orange-600 font-bold">Hybrid Forecast</span> = Moving Average (40%) + Linear Regression (50%) + Seasonal Factor (10%)
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">Algorithmic weights autonomously self-correct increasing Regression priority identically balancing if trailing historic accuracy slips beneath 70% thresholds.</p>
@@ -271,8 +276,8 @@ const Forecasting = () => {
                     {/* Dynamic Chart Containers (Side by Side when available) */}
                     {selectedProduct && (
                         <div className="mb-8 grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in">
-                            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 flex flex-col">
-                                <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 p-6 flex flex-col">
+                                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
                                     <svg className="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                                     </svg>
@@ -283,8 +288,8 @@ const Forecasting = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 flex flex-col">
-                                <h2 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+                            <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 p-6 flex flex-col">
+                                <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
                                     <svg className="w-5 h-5 text-emerald-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                     </svg>
@@ -298,15 +303,15 @@ const Forecasting = () => {
                     )}
 
                     {/* Controls & Table */}
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                        <div className="px-6 py-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/50">
-                            <h2 className="text-lg font-semibold text-gray-800">Forecast History Tracking <span className="text-xs font-normal text-gray-500 ml-2">(Click row to view trend/seasonality)</span></h2>
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden border border-gray-100">
+                        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50 dark:bg-gray-800/50">
+                            <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Forecast History Tracking <span className="text-xs font-normal text-gray-500 ml-2">(Click row to view trend/seasonality)</span></h2>
                             <div className="flex items-center gap-2">
-                                <label className="text-sm text-gray-600 font-medium whitespace-nowrap">Sort By:</label>
+                                <label className="text-sm text-gray-600 dark:text-gray-400 font-medium whitespace-nowrap">Sort By:</label>
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="block w-full pl-3 pr-10 py-2 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+                                    className="block w-full pl-3 pr-10 py-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
                                 >
                                     <option value="demand">Highest Demand</option>
                                     <option value="reorder">Highest Reorder</option>
@@ -316,18 +321,18 @@ const Forecasting = () => {
 
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                                <thead className="bg-gray-50 dark:bg-gray-800">
                                     <tr>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Trend</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden xl:table-cell">Peak Day</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden sm:table-cell">Predicted/Mo</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t.product || "Product"}</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">{t.trend || "Trend"}</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden xl:table-cell">Peak Day</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Predicted/Mo</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-indigo-600 uppercase tracking-wider bg-indigo-50/50">Suggested Reorder</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Accuracy %</th>
-                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Accuracy %</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-100">
+                                <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-100">
                                     {sortedData.map((item) => (
                                         <tr
                                             key={item._id}
@@ -335,7 +340,7 @@ const Forecasting = () => {
                                             className="hover:bg-indigo-50 transition-colors cursor-pointer group"
                                         >
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900 group-hover:text-indigo-600 transition-colors">
+                                                <div className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 transition-colors">
                                                     {item.product?.name || 'Unknown Product'}
                                                 </div>
                                             </td>
@@ -367,7 +372,7 @@ const Forecasting = () => {
                                                 ) : <span className="text-sm text-gray-400">-</span>}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                                                <div className="text-sm font-medium text-gray-800">{item.predictedMonthlyDemand}</div>
+                                                <div className="text-sm font-medium text-gray-800 dark:text-gray-200">{item.predictedMonthlyDemand}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap bg-indigo-50/10 group-hover:bg-indigo-100/30 transition-colors">
                                                 <div className={`text-sm font-bold ${item.suggestedReorder > 0 ? 'text-indigo-600' : 'text-gray-400'}`}>
@@ -383,7 +388,7 @@ const Forecasting = () => {
                                                         {item.accuracyPercentage}%
                                                     </span>
                                                 ) : (
-                                                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full bg-gray-100 text-gray-500">
+                                                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-500">
                                                         Unrated
                                                     </span>
                                                 )}

@@ -5,9 +5,9 @@ const StockStatus = ({ lowStockItems }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100/50 overflow-hidden">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100/50 overflow-hidden">
             <div className="p-5 border-b border-gray-50 flex justify-between items-center">
-                <h3 className="font-semibold text-gray-900">Reorder Alerts</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Reorder Alerts</h3>
                 <span
                     onClick={() => navigate('/reorder')}
                     className="text-xs font-medium text-blue-600 cursor-pointer hover:underline"
@@ -27,9 +27,9 @@ const StockStatus = ({ lowStockItems }) => {
                                         {item.quantity}
                                     </div>
                                     <div className="ml-3">
-                                        <p className="text-sm font-medium text-gray-900 truncate w-32 sm:w-40">{item.name}</p>
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate w-32 sm:w-40">{item.name}</p>
                                         <div className="flex items-center text-xs text-gray-500 mt-0.5">
-                                            <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 border border-gray-200">
+                                            <span className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
                                                 RL: {item.reorderLevel}
                                             </span>
                                         </div>

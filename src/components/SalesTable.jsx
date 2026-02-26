@@ -2,12 +2,12 @@ import { format } from 'date-fns';
 
 const SalesTable = ({ sales }) => {
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <h2 className="text-xl font-semibold p-4 border-b text-gray-800">Sales History</h2>
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden">
+            <h2 className="text-xl font-semibold p-4 border-b text-gray-800 dark:text-gray-200">Sales History</h2>
             <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
+                <table className="min-w-full w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-gray-100 text-gray-600 uppercase text-sm leading-normal">
+                        <tr className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 uppercase text-sm leading-normal">
                             <th className="py-3 px-6">Date</th>
                             <th className="py-3 px-6">Product</th>
                             <th className="py-3 px-6">Category</th>
@@ -17,14 +17,14 @@ const SalesTable = ({ sales }) => {
                             <th className="py-3 px-6">Sold By</th>
                         </tr>
                     </thead>
-                    <tbody className="text-gray-600 text-sm font-light">
+                    <tbody className="text-gray-600 dark:text-gray-400 text-sm font-light">
                         {sales.length > 0 ? (
                             sales.map((sale) => (
-                                <tr key={sale._id} className="border-b border-gray-200 hover:bg-gray-50 transition duration-150">
+                                <tr key={sale._id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:bg-gray-800 transition duration-150">
                                     <td className="py-3 px-6 whitespace-nowrap">
                                         {format(new Date(sale.createdAt), 'dd/MM/yyyy HH:mm')}
                                     </td>
-                                    <td className="py-3 px-6 font-medium text-gray-800">
+                                    <td className="py-3 px-6 font-medium text-gray-800 dark:text-gray-200">
                                         {sale.productName}
                                     </td>
                                     <td className="py-3 px-6">

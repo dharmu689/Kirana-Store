@@ -13,35 +13,46 @@ import Forecasting from './pages/Forecasting';
 import VendorCompare from './pages/VendorCompare';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
-import { ThemeProvider } from './context/ThemeContext';
-import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+
+function AppContent() {
+  const { language } = useLanguage();
+  const { theme } = useTheme();
+
+  return (
+    <div key={language + theme} className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected Routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="products" element={<Products />} />
+              <Route path="sales" element={<Sales />} />
+              <Route path="reorder" element={<Reorder />} />
+              <Route path="vendor-orders" element={<VendorOrders />} />
+              <Route path="vendors" element={<Vendors />} />
+              <Route path="forecasting" element={<Forecasting />} />
+              <Route path="vendor-compare/:productId" element={<VendorCompare />} />
+              <Route path="reports" element={<Reports />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+          </Route>
+        </Routes>
+      </Router>
+    </div>
+  );
+}
 
 function App() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        <Router>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-
-            {/* Protected Routes */}
-            <Route element={<ProtectedRoute />}>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="products" element={<Products />} />
-                <Route path="sales" element={<Sales />} />
-                <Route path="reorder" element={<Reorder />} />
-                <Route path="vendor-orders" element={<VendorOrders />} />
-                <Route path="vendors" element={<Vendors />} />
-                <Route path="forecasting" element={<Forecasting />} />
-                <Route path="vendor-compare/:productId" element={<VendorCompare />} />
-                <Route path="reports" element={<Reports />} />
-                <Route path="settings" element={<Settings />} />
-              </Route>
-            </Route>
-          </Routes>
-        </Router>
+        <AppContent />
       </LanguageProvider>
     </ThemeProvider>
   );

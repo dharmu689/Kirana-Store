@@ -13,9 +13,14 @@ import {
     ArrowUpTrayIcon,
     FolderIcon
 } from '@heroicons/react/24/outline';
-import * as XLSX from 'xlsx'; // Need to install xlsx, but will fallback to CSV if package missing or simulate for now
+import * as XLSX from 'xlsx';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const Products = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     // Data State
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -229,7 +234,7 @@ const Products = () => {
             {/* Header & Quick Actions */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-3xl font-bold text-gray-800">Products Inventory</h1>
+                    <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">{t.products || "Products Inventory"}</h1>
                     <p className="text-gray-500 mt-1">Manage stock, track expiry, and organize categories.</p>
                 </div>
                 {user && user.role === 'admin' && (
@@ -243,19 +248,19 @@ const Products = () => {
                         />
                         <button
                             onClick={handleImportClick}
-                            className="flex items-center px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 shadow-sm transition-colors text-sm font-medium"
+                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-colors text-sm font-medium"
                         >
                             <ArrowUpTrayIcon className="h-4 w-4 mr-2" /> Import
                         </button>
                         <button
                             onClick={handleExport}
-                            className="flex items-center px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 shadow-sm transition-colors text-sm font-medium"
+                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-colors text-sm font-medium"
                         >
                             <ArrowDownTrayIcon className="h-4 w-4 mr-2" /> Export
                         </button>
                         <button
                             onClick={() => setIsCategoryModalOpen(true)}
-                            className="flex items-center px-3 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 shadow-sm transition-colors text-sm font-medium"
+                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-colors text-sm font-medium"
                         >
                             <FolderIcon className="h-4 w-4 mr-2" /> Categories
                         </button>
@@ -263,7 +268,7 @@ const Products = () => {
                             onClick={handleAddProduct}
                             className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md hover:shadow-lg transition-all text-sm font-medium"
                         >
-                            <PlusIcon className="h-5 w-5 mr-2" /> Add Product
+                            <PlusIcon className="h-5 w-5 mr-2" /> {t.addProduct}
                         </button>
                     </div>
                 )}
@@ -271,17 +276,17 @@ const Products = () => {
 
             {/* Metrics Summary (Optional, simple version) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
                     <p className="text-sm text-gray-500">Total Value</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                         ₹{products.reduce((acc, p) => acc + (p.price * p.quantity), 0).toLocaleString()}
                     </p>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
                     <p className="text-sm text-gray-500">Total Products</p>
-                    <p className="text-2xl font-bold text-gray-900">{products.length}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{products.length}</p>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
                     <p className="text-sm text-gray-500">Low Stock Items</p>
                     <p className="text-2xl font-bold text-yellow-600">
                         {products.filter(p => p.status === 'LOW_STOCK').length}
@@ -290,7 +295,7 @@ const Products = () => {
             </div>
 
             {/* Detailed Filters & Search */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full md:w-96">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
@@ -301,7 +306,7 @@ const Products = () => {
                         value={filters.keyword}
                         onChange={handleFilterChange}
                         placeholder="Search by name or category..."
-                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                 </div>
 
@@ -310,7 +315,7 @@ const Products = () => {
                         name="category"
                         value={filters.category}
                         onChange={handleFilterChange}
-                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
+                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
                     >
                         <option value="">All Categories</option>
                         {categories.map(cat => (
@@ -322,7 +327,7 @@ const Products = () => {
                         name="status"
                         value={filters.status}
                         onChange={handleFilterChange}
-                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
+                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
                     >
                         <option value="">All Statuses</option>
                         <option value="IN_STOCK">In Stock</option>

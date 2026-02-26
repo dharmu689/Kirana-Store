@@ -43,7 +43,7 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
     const SortableHeader = ({ label, sortKey }) => (
         <th
             scope="col"
-            className="py-3 px-6 cursor-pointer hover:bg-gray-100 transition-colors"
+            className="py-3 px-6 cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors"
             onClick={() => onSort(sortKey)}
         >
             <div className="flex items-center space-x-1">
@@ -55,8 +55,8 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
 
     return (
         <div className="overflow-x-auto relative shadow-md sm:rounded-lg min-h-[400px]">
-            <table className="w-full text-sm text-left text-gray-500">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 border-b">
+            <table className="min-w-full w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800 border-b">
                     <tr>
                         <SortableHeader label="Product Name" sortKey="name" />
                         <SortableHeader label="Category" sortKey="category" />
@@ -72,15 +72,15 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                 </thead>
                 <tbody>
                     {products.length === 0 ? (
-                        <tr className="bg-white border-b hover:bg-gray-50">
+                        <tr className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
                             <td colSpan={isAdmin ? 9 : 8} className="py-12 px-6 text-center text-gray-400">
                                 No products found matching criteria
                             </td>
                         </tr>
                     ) : (
                         products.map((product) => (
-                            <tr key={product._id} className="bg-white border-b hover:bg-gray-50">
-                                <td className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">{product.name}</td>
+                            <tr key={product._id} className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
+                                <td className="py-4 px-6 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{product.name}</td>
                                 <td className="py-4 px-6">{product.category}</td>
                                 <td className="py-4 px-6">₹{product.price}</td>
                                 <td className="py-4 px-6 font-semibold">{product.quantity}</td>
@@ -95,23 +95,23 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                                     <td className="py-4 px-6 text-center relative">
                                         <button
                                             onClick={() => toggleDropdown(product._id)}
-                                            className="text-gray-500 hover:text-gray-700 focus:outline-none p-1 rounded-full hover:bg-gray-100"
+                                            className="text-gray-500 hover:text-gray-700 dark:text-gray-300 focus:outline-none p-1 rounded-full hover:bg-gray-100 dark:bg-gray-800"
                                         >
                                             <EllipsisVerticalIcon className="h-5 w-5" />
                                         </button>
 
                                         {openDropdownId === product._id && (
-                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                            <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-900 rounded-md shadow-lg z-10 border border-gray-200 dark:border-gray-700">
                                                 <div className="py-1">
                                                     <button
                                                         onClick={() => { setOpenDropdownId(null); onEdit(product); }}
-                                                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"
                                                     >
                                                         <PencilIcon className="h-4 w-4 mr-2" /> Edit
                                                     </button>
                                                     <button
                                                         onClick={() => { setOpenDropdownId(null); onAdjustStock(product); }}
-                                                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"
                                                     >
                                                         <ArchiveBoxArrowDownIcon className="h-4 w-4 mr-2" /> Adjust Stock
                                                     </button>

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import vendorOrderService from '../services/vendorOrderService';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const VendorOrders = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -70,7 +75,7 @@ const VendorOrders = () => {
         return (
             <div className="container mx-auto px-4 py-8 text-center">
                 <h2 className="text-2xl font-bold text-red-600">Access Denied</h2>
-                <p className="mt-2 text-gray-600">You do not have permission to view vendor orders.</p>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">You do not have permission to view vendor orders.</p>
             </div>
         );
     }
@@ -79,8 +84,8 @@ const VendorOrders = () => {
         <div className="container mx-auto px-4 sm:px-8">
             <div className="py-8">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-semibold leading-tight text-gray-800">
-                        Vendor Orders
+                    <h2 className="text-2xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+                        {t.vendorOrders || "Vendor Orders"}
                     </h2>
                     <button
                         onClick={fetchOrders}
@@ -103,26 +108,26 @@ const VendorOrders = () => {
                         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                     </div>
                 ) : (
-                    <div className="overflow-x-auto bg-white rounded-lg shadow">
+                    <div className="overflow-x-auto bg-white dark:bg-gray-900 rounded-lg shadow">
                         <table className="min-w-full leading-normal">
                             <thead>
                                 <tr>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Product
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                        {t.product || "Product"}
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Vendor
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                        {t.vendor || "Vendor"}
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Quantity
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
+                                        {t.quantity || "Quantity"}
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                                         Order Date
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                                         Status
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                                         Actions
                                     </th>
                                 </tr>
@@ -131,34 +136,34 @@ const VendorOrders = () => {
                                 {orders.length > 0 ? (
                                     orders.map((order) => (
                                         <tr key={order._id}>
-                                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                <p className="text-gray-900 whitespace-no-wrap font-medium">
+                                            <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
+                                                <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap font-medium">
                                                     {order.product?.name || 'Unknown Product'}
                                                 </p>
                                             </td>
-                                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
                                                 <div className="flex flex-col">
-                                                    <span className="text-gray-900 font-medium">{order.vendor?.name || 'Unknown Vendor'}</span>
+                                                    <span className="text-gray-900 dark:text-gray-100 font-medium">{order.vendor?.name || 'Unknown Vendor'}</span>
                                                     <span className="text-gray-500 text-xs">{order.vendor?.contactPerson}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center">
-                                                <p className="text-gray-900 whitespace-no-wrap font-bold">
+                                            <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-center">
+                                                <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap font-bold">
                                                     {order.quantity}
                                                 </p>
                                             </td>
-                                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                                <p className="text-gray-900 whitespace-no-wrap">
+                                            <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
+                                                <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap">
                                                     {new Date(order.orderDate).toLocaleDateString()}
                                                 </p>
                                             </td>
-                                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
                                                 {getStatusIcon(order.status)}
                                             </td>
-                                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
                                                 {order.status !== 'Delivered' && (
                                                     <select
-                                                        className="block w-full bg-gray-50 border border-gray-300 text-gray-700 py-1 px-2 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 text-sm"
+                                                        className="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 px-2 rounded leading-tight focus:outline-none focus:bg-white dark:bg-gray-900 focus:border-gray-500 text-sm"
                                                         value=""
                                                         onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
                                                     >
@@ -175,7 +180,7 @@ const VendorOrders = () => {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-center text-gray-500">
+                                        <td colSpan="6" className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm text-center text-gray-500">
                                             No vendor orders found.
                                         </td>
                                     </tr>

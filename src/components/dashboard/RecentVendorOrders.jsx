@@ -3,9 +3,9 @@ import { Package } from 'lucide-react';
 
 const RecentVendorOrders = ({ orders }) => {
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100/50 overflow-hidden h-full">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100/50 overflow-hidden h-full">
             <div className="p-5 border-b border-gray-50 flex justify-between items-center">
-                <h3 className="font-semibold text-gray-900">Recent Vendor Orders</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Recent Vendor Orders</h3>
             </div>
             <div className="p-4">
                 {!orders || orders.length === 0 ? (
@@ -27,7 +27,7 @@ const RecentVendorOrders = ({ orders }) => {
                                         <Package size={18} />
                                     </div>
                                     <div className="ml-4">
-                                        <p className="text-sm font-medium text-gray-900">
+                                        <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                                             {order.product?.name || 'Unknown Product'}
                                         </p>
                                         <div className="flex items-center mt-1">

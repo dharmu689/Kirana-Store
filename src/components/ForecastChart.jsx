@@ -13,7 +13,7 @@ import {
 const ForecastChart = ({ data, loading }) => {
     if (loading) {
         return (
-            <div className="w-full h-72 md:h-96 bg-white rounded-xl shadow-lg p-4 flex items-center justify-center border border-gray-100">
+            <div className="w-full h-72 md:h-96 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 flex items-center justify-center border border-gray-100">
                 <div className="flex flex-col items-center">
                     <svg className="animate-spin h-10 w-10 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -27,7 +27,7 @@ const ForecastChart = ({ data, loading }) => {
 
     if (!data || data.length === 0) {
         return (
-            <div className="w-full h-72 md:h-96 bg-white rounded-xl shadow-lg p-4 flex items-center justify-center border border-gray-100">
+            <div className="w-full h-72 md:h-96 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 flex items-center justify-center border border-gray-100">
                 <p className="text-gray-500 font-medium">No trend data available for this product.</p>
             </div>
         );
@@ -37,8 +37,8 @@ const ForecastChart = ({ data, loading }) => {
     const CustomTooltip = ({ active, payload, label }) => {
         if (active && payload && payload.length) {
             return (
-                <div className="bg-white p-3 border border-gray-100 shadow-md rounded-lg">
-                    <p className="text-sm font-semibold text-gray-700 mb-2">{label}</p>
+                <div className="bg-white dark:bg-gray-900 p-3 border border-gray-100 shadow-md rounded-lg">
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{label}</p>
                     {payload.map((entry, index) => (
                         <p key={index} className="text-sm flex items-center my-1" style={{ color: entry.color }}>
                             <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: entry.color }}></span>
@@ -52,7 +52,7 @@ const ForecastChart = ({ data, loading }) => {
     };
 
     return (
-        <div className="w-full h-72 md:h-96 bg-white rounded-xl shadow-lg p-4 pt-6 border border-gray-100 transition-all hover:shadow-xl">
+        <div className="w-full h-72 md:h-96 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 pt-6 border border-gray-100 transition-all hover:shadow-xl">
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                     data={data}

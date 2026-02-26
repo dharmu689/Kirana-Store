@@ -16,12 +16,17 @@ import {
     ResponsiveContainer
 } from 'recharts';
 import { Calendar, Download, FileText, TrendingUp, DollarSign, ShoppingCart, Award, Package, AlertTriangle, CheckCircle, BarChart2, Wallet, CreditCard, PieChart as PieChartIcon, Users, Truck, Activity, TrendingDown, Target } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const COLORS = ['#10b981', '#ef4444', '#9ca3af']; // Green (Upward), Red (Downward), Gray (Stable)
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Reports = () => {
+    const { language } = useLanguage();
+    const t = translations[language];
+
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [reportData, setReportData] = useState(null);
@@ -230,13 +235,13 @@ const Reports = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Sales Reports</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.reports || "Sales Reports"}</h1>
 
                 {/* Export Buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <button
                         onClick={handleExportCSV}
-                        className="flex items-center justify-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors w-full sm:w-auto shadow-sm"
+                        className="flex items-center justify-center gap-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:bg-gray-800 transition-colors w-full sm:w-auto shadow-sm"
                     >
                         <FileText size={18} />
                         Export CSV
@@ -252,28 +257,28 @@ const Reports = () => {
             </div>
 
             {/* Filter Panel */}
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                     <Calendar size={20} className="text-indigo-500" />
                     Filter Report
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-4 items-end">
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date</label>
                         <input
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">End Date</label>
                         <input
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto">
@@ -293,47 +298,47 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-green-100 text-green-600 rounded-lg">
                                 <DollarSign size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{reportData.totalRevenue?.toLocaleString()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
                                 <ShoppingCart size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Orders</p>
-                                <p className="text-2xl font-bold text-gray-800">{reportData.totalOrders || 0}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{reportData.totalOrders || 0}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-amber-100 text-amber-600 rounded-lg">
                                 <Award size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Top Selling Product</p>
-                                <p className="text-lg font-bold text-gray-800 line-clamp-1 truncate" title={reportData.topSellingProduct}>
+                                <p className="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-1 truncate" title={reportData.topSellingProduct}>
                                     {reportData.topSellingProduct}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
                                 <TrendingUp size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Sales Growth %</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {reportData.salesGrowthPercentage}%
                                 </p>
                             </div>
@@ -341,8 +346,8 @@ const Reports = () => {
                     </div>
 
                     {/* Sales Trend Chart */}
-                    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <TrendingUp size={20} className="text-indigo-500" />
                             Sales Trend
                         </h2>
@@ -379,17 +384,17 @@ const Reports = () => {
                     </div>
 
                     {/* Product-wise Sales Table */}
-                    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
                         <div className="p-4 sm:p-6 border-b border-gray-100">
-                            <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <ShoppingCart size={20} className="text-indigo-500" />
                                 Product-wise Sales
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse">
+                            <table className="min-w-full w-full text-left border-collapse">
                                 <thead>
-                                    <tr className="bg-gray-50 text-gray-600 text-sm">
+                                    <tr className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm">
                                         <th className="py-4 px-6 font-medium">Product Name</th>
                                         {/* Hide Quantity on very small screens, though it can usually fit. Following request closely: hid minor columns on mobile */}
                                         <th className="py-4 px-6 font-medium hidden md:table-cell">Quantity Sold</th>
@@ -398,15 +403,15 @@ const Reports = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {reportData.productWiseSales?.map((product, index) => (
-                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                            <td className="py-4 px-6 text-gray-800 font-medium">
+                                        <tr key={index} className="hover:bg-gray-50 dark:bg-gray-800 transition-colors">
+                                            <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium">
                                                 {product.productName}
                                                 {/* Show quantity on mobile right under product name since it's hidden from table column */}
                                                 <div className="md:hidden text-xs text-gray-500 mt-1">
                                                     Qty: {product.totalQuantitySold}
                                                 </div>
                                             </td>
-                                            <td className="py-4 px-6 text-gray-600 hidden md:table-cell">
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-400 hidden md:table-cell">
                                                 {product.totalQuantitySold}
                                             </td>
                                             <td className="py-4 px-6 text-indigo-600 font-medium whitespace-nowrap">
@@ -429,8 +434,8 @@ const Reports = () => {
             )}
 
             {/* INVENTORY REPORT SECTION */}
-            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Inventory Health Reports</h1>
+            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Inventory Health Reports</h1>
             </div>
 
             {inventoryError && (
@@ -443,52 +448,52 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
                                 <Package size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Products</p>
-                                <p className="text-2xl font-bold text-gray-800">{inventoryData.totalProducts}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{inventoryData.totalProducts}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg">
                                 <DollarSign size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Stock Value</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{inventoryData.totalStockValue?.toLocaleString()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-red-100 text-red-600 rounded-lg">
                                 <AlertTriangle size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Low Stock Items</p>
-                                <p className="text-2xl font-bold text-gray-800">{inventoryData.lowStockCount}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{inventoryData.lowStockCount}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-green-100 text-green-600 rounded-lg">
                                 <CheckCircle size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Safe Stock Items</p>
-                                <p className="text-2xl font-bold text-gray-800">{inventoryData.safeStockCount}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{inventoryData.safeStockCount}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Inventory Health Summary Bar */}
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <BarChart2 size={20} className="text-indigo-500" />
                             Inventory Health Summary
                         </h2>
@@ -526,16 +531,16 @@ const Reports = () => {
                     </div>
 
                     {/* Inventory Table with Filter */}
-                    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
                         <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <Package size={20} className="text-indigo-500" />
                                 Inventory Status Details
                             </h2>
                             <div className="w-full sm:w-auto flex items-center gap-2">
-                                <label className="text-sm font-medium text-gray-600 whitespace-nowrap">Filter Status:</label>
+                                <label className="text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">Filter Status:</label>
                                 <select
-                                    className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none w-full sm:w-auto bg-white"
+                                    className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-indigo-500 outline-none w-full sm:w-auto bg-white dark:bg-gray-900"
                                     value={inventoryFilter}
                                     onChange={(e) => setInventoryFilter(e.target.value)}
                                 >
@@ -547,9 +552,9 @@ const Reports = () => {
                             </div>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-[600px]">
+                            <table className="min-w-full w-full text-left border-collapse min-w-[600px]">
                                 <thead>
-                                    <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                    <tr className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm border-b border-gray-100">
                                         <th className="py-4 px-6 font-medium">Product Name</th>
                                         <th className="py-4 px-6 font-medium hidden sm:table-cell">Category</th>
                                         <th className="py-4 px-6 font-medium">Current Stock</th>
@@ -561,20 +566,20 @@ const Reports = () => {
                                     {inventoryData.productInventory
                                         ?.filter(item => inventoryFilter === 'All' || item.status === inventoryFilter)
                                         .map((item, index) => (
-                                            <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                                <td className="py-4 px-6 text-gray-800 font-medium whitespace-nowrap">
+                                            <tr key={index} className="hover:bg-gray-50 dark:bg-gray-800 transition-colors">
+                                                <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium whitespace-nowrap">
                                                     {item.productName}
                                                     <div className="sm:hidden text-xs text-gray-500 mt-1">
                                                         {item.category}
                                                     </div>
                                                 </td>
-                                                <td className="py-4 px-6 text-gray-600 hidden sm:table-cell whitespace-nowrap">
+                                                <td className="py-4 px-6 text-gray-600 dark:text-gray-400 hidden sm:table-cell whitespace-nowrap">
                                                     {item.category}
                                                 </td>
-                                                <td className="py-4 px-6 text-gray-800 font-medium">
+                                                <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium">
                                                     {item.currentStock}
                                                 </td>
-                                                <td className="py-4 px-6 text-gray-800 font-medium whitespace-nowrap">
+                                                <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium whitespace-nowrap">
                                                     ₹{item.stockValue.toLocaleString()}
                                                 </td>
                                                 <td className="py-3 px-6 text-center">
@@ -603,33 +608,33 @@ const Reports = () => {
             )}
 
             {/* FINANCIAL REPORT SECTION */}
-            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Financial Reports</h1>
+            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Financial Reports</h1>
             </div>
 
             {/* Financial Filter Panel */}
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                     <Calendar size={20} className="text-green-500" />
                     Filter Financial Data
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-4 items-end">
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date</label>
                         <input
                             type="date"
                             value={financialStartDate}
                             onChange={(e) => setFinancialStartDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">End Date</label>
                         <input
                             type="date"
                             value={financialEndDate}
                             onChange={(e) => setFinancialEndDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto">
@@ -649,31 +654,31 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
                                 <Wallet size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{financialData.totalRevenue?.toLocaleString()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-red-100 text-red-600 rounded-lg">
                                 <CreditCard size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Purchase Cost</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     ₹{financialData.totalPurchaseCost?.toLocaleString()}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className={`p-3 rounded-lg ${financialData.totalProfit >= 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                                 <DollarSign size={24} />
                             </div>
@@ -685,7 +690,7 @@ const Reports = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className={`p-3 rounded-lg ${financialData.profitMargin >= 0 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                                 <PieChartIcon size={24} />
                             </div>
@@ -699,8 +704,8 @@ const Reports = () => {
                     </div>
 
                     {/* Financial Trend Chart */}
-                    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <BarChart2 size={20} className="text-green-500" />
                             Monthly Financial Trend
                         </h2>
@@ -723,17 +728,17 @@ const Reports = () => {
                     </div>
 
                     {/* Financial Summary Table */}
-                    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
                         <div className="p-4 sm:p-6 border-b border-gray-100">
-                            <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <FileText size={20} className="text-green-500" />
                                 Financial Summary
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-[600px]">
+                            <table className="min-w-full w-full text-left border-collapse min-w-[600px]">
                                 <thead>
-                                    <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                    <tr className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm border-b border-gray-100">
                                         <th className="py-4 px-6 font-medium">Month</th>
                                         <th className="py-4 px-6 font-medium">Revenue</th>
                                         <th className="py-4 px-6 font-medium">Purchase Cost</th>
@@ -742,8 +747,8 @@ const Reports = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {financialData.monthlyFinancials?.map((item, index) => (
-                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                            <td className="py-4 px-6 text-gray-800 font-medium">
+                                        <tr key={index} className="hover:bg-gray-50 dark:bg-gray-800 transition-colors">
+                                            <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium">
                                                 {item.month}
                                             </td>
                                             <td className="py-4 px-6 text-blue-600 font-medium">
@@ -772,33 +777,33 @@ const Reports = () => {
             )}
 
             {/* VENDOR REPORT SECTION */}
-            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Vendor Reports</h1>
+            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Vendor Reports</h1>
             </div>
 
             {/* Vendor Filter Panel */}
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                     <Calendar size={20} className="text-purple-500" />
                     Filter Vendor Data
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-4 items-end">
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date</label>
                         <input
                             type="date"
                             value={vendorStartDate}
                             onChange={(e) => setVendorStartDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">End Date</label>
                         <input
                             type="date"
                             value={vendorEndDate}
                             onChange={(e) => setVendorEndDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto">
@@ -818,47 +823,47 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-purple-100 text-purple-600 rounded-lg">
                                 <Users size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Vendors</p>
-                                <p className="text-2xl font-bold text-gray-800">{vendorData.totalVendors}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{vendorData.totalVendors}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
                                 <Award size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Best Vendor</p>
-                                <p className="text-lg font-bold text-gray-800 line-clamp-1 truncate" title={vendorData.bestVendor}>
+                                <p className="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-1 truncate" title={vendorData.bestVendor}>
                                     {vendorData.bestVendor}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
                                 <Wallet size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Top Spender</p>
-                                <p className="text-lg font-bold text-gray-800 line-clamp-1 truncate" title={vendorData.highestSpendingVendor}>
+                                <p className="text-lg font-bold text-gray-800 dark:text-gray-200 line-clamp-1 truncate" title={vendorData.highestSpendingVendor}>
                                     {vendorData.highestSpendingVendor}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-yellow-100 text-yellow-600 rounded-lg">
                                 <BarChart2 size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Avg Performance</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {vendorData.vendorSummary.length > 0
                                         ? (vendorData.vendorSummary.reduce((acc, curr) => acc + curr.performanceScore, 0) / vendorData.vendorSummary.length).toFixed(1)
                                         : 0}%
@@ -868,8 +873,8 @@ const Reports = () => {
                     </div>
 
                     {/* Vendor Performance Chart */}
-                    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                             <BarChart2 size={20} className="text-purple-500" />
                             Vendor Spend vs Performance
                         </h2>
@@ -892,17 +897,17 @@ const Reports = () => {
                     </div>
 
                     {/* Vendor Summary Table */}
-                    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
                         <div className="p-4 sm:p-6 border-b border-gray-100">
-                            <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <Truck size={20} className="text-purple-500" />
                                 Vendor Summary
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-[600px]">
+                            <table className="min-w-full w-full text-left border-collapse min-w-[600px]">
                                 <thead>
-                                    <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                    <tr className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm border-b border-gray-100">
                                         <th className="py-4 px-6 font-medium">Vendor Name</th>
                                         <th className="py-4 px-6 font-medium">Orders</th>
                                         <th className="py-4 px-6 font-medium">Quantity</th>
@@ -913,20 +918,20 @@ const Reports = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {vendorData.vendorSummary?.map((item, index) => (
-                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                            <td className="py-4 px-6 text-gray-800 font-medium">
+                                        <tr key={index} className="hover:bg-gray-50 dark:bg-gray-800 transition-colors">
+                                            <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium">
                                                 {item.vendorName}
                                             </td>
-                                            <td className="py-4 px-6 text-gray-600">
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-400">
                                                 {item.totalOrders}
                                             </td>
-                                            <td className="py-4 px-6 text-gray-600">
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-400">
                                                 {item.totalQuantityOrdered}
                                             </td>
                                             <td className="py-4 px-6 text-purple-600 font-medium">
                                                 ₹{item.totalAmountSpent?.toLocaleString()}
                                             </td>
-                                            <td className="py-4 px-6 text-gray-600 hidden sm:table-cell">
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-400 hidden sm:table-cell">
                                                 {item.averageDeliveryDays}
                                             </td>
                                             <td className="py-3 px-6 text-center">
@@ -955,33 +960,33 @@ const Reports = () => {
             )}
 
             {/* FORECAST REPORT SECTION */}
-            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Forecast & Demand Reports</h1>
+            <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">Forecast & Demand Reports</h1>
             </div>
 
             {/* Forecast Filter Panel */}
-            <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+            <div className="bg-white dark:bg-gray-900 p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 mb-8">
+                <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                     <Calendar size={20} className="text-orange-500" />
                     Filter Forecast Snapshots
                 </h2>
                 <div className="flex flex-col sm:flex-row gap-4 items-end">
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">Start Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date</label>
                         <input
                             type="date"
                             value={forecastStartDate}
                             onChange={(e) => setForecastStartDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto flex-1">
-                        <label className="block text-sm font-medium text-gray-600 mb-1">End Date</label>
+                        <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">End Date</label>
                         <input
                             type="date"
                             value={forecastEndDate}
                             onChange={(e) => setForecastEndDate(e.target.value)}
-                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
                         />
                     </div>
                     <div className="w-full sm:w-auto">
@@ -1001,47 +1006,47 @@ const Reports = () => {
                 <>
                     {/* KPI Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-blue-100 text-blue-600 rounded-lg">
                                 <Activity size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Total Predicted Demand</p>
-                                <p className="text-2xl font-bold text-gray-800">{forecastData.totalForecastedDemand?.toLocaleString()}</p>
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">{forecastData.totalForecastedDemand?.toLocaleString()}</p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-green-100 text-green-600 rounded-lg">
                                 <Target size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Average Accuracy %</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {forecastData.averageForecastAccuracy}%
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
                             <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg">
                                 <TrendingUp size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Upward Trend Products</p>
-                                <p className="text-2xl font-bold text-gray-800">
+                                <p className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                                     {forecastData.upwardTrendCount}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
-                            <div className={`p-3 rounded-lg ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600'}`}>
+                        <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 flex items-center gap-4">
+                            <div className={`p-3 rounded-lg ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'bg-red-100 text-red-600' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'}`}>
                                 <AlertTriangle size={24} />
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500 font-medium">Stock Risk Items</p>
-                                <p className={`text-2xl font-bold ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'text-red-600' : 'text-gray-800'}`}>
+                                <p className={`text-2xl font-bold ${forecastData.forecastSummary.some(f => f.riskStatus === 'Stock Risk') ? 'text-red-600' : 'text-gray-800 dark:text-gray-200'}`}>
                                     {forecastData.forecastSummary.filter(f => f.riskStatus === 'Stock Risk').length}
                                 </p>
                             </div>
@@ -1051,8 +1056,8 @@ const Reports = () => {
                     {/* Forecast Charts Row */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                         {/* Accuracy Chart */}
-                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 lg:col-span-2">
-                            <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 lg:col-span-2">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
                                 <Target size={20} className="text-orange-500" />
                                 Model Accuracy per Product
                             </h2>
@@ -1073,8 +1078,8 @@ const Reports = () => {
                         </div>
 
                         {/* Trend Pie Chart */}
-                        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 text-center">
-                            <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center justify-center gap-2">
+                        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100 text-center">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4 flex items-center justify-center gap-2">
                                 <PieChartIcon size={20} className="text-orange-500" />
                                 Demand Trend Distribution
                             </h2>
@@ -1116,17 +1121,17 @@ const Reports = () => {
                     </div>
 
                     {/* Forecast Summary Table */}
-                    <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
+                    <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-100 overflow-hidden mb-8">
                         <div className="p-4 sm:p-6 border-b border-gray-100">
-                            <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                            <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                 <FileText size={20} className="text-orange-500" />
                                 Forecast Breakdown
                             </h2>
                         </div>
                         <div className="overflow-x-auto">
-                            <table className="w-full text-left border-collapse min-w-[800px]">
+                            <table className="min-w-full w-full text-left border-collapse min-w-[800px]">
                                 <thead>
-                                    <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-100">
+                                    <tr className="bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm border-b border-gray-100">
                                         <th className="py-4 px-6 font-medium">Product Name</th>
                                         <th className="py-4 px-6 font-medium">Predicted Demand</th>
                                         <th className="py-4 px-6 font-medium">Suggested Reorder</th>
@@ -1138,17 +1143,17 @@ const Reports = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {forecastData.forecastSummary?.map((item, index) => (
-                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                            <td className="py-4 px-6 text-gray-800 font-medium whitespace-nowrap">
+                                        <tr key={index} className="hover:bg-gray-50 dark:bg-gray-800 transition-colors">
+                                            <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-medium whitespace-nowrap">
                                                 {item.productName}
                                             </td>
-                                            <td className="py-4 px-6 text-gray-800 font-bold">
+                                            <td className="py-4 px-6 text-gray-800 dark:text-gray-200 font-bold">
                                                 {item.predictedMonthlyDemand}
                                             </td>
                                             <td className="py-4 px-6 text-indigo-600 font-semibold">
                                                 {item.suggestedReorder}
                                             </td>
-                                            <td className="py-4 px-6 text-gray-600">
+                                            <td className="py-4 px-6 text-gray-600 dark:text-gray-400">
                                                 {item.accuracyPercentage !== null ? `${item.accuracyPercentage}%` : 'N/A'}
                                             </td>
                                             <td className="py-4 px-6">
@@ -1157,8 +1162,8 @@ const Reports = () => {
                                                     {item.trendType === 'Downward' && <TrendingDown size={16} className="text-red-500" />}
                                                     {item.trendType === 'Stable' && <div className="w-4 h-1 bg-gray-400 rounded-full" />}
                                                     <span className={`text-sm ${item.trendType === 'Upward' ? 'text-green-600' :
-                                                            item.trendType === 'Downward' ? 'text-red-600' :
-                                                                'text-gray-500'
+                                                        item.trendType === 'Downward' ? 'text-red-600' :
+                                                            'text-gray-500'
                                                         }`}>
                                                         {item.trendType}
                                                     </span>
@@ -1169,7 +1174,7 @@ const Reports = () => {
                                             </td>
                                             <td className="py-3 px-6 text-center">
                                                 <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full min-w-[80px] text-center
-                                                    ${item.riskStatus === 'Stock Risk' ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-gray-100 text-gray-600'}`}
+                                                    ${item.riskStatus === 'Stock Risk' ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'}`}
                                                 >
                                                     {item.riskStatus}
                                                 </span>

@@ -99,10 +99,10 @@ const RevenueChart = ({ data }) => {
     };
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100/50 p-6 h-96">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-100/50 p-6 h-96">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h3 className="text-lg font-bold text-gray-800">Revenue Overview</h3>
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Revenue Overview</h3>
                     <p className="text-sm text-gray-500">Monthly sales performance</p>
                 </div>
             </div>
