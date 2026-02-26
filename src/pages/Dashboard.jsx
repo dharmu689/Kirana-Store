@@ -2,16 +2,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import KPICards from '../components/dashboard/KPICards';
 import dashboardService from '../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
-import { SalesTrendChart, ForecastAccuracyChart, InventoryHealthChart, VendorPerformanceChart } from '../components/dashboard/BICharts';
-import { SmartInsightsPanel, RiskAlertPanel } from '../components/dashboard/InsightsTracking';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { ArrowRight, Activity, TrendingUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
 
 const Dashboard = () => {
-    const [analyticsData, setAnalyticsData] = useState(null);
-    const [salesTrend, setSalesTrend] = useState([]);
-    const [inventoryHealth, setInventoryHealth] = useState([]);
+    const [summaryData, setSummaryData] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { language } = useLanguage();
@@ -20,17 +17,10 @@ const Dashboard = () => {
     const fetchAllData = useCallback(async () => {
         try {
             setLoading(true);
-            const [analytics, trend, health] = await Promise.all([
-                dashboardService.getAnalytics(),
-                dashboardService.getSalesTrend(),
-                dashboardService.getInventoryHealth()
-            ]);
-
-            setAnalyticsData(analytics);
-            setSalesTrend(trend);
-            setInventoryHealth(health);
+            const data = await dashboardService.getSummary();
+            setSummaryData(data);
         } catch (error) {
-            console.error("Failed to fetch Final BI components", error);
+            console.error("Failed to fetch dashboard summary", error);
         } finally {
             setLoading(false);
         }
@@ -51,8 +41,8 @@ const Dashboard = () => {
         return (
             <div className="flex flex-col justify-center items-center h-screen bg-gray-50 dark:bg-gray-800/50 dark:bg-gray-900">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600 mb-4"></div>
-                <h2 className="text-xl font-bold text-gray-700 dark:text-gray-300">Loading Business Intelligence Suite...</h2>
-                <p className="text-sm text-gray-500 mt-2">Aggregating Global APIs</p>
+                <h2 className="text-xl font-bold text-gray-700 dark:text-gray-300">Loading Dashboard...</h2>
+                <p className="text-sm text-gray-500 mt-2">Aggregating Summary Data</p>
             </div>
         );
     }
@@ -64,9 +54,9 @@ const Dashboard = () => {
                 <div>
                     <h1 className="text-2xl font-black text-gray-900 dark:text-white flex items-center">
                         <Activity className="w-6 h-6 mr-3 text-indigo-600 dark:text-indigo-400" />
-                        {t.dashboard}
+                        {t.dashboard || "Dashboard"}
                     </h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Phase 10: Complete System Overview & Real-time Logistics</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Complete System Overview</p>
                 </div>
                 <div className="mt-4 sm:mt-0 flex space-x-3">
                     <button
@@ -79,35 +69,26 @@ const Dashboard = () => {
                         onClick={() => navigate('/products')}
                         className="px-4 py-2 bg-indigo-600 text-white font-bold rounded-lg text-sm shadow-md hover:bg-indigo-700 transition-colors flex items-center"
                     >
-                        {t.products} <ArrowRight className="w-4 h-4 ml-2" />
+                        {t.products || "Products"} <ArrowRight className="w-4 h-4 ml-2" />
                     </button>
                 </div>
             </div>
 
-            {/* KPI Cards section (Phase 10 Grid) */}
-            <KPICards data={analyticsData} />
+            {/* Row 1 - KPI Cards */}
+            <KPICards data={summaryData} />
 
-            {/* Middle BI Row: Primary Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <SalesTrendChart data={salesTrend} />
-                <InventoryHealthChart data={inventoryHealth} />
-            </div>
-
-            {/* Bottom BI Row: Intelligence and Risk Alerts */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* 1 col */}
-                <div className="lg:col-span-1">
-                    <RiskAlertPanel lowStockItems={analyticsData?.lowStockItems} />
-                    <div className="mt-6">
-                        <ForecastAccuracyChart data={analyticsData?.averageForecastAccuracy} />
-                    </div>
-                </div>
-
-                {/* 2 cols */}
-                <div className="lg:col-span-2 space-y-6">
-                    <VendorPerformanceChart />
-                    <SmartInsightsPanel data={analyticsData} />
-                </div>
+            {/* Row 2 - Sales Trend Chart */}
+            <div className="w-full h-80 bg-white dark:bg-gray-900 p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50">
+                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Sales Trend (30 Days)</h3>
+                <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={summaryData?.salesTrend || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+                        <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#6B7280' }} tickFormatter={(str) => str?.slice(5) || ''} />
+                        <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
+                        <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+                        <Line type="monotone" dataKey="sales" stroke="#4F46E5" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+                    </LineChart>
+                </ResponsiveContainer>
             </div>
         </div>
     );

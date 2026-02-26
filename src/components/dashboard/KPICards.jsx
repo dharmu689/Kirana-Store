@@ -1,4 +1,4 @@
-import { Package, TrendingUp, ShoppingCart, AlertTriangle, Truck, CheckCircle, Star, DollarSign, Clock } from 'lucide-react';
+import { Package, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const KPICards = ({ data }) => {
@@ -6,61 +6,36 @@ const KPICards = ({ data }) => {
 
     const displayData = [
         {
-            title: 'Total Revenue',
-            value: data ? `₹${data.totalRevenue?.toLocaleString()}` : '...',
-            subtext: 'Asset Value',
+            title: 'Today Revenue',
+            value: data ? `₹${data.todayRevenue?.toLocaleString()}` : '...',
+            subtext: 'Daily earnings',
             icon: DollarSign,
             color: 'bg-green-100 text-green-600',
             path: '/sales'
         },
         {
-            title: 'Forecast Accuracy',
-            value: data ? `${data.averageForecastAccuracy}%` : '...',
-            subtext: 'AI Confidence',
+            title: 'Monthly Revenue',
+            value: data ? `₹${data.monthlyRevenue?.toLocaleString()}` : '...',
+            subtext: 'Monthly earnings',
             icon: TrendingUp,
             color: 'bg-blue-100 text-blue-600',
-            path: '/forecasting'
-        },
-        {
-            title: 'High Risk Products',
-            value: data ? data.highRiskProductsCount : '...',
-            subtext: 'Critical Attention',
-            icon: AlertTriangle,
-            color: 'bg-red-100 text-red-600',
-            path: '/reorder'
-        },
-
-        {
-            title: 'Low Stock Items',
-            value: data ? data.lowStockItemsCount : '...',
-            subtext: 'Needs Review',
-            icon: ShoppingCart,
-            color: 'bg-orange-100 text-orange-600',
-            path: '/products'
-        },
-        {
-            title: 'Total Sales (30d)',
-            value: data ? data.totalSales30d : '...',
-            subtext: 'Monthly Volume',
-            icon: Package,
-            color: 'bg-cyan-100 text-cyan-600',
             path: '/sales'
         },
         {
-            title: 'Best Vendor',
-            value: data ? data.bestPerformingVendor : '...',
-            subtext: 'Cost-Effective',
-            icon: Star,
+            title: 'Total Orders',
+            value: data !== null ? data.totalOrders : '...',
+            subtext: 'Total orders placed',
+            icon: Package,
             color: 'bg-indigo-100 text-indigo-600',
-            path: '/vendors'
+            path: '/sales'
         },
         {
-            title: 'System Health',
-            value: data && data.inventoryHealth && data.inventoryHealth[0] ? `${data.inventoryHealth[0].value}%` : '...',
-            subtext: 'Safe Stock Ratio',
-            icon: CheckCircle,
-            color: 'bg-emerald-100 text-emerald-600',
-            path: '/reports'
+            title: 'Low Stock',
+            value: data !== null ? data.lowStockCount : '...',
+            subtext: 'Requires reorder',
+            icon: AlertTriangle,
+            color: 'bg-red-100 text-red-600',
+            path: '/reorder'
         }
     ];
 
@@ -72,7 +47,7 @@ const KPICards = ({ data }) => {
                     <div
                         key={index}
                         onClick={() => item.path && navigate(item.path)}
-                        className={`bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100/50 hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1`}
+                        className={`bg-white dark:bg-gray-900 rounded-xl p-6 shadow-sm border border-gray-100/50 dark:border-gray-700/50 hover:shadow-md transition-all duration-300 cursor-pointer transform hover:-translate-y-1`}
                     >
                         <div className="flex justify-between items-start">
                             <div>
