@@ -2,11 +2,12 @@ import { Bell, Search, Menu, Moon, Sun, Globe, CheckCircle } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLanguage } from '../../context/LanguageContext';
+import { translations } from '../../utils/translations';
 import API from '../../utils/api';
 
 const Navbar = ({ user, onMenuClick }) => {
     const { theme, toggleTheme } = useTheme();
-    const { language, toggleLanguage, t } = useLanguage();
+    const { language, setLanguage } = useLanguage();
 
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -71,7 +72,7 @@ const Navbar = ({ user, onMenuClick }) => {
                     <input
                         type="text"
                         className="block w-full pl-10 pr-3 py-2 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-gray-700 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-900 focus:border-blue-400 sm:text-sm transition-all duration-200"
-                        placeholder={t('search')}
+                        placeholder={translations[language]?.search || 'Search'}
                     />
                 </div>
             </div>
@@ -80,19 +81,20 @@ const Navbar = ({ user, onMenuClick }) => {
             <div className="flex items-center space-x-4">
 
                 {/* Language Toggle */}
-                <button
-                    onClick={toggleLanguage}
-                    className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value)}
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg px-2 py-1.5 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors cursor-pointer"
                 >
-                    <Globe size={16} />
-                    <span>{language === 'English' ? 'EN' : 'HI'}</span>
-                </button>
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                </select>
 
                 {/* Dark Mode Toggle */}
                 <button
                     onClick={toggleTheme}
                     className="p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                    title={theme === 'light' ? t('dark_mode') : t('light_mode')}
+                    title={theme === 'light' ? (translations[language]?.darkMode || 'Dark Mode') : (translations[language]?.lightMode || 'Light Mode')}
                 >
                     {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
                 </button>
@@ -115,7 +117,7 @@ const Navbar = ({ user, onMenuClick }) => {
                     {showNotifications && (
                         <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
                             <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-                                <h3 className="font-semibold text-gray-900 dark:text-white">{t('notifications')}</h3>
+                                <h3 className="font-semibold text-gray-900 dark:text-white">{translations[language]?.notifications || 'Notifications'}</h3>
                                 {unreadCount > 0 && (
                                     <span className="text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 px-2 py-0.5 rounded-full">
                                         {unreadCount} new
@@ -163,10 +165,10 @@ const Navbar = ({ user, onMenuClick }) => {
                 <div className="h-8 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
                 <div className="flex flex-col items-end">
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {user ? `${t('welcome')}, ${user.name}` : `${t('welcome')}, ${t('guest')}`}
+                        {user ? `${translations[language]?.welcome || 'Welcome'}, ${user.name}` : `${translations[language]?.welcome || 'Welcome'}, ${translations[language]?.guest || 'Guest'}`}
                     </span>
                     <span className="text-xs text-[var(--color-brand-blue)] dark:text-blue-300 font-bold bg-blue-50/80 dark:bg-[var(--color-brand-blue)]/20 px-2.5 py-0.5 rounded-full uppercase tracking-wide border border-blue-100 dark:border-[var(--color-brand-blue)]/30">
-                        {user ? user.role : t('offline')}
+                        {user ? user.role : (translations[language]?.offline || 'Offline')}
                     </span>
                 </div>
             </div>

@@ -1,38 +1,42 @@
 import { Package, TrendingUp, DollarSign, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import { translations } from '../../utils/translations';
 
 const KPICards = ({ data }) => {
     const navigate = useNavigate();
+    const { language } = useLanguage();
+    const t = translations[language];
 
     const displayData = [
         {
-            title: 'Today Revenue',
+            title: t?.todayRevenue || 'Today Revenue',
             value: data ? `₹${data.todayRevenue?.toLocaleString()}` : '...',
-            subtext: 'Daily earnings',
+            subtext: t?.dailyEarnings || 'Daily earnings',
             icon: DollarSign,
             color: 'bg-green-100 text-[var(--color-brand-green)] dark:bg-[var(--color-brand-green)]/20',
             path: '/sales'
         },
         {
-            title: 'Monthly Revenue',
+            title: t?.monthlyRevenue || 'Monthly Revenue',
             value: data ? `₹${data.monthlyRevenue?.toLocaleString()}` : '...',
-            subtext: 'Monthly earnings',
+            subtext: t?.monthlyEarnings || 'Monthly earnings',
             icon: TrendingUp,
             color: 'bg-blue-100 text-[var(--color-brand-blue)] dark:bg-[var(--color-brand-blue)]/20',
             path: '/sales'
         },
         {
-            title: 'Total Orders',
+            title: t?.totalOrders || 'Total Orders',
             value: data !== null ? data.totalOrders : '...',
-            subtext: 'Total orders placed',
+            subtext: t?.totalOrdersPlaced || 'Total orders placed',
             icon: Package,
             color: 'bg-blue-50 text-[var(--color-brand-blue-hover)] dark:bg-[var(--color-brand-blue-hover)]/20',
             path: '/sales'
         },
         {
-            title: 'Low Stock',
+            title: t?.lowStock || 'Low Stock',
             value: data !== null ? data.lowStockCount : '...',
-            subtext: 'Requires reorder',
+            subtext: t?.requiresReorder || 'Requires reorder',
             icon: AlertTriangle,
             color: 'bg-orange-100 text-[var(--color-brand-orange)] dark:bg-[var(--color-brand-orange)]/20',
             path: '/reorder'

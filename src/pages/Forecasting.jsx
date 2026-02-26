@@ -162,7 +162,7 @@ const Forecasting = () => {
         <div className="container mx-auto px-4 py-8">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.demandForecast || "Demand Forecasting"}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800 dark:text-gray-200">{t?.demandForecast || "Demand Forecasting"}</h1>
                 <div className="flex flex-col sm:flex-row w-full md:w-auto gap-3 items-center">
                     <select
                         value={algorithm}

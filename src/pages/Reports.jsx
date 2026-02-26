@@ -211,7 +211,7 @@ const Reports = () => {
     return (
         <div className="p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.reports || "Sales Reports"}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t?.reports || "Sales Reports"}</h1>
 
                 {/* Export Buttons */}
                 <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -411,7 +411,7 @@ const Reports = () => {
 
             {/* INVENTORY REPORT SECTION */}
             <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.inventoryReports || "Inventory Operations"}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t?.inventoryReports || "Inventory Operations"}</h1>
             </div>
 
             {inventoryError && (
@@ -585,7 +585,7 @@ const Reports = () => {
 
             {/* FINANCIAL REPORT SECTION */}
             <div className="mt-12 mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-t border-gray-200 dark:border-gray-700 pt-8">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.financialReports || "Financial Overview"}</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t?.financialReports || "Financial Overview"}</h1>
             </div>
 
             {/* Financial Filter Panel */}

@@ -85,16 +85,16 @@ const Sales = () => {
 
     return (
         <div className="p-6">
-            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{t.sales || "Sales Management"}</h1>
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">{t?.sales || "Sales Management"}</h1>
 
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-green)] border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
-                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t.totalRevenue || "Total Revenue"}</h3>
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t?.totalRevenue || "Total Revenue"}</h3>
                     <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-2">₹{summary.totalRevenue.toLocaleString()}</p>
                 </div>
                 <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border-l-4 border-l-[var(--color-brand-blue)] border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">
-                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t.totalSales || "Total Sales Count"}</h3>
+                    <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wide">{t?.totalSales || "Total Sales Count"}</h3>
                     <p className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-2">{summary.totalSalesCount}</p>
                 </div>
                 <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 hover-mac-folder cursor-default">

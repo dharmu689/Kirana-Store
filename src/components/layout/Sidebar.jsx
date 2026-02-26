@@ -3,10 +3,13 @@ import { SIDEBAR_ITEMS } from '../../services/dummyData';
 import clsx from 'clsx';
 import { LogOut, User } from 'lucide-react';
 import authService from '../../services/authService';
+import { useLanguage } from '../../context/LanguageContext';
+import { translations } from '../../utils/translations';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { language } = useLanguage();
 
     const handleLogout = () => {
         authService.logout();
@@ -41,6 +44,12 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                     const isActive = location.pathname === item.path;
                     const Icon = item.icon;
 
+                    const getTranslationKey = (name) => {
+                        if (name === 'Vendor Orders') return 'vendorOrders';
+                        return name.toLowerCase();
+                    };
+                    const translatedName = translations[language]?.[getTranslationKey(item.name)] || item.name;
+
                     return (
                         <Link
                             key={item.path}
@@ -60,7 +69,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                                     isActive ? "text-white" : "text-gray-400 group-hover:text-[var(--color-brand-blue)] dark:text-gray-400"
                                 )}
                             />
-                            {item.name}
+                            {translatedName}
                         </Link>
                     );
                 })}

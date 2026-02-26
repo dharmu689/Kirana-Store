@@ -122,13 +122,13 @@ const VendorOrders = () => {
                                         {t.quantity || "Quantity"}
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                        Order Date
+                                        {t?.date || "Order Date"}
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                        Status
+                                        {t?.status || "Status"}
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                                        Actions
+                                        {t?.actions || "Actions"}
                                     </th>
                                 </tr>
                             </thead>

@@ -6,10 +6,14 @@ import {
     EllipsisVerticalIcon,
     ArchiveBoxArrowDownIcon
 } from '@heroicons/react/24/outline';
+import { useLanguage } from '../context/LanguageContext';
+import { translations } from '../utils/translations';
 
 const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort, sortConfig }) => {
     const isAdmin = user && user.role === 'admin';
     const [openDropdownId, setOpenDropdownId] = useState(null);
+    const { language } = useLanguage();
+    const t = translations[language];
 
     const toggleDropdown = (id) => {
         setOpenDropdownId(openDropdownId === id ? null : id);
@@ -18,12 +22,12 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
     const getStatusBadge = (status) => {
         switch (status) {
             case 'OUT_OF_STOCK':
-                return <span className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-xs font-bold px-2.5 py-0.5 rounded border border-red-200 dark:border-red-800/50">Out of Stock</span>;
+                return <span className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 text-xs font-bold px-2.5 py-0.5 rounded border border-red-200 dark:border-red-800/50">{t?.outOfStock || "Out of Stock"}</span>;
             case 'LOW_STOCK':
-                return <span className="bg-orange-100 text-[var(--color-brand-orange)] dark:bg-[var(--color-brand-orange)]/20 text-xs font-bold px-2.5 py-0.5 rounded border border-orange-200 dark:border-[var(--color-brand-orange)]/30">Low Stock</span>;
+                return <span className="bg-orange-100 text-[var(--color-brand-orange)] dark:bg-[var(--color-brand-orange)]/20 text-xs font-bold px-2.5 py-0.5 rounded border border-orange-200 dark:border-[var(--color-brand-orange)]/30">{t?.lowStock || "Low Stock"}</span>;
             case 'IN_STOCK':
             default:
-                return <span className="bg-green-100 text-[var(--color-brand-green)] dark:bg-[var(--color-brand-green)]/20 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200 dark:border-[var(--color-brand-green)]/30">In Stock</span>;
+                return <span className="bg-green-100 text-[var(--color-brand-green)] dark:bg-[var(--color-brand-green)]/20 text-xs font-bold px-2.5 py-0.5 rounded border border-green-200 dark:border-[var(--color-brand-green)]/30">{t?.inStock || "In Stock"}</span>;
         }
     };
 
@@ -58,23 +62,23 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
             <table className="min-w-full w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800 border-b">
                     <tr>
-                        <SortableHeader label="Product Name" sortKey="name" />
-                        <SortableHeader label="Category" sortKey="category" />
-                        <SortableHeader label="Price" sortKey="price" />
-                        <SortableHeader label="Stock" sortKey="quantity" />
-                        <th scope="col" className="py-3 px-6">Value</th>
-                        <th scope="col" className="py-3 px-6">Status</th>
-                        <SortableHeader label="Sold" sortKey="totalSold" />
-                        <th scope="col" className="py-3 px-6">Revenue</th>
-                        <SortableHeader label="Expiry" sortKey="expiryDate" />
-                        {isAdmin && <th scope="col" className="py-3 px-6 text-center">Actions</th>}
+                        <SortableHeader label={t?.productName || "Product Name"} sortKey="name" />
+                        <SortableHeader label={t?.category || "Category"} sortKey="category" />
+                        <SortableHeader label={t?.price || "Price"} sortKey="price" />
+                        <SortableHeader label={t?.stock || "Stock"} sortKey="quantity" />
+                        <th scope="col" className="py-3 px-6">{t?.value || "Value"}</th>
+                        <th scope="col" className="py-3 px-6">{t?.status || "Status"}</th>
+                        <SortableHeader label={t?.sold || "Sold"} sortKey="totalSold" />
+                        <th scope="col" className="py-3 px-6">{t?.revenue || "Revenue"}</th>
+                        <SortableHeader label={t?.expiry || "Expiry"} sortKey="expiryDate" />
+                        {isAdmin && <th scope="col" className="py-3 px-6 text-center">{t?.actions || "Actions"}</th>}
                     </tr>
                 </thead>
                 <tbody>
                     {products.length === 0 ? (
                         <tr className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
-                            <td colSpan={isAdmin ? 9 : 8} className="py-12 px-6 text-center text-gray-400">
-                                No products found matching criteria
+                            <td colSpan={isAdmin ? 10 : 9} className="py-12 px-6 text-center text-gray-400">
+                                {t?.noProductsFound || "No products found matching criteria"}
                             </td>
                         </tr>
                     ) : (
@@ -107,19 +111,19 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                                                         onClick={() => { setOpenDropdownId(null); onEdit(product); }}
                                                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"
                                                     >
-                                                        <PencilIcon className="h-4 w-4 mr-2" /> Edit
+                                                        <PencilIcon className="h-4 w-4 mr-2" /> {t?.edit || "Edit"}
                                                     </button>
                                                     <button
                                                         onClick={() => { setOpenDropdownId(null); onAdjustStock(product); }}
                                                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"
                                                     >
-                                                        <ArchiveBoxArrowDownIcon className="h-4 w-4 mr-2" /> Adjust Stock
+                                                        <ArchiveBoxArrowDownIcon className="h-4 w-4 mr-2" /> {t?.adjustStock || "Adjust Stock"}
                                                     </button>
                                                     <button
                                                         onClick={() => { setOpenDropdownId(null); onDelete(product); }}
                                                         className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
                                                     >
-                                                        <TrashIcon className="h-4 w-4 mr-2" /> Delete
+                                                        <TrashIcon className="h-4 w-4 mr-2" /> {t?.delete || "Delete"}
                                                     </button>
                                                 </div>
                                             </div>

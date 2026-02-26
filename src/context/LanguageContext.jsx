@@ -1,29 +1,19 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from "react";
 
 const LanguageContext = createContext();
 
-import { translations } from '../utils/translations';
-
 export const LanguageProvider = ({ children }) => {
-    const [language, setLanguage] = useState(() => {
-        const savedLanguage = localStorage.getItem('language');
-        return savedLanguage || 'English';
-    });
+
+    const [language, setLanguage] = useState(
+        localStorage.getItem("language") || "English"
+    );
 
     useEffect(() => {
-        localStorage.setItem('language', language);
+        localStorage.setItem("language", language);
     }, [language]);
 
-    const toggleLanguage = () => {
-        setLanguage((prevLang) => (prevLang === 'English' ? 'Hindi' : 'English'));
-    };
-
-    const t = (key) => {
-        return translations[language][key] || key;
-    };
-
     return (
-        <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+        <LanguageContext.Provider value={{ language, setLanguage }}>
             {children}
         </LanguageContext.Provider>
     );

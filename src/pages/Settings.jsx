@@ -16,7 +16,7 @@ const Settings = () => {
         <div className="space-y-6">
             <div className="flex justify-between items-center bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 sm:p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t.settings || "Settings"}</h1>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-200">{t?.settings || "Settings"}</h1>
                     <p className="text-gray-500 mt-1 text-sm sm:text-base">
                         Manage your store configuration and preferences
                     </p>

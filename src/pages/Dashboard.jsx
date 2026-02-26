@@ -41,8 +41,8 @@ const Dashboard = () => {
         return (
             <div className="flex flex-col justify-center items-center h-screen bg-transparent">
                 <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-[var(--color-brand-blue)] mb-4"></div>
-                <h2 className="text-xl font-bold text-gray-700 dark:text-gray-300">Loading Dashboard...</h2>
-                <p className="text-sm text-gray-500 mt-2">Aggregating Summary Data</p>
+                <h2 className="text-xl font-bold text-gray-700 dark:text-gray-300">{t?.loading || "Loading Dashboard..."}</h2>
+                <p className="text-sm text-gray-500 mt-2">{t?.aggregatingData || "Aggregating Summary Data"}</p>
             </div>
         );
     }
@@ -56,7 +56,7 @@ const Dashboard = () => {
                         <Activity className="w-6 h-6 mr-3 text-[var(--color-brand-blue)] dark:text-[var(--color-brand-blue-hover)]" />
                         {t.dashboard || "Dashboard"}
                     </h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">Complete System Overview</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">{t?.systemOverview || "Complete System Overview"}</p>
                 </div>
                 <div className="mt-4 sm:mt-0 flex space-x-3">
                     <button
@@ -79,7 +79,7 @@ const Dashboard = () => {
 
             {/* Row 2 - Sales Trend Chart */}
             <div className="w-full h-80 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50">
-                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Sales Trend (30 Days)</h3>
+                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">{t?.salesTrend || "Sales Trend (30 Days)"}</h3>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={summaryData?.salesTrend || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />

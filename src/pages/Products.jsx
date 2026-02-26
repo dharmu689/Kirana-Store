@@ -235,7 +235,7 @@ const Products = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">{t.products || "Products Inventory"}</h1>
-                    <p className="text-gray-500 mt-1">Manage stock, track expiry, and organize categories.</p>
+                    <p className="text-gray-500 mt-1">{t?.manageStockDesc || "Manage stock, track expiry, and organize categories."}</p>
                 </div>
                 {user && user.role === 'admin' && (
                     <div className="flex flex-wrap gap-2">
@@ -250,19 +250,19 @@ const Products = () => {
                             onClick={handleImportClick}
                             className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:text-[var(--color-brand-blue)] hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-all duration-300 hover-mac-folder text-sm font-medium"
                         >
-                            <ArrowUpTrayIcon className="h-4 w-4 mr-2" /> Import
+                            <ArrowUpTrayIcon className="h-4 w-4 mr-2" /> {t?.import || "Import"}
                         </button>
                         <button
                             onClick={handleExport}
                             className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:text-[var(--color-brand-blue)] hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-all duration-300 hover-mac-folder text-sm font-medium"
                         >
-                            <ArrowDownTrayIcon className="h-4 w-4 mr-2" /> Export
+                            <ArrowDownTrayIcon className="h-4 w-4 mr-2" /> {t?.export || "Export"}
                         </button>
                         <button
                             onClick={() => setIsCategoryModalOpen(true)}
                             className="flex items-center px-3 py-2 bg-[var(--color-brand-orange)]/10 dark:bg-[var(--color-brand-orange)]/10 border border-[var(--color-brand-orange)]/20 text-[var(--color-brand-orange)] rounded-lg shadow-sm transition-all duration-300 hover-mac-folder text-sm font-bold"
                         >
-                            <FolderIcon className="h-4 w-4 mr-2" /> Categories
+                            <FolderIcon className="h-4 w-4 mr-2" /> {t?.categories || "Categories"}
                         </button>
                         <button
                             onClick={handleAddProduct}
@@ -277,17 +277,17 @@ const Products = () => {
             {/* Metrics Summary (Optional, simple version) */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
-                    <p className="text-sm text-gray-500">Total Value</p>
+                    <p className="text-sm text-gray-500">{t?.totalValue || "Total Value"}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                         ₹{products.reduce((acc, p) => acc + (p.price * p.quantity), 0).toLocaleString()}
                     </p>
                 </div>
                 <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
-                    <p className="text-sm text-gray-500">Total Products</p>
+                    <p className="text-sm text-gray-500">{t?.totalProducts || "Total Products"}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{products.length}</p>
                 </div>
                 <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
-                    <p className="text-sm text-gray-500">Low Stock Items</p>
+                    <p className="text-sm text-gray-500">{t?.lowStockAlerts || "Low Stock Items"}</p>
                     <p className="text-2xl font-bold text-yellow-600">
                         {products.filter(p => p.status === 'LOW_STOCK').length}
                     </p>
@@ -305,7 +305,7 @@ const Products = () => {
                         name="keyword"
                         value={filters.keyword}
                         onChange={handleFilterChange}
-                        placeholder={t.searchProducts || "Search products by name, SKU, or category..."}
+                        placeholder={t?.search || "Search products by name, SKU, or category..."}
                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg leading-5 bg-white dark:bg-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     />
                 </div>
@@ -329,10 +329,10 @@ const Products = () => {
                         onChange={handleFilterChange}
                         className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg"
                     >
-                        <option value="">All Statuses</option>
-                        <option value="IN_STOCK">In Stock</option>
-                        <option value="LOW_STOCK">Low Stock</option>
-                        <option value="OUT_OF_STOCK">Out of Stock</option>
+                        <option value="">{t?.allStatuses || "All Statuses"}</option>
+                        <option value="IN_STOCK">{t?.inStock || "In Stock"}</option>
+                        <option value="LOW_STOCK">{t?.lowStock || "Low Stock"}</option>
+                        <option value="OUT_OF_STOCK">{t?.outOfStock || "Out of Stock"}</option>
                     </select>
                 </div>
             </div>
