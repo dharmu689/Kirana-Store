@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../utils/axiosConfig';
 import {
     LineChart,
     Line,
@@ -21,7 +21,6 @@ import { translations } from '../utils/translations';
 
 const COLORS = ['#10b981', '#ef4444', '#9ca3af']; // Green (Upward), Red (Downward), Gray (Stable)
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const Reports = () => {
     const { language } = useLanguage();
@@ -61,18 +60,14 @@ const Reports = () => {
             setLoading(true);
             setError('');
 
-            const token = localStorage.getItem('token');
             const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
                 params: {}
             };
 
             if (startDate) config.params.startDate = startDate;
             if (endDate) config.params.endDate = endDate;
 
-            const { data } = await axios.get(`${API_URL}/api/reports/sales`, config);
+            const { data } = await API.get(`/reports/sales`, config);
             setReportData(data);
         } catch (err) {
             console.error(err);
@@ -87,14 +82,7 @@ const Reports = () => {
             setLoadingInventory(true);
             setInventoryError('');
 
-            const token = localStorage.getItem('token');
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            };
-
-            const { data } = await axios.get(`${API_URL}/api/reports/inventory`, config);
+            const { data } = await API.get(`/reports/inventory`);
             setInventoryData(data);
         } catch (err) {
             console.error(err);
@@ -109,18 +97,14 @@ const Reports = () => {
             setLoadingFinancial(true);
             setFinancialError('');
 
-            const token = localStorage.getItem('token');
             const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
                 params: {}
             };
 
             if (financialStartDate) config.params.startDate = financialStartDate;
             if (financialEndDate) config.params.endDate = financialEndDate;
 
-            const { data } = await axios.get(`${API_URL}/api/reports/financial`, config);
+            const { data } = await API.get(`/reports/financial`, config);
             setFinancialData(data);
         } catch (err) {
             console.error(err);
@@ -135,18 +119,14 @@ const Reports = () => {
             setLoadingVendor(true);
             setVendorError('');
 
-            const token = localStorage.getItem('token');
             const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
                 params: {}
             };
 
             if (vendorStartDate) config.params.startDate = vendorStartDate;
             if (vendorEndDate) config.params.endDate = vendorEndDate;
 
-            const { data } = await axios.get(`${API_URL}/api/reports/vendors`, config);
+            const { data } = await API.get(`/reports/vendors`, config);
             setVendorData(data);
         } catch (err) {
             console.error(err);
@@ -161,18 +141,14 @@ const Reports = () => {
             setLoadingForecast(true);
             setForecastError('');
 
-            const token = localStorage.getItem('token');
             const config = {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                },
                 params: {}
             };
 
             if (forecastStartDate) config.params.startDate = forecastStartDate;
             if (forecastEndDate) config.params.endDate = forecastEndDate;
 
-            const { data } = await axios.get(`${API_URL}/api/reports/forecast`, config);
+            const { data } = await API.get(`/reports/forecast`, config);
             setForecastData(data);
         } catch (err) {
             console.error(err);
@@ -351,7 +327,7 @@ const Reports = () => {
                             <TrendingUp size={20} className="text-indigo-500" />
                             Sales Trend
                         </h2>
-                        <div className="w-full h-72 md:h-96">
+                        <div className="w-full h-[300px] md:h-[400px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={reportData.salesTrend} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
@@ -709,7 +685,7 @@ const Reports = () => {
                             <BarChart2 size={20} className="text-green-500" />
                             Monthly Financial Trend
                         </h2>
-                        <div className="w-full h-72 md:h-96">
+                        <div className="w-full h-[300px] md:h-[400px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={financialData.monthlyFinancials} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
