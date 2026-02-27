@@ -24,8 +24,7 @@ const createSale = async (req, res) => {
         let unitPrice = productItem.sellingPrice || productItem.price;
         const totalPrice = quantitySold * unitPrice;
 
-        let profitPerUnit = productItem.profitPerUnit || 0;
-        const totalProfit = profitPerUnit * quantitySold;
+        const totalProfit = (productItem.sellingPrice - productItem.purchasePrice) * quantitySold;
 
         // Create sale
         const sale = await Sale.create({

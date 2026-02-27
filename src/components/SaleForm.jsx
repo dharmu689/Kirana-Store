@@ -55,6 +55,11 @@ const SaleForm = ({ onSaleAdded }) => {
             return;
         }
 
+        if (selectedProduct.quantity <= 0) {
+            setError('Out of stock');
+            return;
+        }
+
         if (parseInt(formData.quantitySold) > selectedProduct.quantity) {
             setError(`Insufficient stock. Available: ${selectedProduct.quantity}`);
             return;
@@ -78,7 +83,7 @@ const SaleForm = ({ onSaleAdded }) => {
     };
 
     const totalPrice = selectedProduct && formData.quantitySold
-        ? (selectedProduct.price * formData.quantitySold).toFixed(2)
+        ? ((selectedProduct.sellingPrice || selectedProduct.price) * formData.quantitySold).toFixed(2)
         : '0.00';
 
     return (
@@ -100,7 +105,7 @@ const SaleForm = ({ onSaleAdded }) => {
                         <option value="">Select Product</option>
                         {products.map((product) => (
                             <option key={product._id} value={product._id} disabled={product.quantity <= 0}>
-                                {product.name} - ₹{product.price} (Stock: {product.quantity})
+                                {product.name} - ₹{product.sellingPrice || product.price} (Stock: {product.quantity})
                             </option>
                         ))}
                     </select>

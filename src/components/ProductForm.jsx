@@ -84,6 +84,10 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (parseFloat(formData.sellingPrice) <= 0) {
+            alert('Selling Price must be greater than 0');
+            return;
+        }
         onSubmit(formData);
     };
 
