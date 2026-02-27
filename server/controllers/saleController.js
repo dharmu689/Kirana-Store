@@ -40,15 +40,20 @@ const createSale = async (req, res) => {
             paymentMethod
         });
 
-        // Deduct stock
-        productItem.quantity -= quantitySold;
-
-        // Update product sales stats
-        productItem.totalSold = (productItem.totalSold || 0) + quantitySold;
-        productItem.revenue = (productItem.revenue || 0) + totalPrice;
-        productItem.lastSoldDate = Date.now();
-
-        await productItem.save();
+        // Deduct stock and update product sales stats
+        await Product.updateOne(
+            { _id: productItem._id },
+            {
+                $inc: {
+                    quantity: -quantitySold,
+                    totalSold: quantitySold,
+                    revenue: totalPrice
+                },
+                $set: {
+                    lastSoldDate: Date.now()
+                }
+            }
+        );
 
         res.status(201).json(sale);
     } catch (error) {

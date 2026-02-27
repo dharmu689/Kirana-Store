@@ -14,11 +14,11 @@ const productSchema = mongoose.Schema(
         },
         purchasePrice: {
             type: Number,
-            required: true
+            default: 0
         },
         sellingPrice: {
             type: Number,
-            required: true
+            default: 0
         },
         margin: {
             type: Number,
