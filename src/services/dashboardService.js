@@ -5,8 +5,14 @@ const getSummary = async () => {
     return response.data;
 };
 
+const getDashboardProfit = async () => {
+    const response = await API.get("/dashboard/profit");
+    return response.data;
+};
+
 const dashboardService = {
-    getSummary
+    getSummary,
+    getDashboardProfit
 };
 
 export default dashboardService;

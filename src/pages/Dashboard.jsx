@@ -9,6 +9,12 @@ import { translations } from '../utils/translations';
 
 const Dashboard = () => {
     const [summaryData, setSummaryData] = useState(null);
+    const [profitData, setProfitData] = useState({
+        totalProfit: 0,
+        oneDayProfit: 0,
+        thirtyDaysProfit: 0
+    });
+    const [selectedPeriod, setSelectedPeriod] = useState("1day");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { language } = useLanguage();
@@ -19,6 +25,9 @@ const Dashboard = () => {
             setLoading(true);
             const data = await dashboardService.getSummary();
             setSummaryData(data);
+
+            const pData = await dashboardService.getDashboardProfit();
+            setProfitData(pData);
         } catch (error) {
             console.error("Failed to fetch dashboard summary", error);
         } finally {
@@ -76,6 +85,44 @@ const Dashboard = () => {
 
             {/* Row 1 - KPI Cards */}
             <KPICards data={summaryData} />
+
+            {/* Profit Analytics Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                {/* Total Profit Card */}
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
+                    <h3 className="text-gray-600 dark:text-gray-300 font-medium">
+                        Total Profit
+                    </h3>
+                    <p className="text-3xl font-bold text-green-600 mt-2">
+                        ₹{profitData.totalProfit.toLocaleString()}
+                    </p>
+                </div>
+
+                {/* Profit Section */}
+                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
+                    <div className="flex gap-4 mb-4">
+                        <button
+                            onClick={() => setSelectedPeriod("1day")}
+                            className={`px-4 py-2 rounded font-medium transition-colors ${selectedPeriod === '1day' ? 'bg-[var(--color-brand-blue)] text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                        >
+                            1 Day
+                        </button>
+                        <button
+                            onClick={() => setSelectedPeriod("30days")}
+                            className={`px-4 py-2 rounded font-medium transition-colors ${selectedPeriod === '30days' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                        >
+                            30 Days
+                        </button>
+                    </div>
+                    <p className="text-2xl font-bold text-green-500">
+                        ₹{
+                            (selectedPeriod === "1day"
+                                ? profitData.oneDayProfit
+                                : profitData.thirtyDaysProfit).toLocaleString()
+                        }
+                    </p>
+                </div>
+            </div>
 
             {/* Row 2 - Sales Trend Chart */}
             <div className="w-full h-80 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50">

@@ -85,6 +85,57 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     });
 });
 
+// @desc    Get dashboard profit analytics
+// @route   GET /api/dashboard/profit
+// @access  Private
+const getDashboardProfit = asyncHandler(async (req, res) => {
+    const totalProfit = await Sale.aggregate([
+        {
+            $group: {
+                _id: null,
+                total: { $sum: "$profit" }
+            }
+        }
+    ]);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const oneDayProfit = await Sale.aggregate([
+        {
+            $match: { createdAt: { $gte: today } }
+        },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: "$profit" }
+            }
+        }
+    ]);
+
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const thirtyDaysProfit = await Sale.aggregate([
+        {
+            $match: { createdAt: { $gte: thirtyDaysAgo } }
+        },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: "$profit" }
+            }
+        }
+    ]);
+
+    res.json({
+        totalProfit: totalProfit[0]?.total || 0,
+        oneDayProfit: oneDayProfit[0]?.total || 0,
+        thirtyDaysProfit: thirtyDaysProfit[0]?.total || 0
+    });
+});
+
 module.exports = {
-    getDashboardSummary
+    getDashboardSummary,
+    getDashboardProfit
 };
