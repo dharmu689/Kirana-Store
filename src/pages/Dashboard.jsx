@@ -6,6 +6,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianG
 import { ArrowRight, Activity, TrendingUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
+import { motion } from 'framer-motion';
 
 const Dashboard = () => {
     const [summaryData, setSummaryData] = useState(null);
@@ -89,17 +90,31 @@ const Dashboard = () => {
             {/* Profit Analytics Row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 {/* Total Profit Card */}
-                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800"
+                >
                     <h3 className="text-gray-600 dark:text-gray-300 font-medium">
                         Total Profit
                     </h3>
-                    <p className="text-3xl font-bold text-green-600 mt-2">
-                        ₹{profitData.totalProfit.toLocaleString()}
-                    </p>
-                </div>
+                    {loading ? (
+                        <p className="text-gray-500 mt-2">Loading...</p>
+                    ) : (
+                        <p className="text-3xl font-bold text-green-600 mt-2">
+                            ₹{profitData?.totalProfit?.toLocaleString()}
+                        </p>
+                    )}
+                </motion.div>
 
-                {/* Profit Section */}
-                <div className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
+                {/* Profit Switch Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8 }}
+                    className="bg-white dark:bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-100 dark:border-gray-800"
+                >
                     <div className="flex gap-4 mb-4">
                         <button
                             onClick={() => setSelectedPeriod("1day")}
@@ -114,14 +129,22 @@ const Dashboard = () => {
                             30 Days
                         </button>
                     </div>
-                    <p className="text-2xl font-bold text-green-500">
-                        ₹{
-                            (selectedPeriod === "1day"
-                                ? profitData.oneDayProfit
-                                : profitData.thirtyDaysProfit).toLocaleString()
-                        }
-                    </p>
-                </div>
+                    {!loading && (
+                        <motion.p
+                            key={selectedPeriod}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="text-2xl font-bold text-green-500"
+                        >
+                            ₹{
+                                (selectedPeriod === "1day"
+                                    ? profitData?.oneDayProfit
+                                    : profitData?.thirtyDaysProfit)?.toLocaleString()
+                            }
+                        </motion.p>
+                    )}
+                </motion.div>
             </div>
 
             {/* Row 2 - Sales Trend Chart */}
