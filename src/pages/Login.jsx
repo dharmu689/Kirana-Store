@@ -53,7 +53,7 @@ const Login = () => {
         <div className="min-h-screen bg-gray-50 dark:bg-gray-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto shadow-lg shadow-blue-200">
-                    <span className="text-white font-bold text-2xl">K</span>
+                    <span className="text-xl font-bold tracking-tight text-[#3b82f6] dark:text-blue-400">Kirana<span className="text-[#f97316]">Smart</span></span>
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
                     Sign in to your account
