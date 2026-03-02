@@ -47,14 +47,72 @@ const Landing = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#eef3f9] via-[#f6f8fb] to-[#e9eef6] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-[#1e293b] dark:text-gray-100 font-sans transition-colors duration-300 overflow-x-hidden relative z-0">
+        <div className="min-h-screen bg-gradient-to-br from-[#eef4ff] via-[#f7f9fc] to-[#fff7ed] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-[#1e293b] dark:text-gray-100 font-sans transition-colors duration-300 overflow-x-hidden relative z-0">
 
-            {/* Premium SaaS Background Glow Effects */}
+            {/* Premium SaaS Animated Background Effects */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
-                {/* Right side warm orange glow */}
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 85% 60%, rgba(255,165,90,0.35), transparent 40%)' }} />
-                {/* Left bottom soft blue glow */}
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 10% 80%, rgba(59,130,246,0.25), transparent 45%)' }} />
+
+                {/* 1. Subtle Noise Overlay */}
+                <div
+                    className="absolute inset-0 opacity-[0.05] dark:opacity-[0.08]"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}
+                />
+
+                {/* 2. Soft Radial Center Highlight */}
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at center, rgba(255,255,255,0.6), transparent 60%)' }} />
+
+                {/* 3. Floating gradient blobs */}
+
+                {/* Top-Left Blue Blob */}
+                <motion.div
+                    animate={{
+                        x: [0, 50, -20, 0],
+                        y: [0, 40, -40, 0],
+                        scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                        duration: 25,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                    }}
+                    className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full blur-[120px]"
+                    style={{ background: 'rgba(59,130,246,0.35)' }}
+                />
+
+                {/* Bottom-Right Orange Blob */}
+                <motion.div
+                    animate={{
+                        x: [0, -60, 30, 0],
+                        y: [0, -50, 40, 0],
+                        scale: [1, 1.05, 1],
+                    }}
+                    transition={{
+                        duration: 30,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                    }}
+                    className="absolute bottom-[-10%] right-[-10%] w-[700px] h-[700px] rounded-full blur-[120px]"
+                    style={{ background: 'rgba(249,115,22,0.35)' }}
+                />
+
+                {/* Center Faint Purple Accent Blob */}
+                <motion.div
+                    animate={{
+                        x: [0, 30, -30, 0],
+                        y: [0, -30, 30, 0],
+                        scale: [1, 1.02, 1],
+                    }}
+                    transition={{
+                        duration: 35,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        ease: "easeInOut"
+                    }}
+                    className="absolute top-[30%] left-[30%] w-[500px] h-[500px] rounded-full blur-[120px]"
+                    style={{ background: 'rgba(139,92,246,0.20)' }}
+                />
             </div>
 
             {/* Navbar */}
