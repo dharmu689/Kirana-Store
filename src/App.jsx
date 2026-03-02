@@ -13,6 +13,7 @@ import Forecasting from './pages/Forecasting';
 import VendorCompare from './pages/VendorCompare';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Landing from './pages/Landing';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
 
 function AppContent() {
@@ -24,10 +25,12 @@ function AppContent() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
+        <Route path="/" element={<Landing />} />
+
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+          <Route element={<Layout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="products" element={<Products />} />
             <Route path="sales" element={<Sales />} />
             <Route path="reorder" element={<Reorder />} />

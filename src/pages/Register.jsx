@@ -46,7 +46,7 @@ const Register = () => {
         setLoading(true);
         try {
             await authService.register({ name, email, password, role });
-            navigate('/');
+            navigate('/dashboard');
         } catch (err) {
             const message =
                 (err.response && err.response.data && err.response.data.message) ||

@@ -62,7 +62,7 @@ export const EXPIRY_ALERTS = [
 ];
 
 export const SIDEBAR_ITEMS = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
+    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'Products', icon: Package, path: '/products' },
     { name: 'Sales', icon: ShoppingCart, path: '/sales' },
     { name: 'Reorder', icon: AlertTriangle, path: '/reorder' },

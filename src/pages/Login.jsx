@@ -11,7 +11,7 @@ const Login = () => {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        
+
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -37,7 +37,7 @@ const Login = () => {
         setLoading(true);
         try {
             await authService.login(formData);
-            navigate('/');
+            navigate('/dashboard');
         } catch (err) {
             const message =
                 (err.response && err.response.data && err.response.data.message) ||
