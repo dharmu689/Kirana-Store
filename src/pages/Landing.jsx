@@ -47,13 +47,14 @@ const Landing = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300 overflow-x-hidden relative">
+        <div className="min-h-screen bg-gradient-to-br from-[#eef3f9] via-[#f6f8fb] to-[#e9eef6] dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 text-[#1e293b] dark:text-gray-100 font-sans transition-colors duration-300 overflow-x-hidden relative z-0">
 
-            {/* Background Graphic Effects */}
-            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[-1]">
-                <div className="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-blue-400/20 dark:bg-blue-600/20 blur-[100px]" />
-                <div className="absolute top-[20%] -right-[10%] w-[40%] h-[40%] rounded-full bg-orange-400/20 dark:bg-orange-600/20 blur-[100px]" />
-                <div className="absolute -bottom-[10%] left-[20%] w-[60%] h-[40%] rounded-full bg-purple-400/20 dark:bg-purple-600/20 blur-[120px]" />
+            {/* Premium SaaS Background Glow Effects */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-[-1]">
+                {/* Right side warm orange glow */}
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 85% 60%, rgba(255,165,90,0.35), transparent 40%)' }} />
+                {/* Left bottom soft blue glow */}
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 10% 80%, rgba(59,130,246,0.25), transparent 45%)' }} />
             </div>
 
             {/* Navbar */}
@@ -67,15 +68,15 @@ const Landing = () => {
                         {/* Desktop Navbar */}
                         <div className="hidden md:flex items-center space-x-8">
                             {navLinks.map((link) => (
-                                <a key={link.name} href={link.href} className="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors">
+                                <a key={link.name} href={link.href} className="text-gray-600 hover:text-[#3b82f6] dark:text-gray-300 dark:hover:text-[#3b82f6] font-medium transition-colors">
                                     {link.name}
                                 </a>
                             ))}
                             <div className="flex items-center space-x-4">
-                                <Link to="/login" className="text-gray-600 hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400 font-medium transition-colors">
+                                <Link to="/login" className="text-gray-600 hover:text-[#3b82f6] dark:text-gray-300 dark:hover:text-[#3b82f6] font-medium transition-colors">
                                     Login
                                 </Link>
-                                <Link to="/register" className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white px-5 py-2 rounded-xl font-medium shadow-lg shadow-blue-500/30 transition-all hover:shadow-blue-500/50 hover:-translate-y-0.5">
+                                <Link to="/register" className="bg-gradient-to-r from-[#3b82f6] to-[#2563eb] hover:from-[#2563eb] hover:to-[#1d4ed8] text-white px-5 py-2 rounded-xl font-medium shadow-lg shadow-blue-500/30 transition-all duration-300 hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] hover:-translate-y-0.5">
                                     Sign Up
                                 </Link>
                             </div>
@@ -100,14 +101,14 @@ const Landing = () => {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            className="md:hidden overflow-hidden bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800"
+                            className="md:hidden overflow-hidden bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800"
                         >
                             <div className="px-4 pt-2 pb-6 space-y-4 shadow-lg">
                                 {navLinks.map((link) => (
                                     <a
                                         key={link.name}
                                         href={link.href}
-                                        className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400"
+                                        className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-[#3b82f6] dark:hover:text-[#3b82f6]"
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
                                         {link.name}
@@ -122,7 +123,7 @@ const Landing = () => {
                                     </Link>
                                     <Link
                                         to="/register"
-                                        className="block w-full text-center px-4 py-2 text-base font-medium text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-xl shadow-md"
+                                        className="block w-full text-center px-4 py-2 text-base font-medium text-white bg-gradient-to-r from-[#3b82f6] to-[#2563eb] rounded-xl shadow-md"
                                     >
                                         Sign Up
                                     </Link>
@@ -136,23 +137,23 @@ const Landing = () => {
             {/* Hero Section */}
             <section className="pt-32 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col items-center text-center">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
+                    transition={{ duration: 0.8 }}
                 >
-                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
-                        Modernize Your Kirana, <br className="hidden md:block" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-orange-500">Supercharge Your Sales</span>
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 text-[#1e293b] dark:text-white drop-shadow-sm">
+                        Modernize Your <span className="text-[#f97316]">Kirana</span>, <br className="hidden md:block" />
+                        Supercharge Your Sales
                     </h1>
                     <p className="mt-4 text-base sm:text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
                         The all-in-one smart inventory and sales platform built specifically for modern Kirana stores. Manage stock, forecast demand, and increase profits effortlessly.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
-                        <Link to="/register" className="w-full sm:w-auto px-8 py-3.5 text-base sm:text-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all hover:-translate-y-1 flex items-center justify-center">
+                        <Link to="/register" className="w-full sm:w-auto px-8 py-3.5 text-base sm:text-lg font-semibold text-white bg-gradient-to-r from-[#3b82f6] to-[#2563eb] rounded-xl shadow-lg hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:scale-105 transition-all duration-300 flex items-center justify-center">
                             Get Started <ArrowRight className="ml-2 w-5 h-5" />
                         </Link>
-                        <a href="#features" className="w-full sm:w-auto px-8 py-3.5 text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-all flex items-center justify-center">
+                        <a href="#features" className="w-full sm:w-auto px-8 py-3.5 text-base sm:text-lg font-semibold text-gray-700 dark:text-gray-200 bg-white/60 dark:bg-gray-800/60 backdrop-blur border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 flex items-center justify-center">
                             Learn More
                         </a>
                     </div>
@@ -160,7 +161,7 @@ const Landing = () => {
             </section>
 
             {/* Features Section */}
-            <section id="features" className="py-20 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-t border-gray-200/50 dark:border-gray-800/50 relative z-10">
+            <section id="features" className="py-20 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <motion.h2
@@ -168,9 +169,9 @@ const Landing = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5 }}
-                            className="text-3xl md:text-4xl font-bold mb-4"
+                            className="text-3xl md:text-4xl font-bold mb-4 text-[#1e293b] dark:text-white"
                         >
-                            Everything you need to <span className="text-blue-600 dark:text-blue-400">scale</span>.
+                            Everything you need to <span className="text-[#3b82f6]">scale</span>.
                         </motion.h2>
                         <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
                             Powerful tools combining point-of-sale ease with enterprise-level analytics.
@@ -185,13 +186,13 @@ const Landing = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                                whileHover={{ y: -5, scale: 1.02 }}
-                                className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-8 rounded-[2rem] border border-gray-100 dark:border-gray-700/50 shadow-xl shadow-gray-200/20 dark:shadow-none hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 group"
+                                whileHover={{ scale: 1.05 }}
+                                className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md p-8 rounded-2xl border border-white/40 dark:border-gray-700/50 shadow-xl hover:shadow-[0_10px_30px_rgba(59,130,246,0.15)] dark:hover:shadow-blue-900/20 transition-all duration-300 group"
                             >
-                                <div className="w-14 h-14 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                                <div className="w-14 h-14 bg-gradient-to-br from-[#eef3f9] to-[#fff3eb] dark:from-blue-900/30 dark:to-orange-900/20 text-[#3b82f6] dark:text-blue-400 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:from-[#3b82f6] group-hover:to-[#2563eb] group-hover:text-white transition-all duration-300 shadow-sm border border-[#eef3f9] dark:border-blue-800/20">
                                     <feature.icon size={28} />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{feature.title}</h3>
+                                <h3 className="text-xl font-bold mb-3 text-[#1e293b] dark:text-white drop-shadow-sm">{feature.title}</h3>
                                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
                                     {feature.description}
                                 </p>
@@ -203,8 +204,8 @@ const Landing = () => {
 
             {/* CTA Section */}
             <section className="py-24 relative overflow-hidden">
-                <div className="absolute inset-0 bg-blue-600 dark:bg-blue-900"></div>
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-900 dark:to-indigo-950 opacity-90"></div>
+                <div className="absolute inset-0 bg-[#2563eb] dark:bg-blue-900"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#3b82f6] to-[#2563eb] dark:from-blue-900 dark:to-indigo-950 opacity-90"></div>
                 <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
                 <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
 
@@ -213,7 +214,7 @@ const Landing = () => {
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight"
+                        className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-6 leading-tight drop-shadow-sm"
                     >
                         Start Managing Your Store Smarter Today
                     </motion.h2>
@@ -232,7 +233,7 @@ const Landing = () => {
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
                     >
-                        <Link to="/login" className="inline-block px-10 py-4 text-lg font-bold text-blue-600 bg-white rounded-2xl shadow-2xl hover:bg-gray-50 hover:scale-105 transition-all duration-300">
+                        <Link to="/login" className="inline-block px-10 py-4 text-lg font-bold text-[#3b82f6] bg-white rounded-xl shadow-2xl hover:bg-gray-50 hover:scale-105 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)]">
                             Transform Your Store Now
                         </Link>
                     </motion.div>
@@ -240,10 +241,10 @@ const Landing = () => {
             </section>
 
             {/* Footer */}
-            <footer className="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-900 py-8">
+            <footer className="bg-[#f6f8fb]/50 dark:bg-gray-950/50 backdrop-blur-md border-t border-gray-200/50 dark:border-gray-900 py-8 relative z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
                     <div className="flex items-center gap-2 mb-4 md:mb-0">
-                        <span className="text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400">Kirana<span className="text-orange-600">Smart</span></span>
+                        <span className="text-xl font-bold tracking-tight text-[#3b82f6] dark:text-blue-400">Kirana<span className="text-[#f97316]">Smart</span></span>
                     </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400 font-bold">
                         &copy; 2026 KiranaSmart. All rights reserved.
