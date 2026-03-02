@@ -245,7 +245,7 @@ const Landing = () => {
                     <div className="flex items-center gap-2 mb-4 md:mb-0">
                         <span className="text-xl font-bold tracking-tight text-blue-600 dark:text-blue-400">Kirana<span className="text-orange-600">Smart</span></span>
                     </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-bold">
                         &copy; 2026 KiranaSmart. All rights reserved.
                     </p>
                 </div>
