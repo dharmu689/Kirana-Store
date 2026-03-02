@@ -61,7 +61,7 @@ const Landing = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex-shrink-0 flex items-center gap-2">
-                            <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-8 md:h-10" />
+                            <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-9 md:h-11" />
                         </div>
 
                         {/* Desktop Navbar */}
