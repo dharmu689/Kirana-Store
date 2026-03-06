@@ -72,6 +72,9 @@ const productSchema = mongoose.Schema(
         },
         lastSoldDate: {
             type: Date
+        },
+        qrCode: {
+            type: String
         }
     },
     {

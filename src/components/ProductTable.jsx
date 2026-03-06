@@ -4,7 +4,8 @@ import {
     TrashIcon,
     ArrowsUpDownIcon,
     EllipsisVerticalIcon,
-    ArchiveBoxArrowDownIcon
+    ArchiveBoxArrowDownIcon,
+    QrCodeIcon
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
@@ -115,6 +116,16 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                                                     >
                                                         <PencilIcon className="h-4 w-4 mr-2" /> {t?.edit || "Edit"}
                                                     </button>
+                                                    {product.qrCode && (
+                                                        <a
+                                                            href={product.qrCode}
+                                                            download={`QR-${product.name}.png`}
+                                                            onClick={() => setOpenDropdownId(null)}
+                                                            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"
+                                                        >
+                                                            <QrCodeIcon className="h-4 w-4 mr-2" /> {t?.downloadQR || "Download QR"}
+                                                        </a>
+                                                    )}
                                                     <button
                                                         onClick={() => { setOpenDropdownId(null); onAdjustStock(product); }}
                                                         className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"

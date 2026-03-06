@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
+const QRCode = require('qrcode');
 
 // @desc    Create a product
 // @route   POST /api/products
@@ -20,6 +21,18 @@ const createProduct = asyncHandler(async (req, res) => {
         supplierLeadTime,
         createdBy: req.user._id
     });
+
+    // Generate QR Code containing product details
+    const qrData = JSON.stringify({
+        productId: product._id,
+        name: product.name,
+        sellingPrice: product.sellingPrice || product.price
+    });
+    const qrCodeImage = await QRCode.toDataURL(qrData);
+
+    // Save QR Code to the product
+    product.qrCode = qrCodeImage;
+    await product.save();
 
     res.status(201).json({
         success: true,
