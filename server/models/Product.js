@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const productSchema = mongoose.Schema(
     {
+        productId: {
+            type: String,
+            unique: true
+        },
         name: {
             type: String,
             required: [true, 'Please add a product name'],
@@ -74,6 +78,9 @@ const productSchema = mongoose.Schema(
             type: Date
         },
         qrCode: {
+            type: String
+        },
+        barcode: {
             type: String
         }
     },

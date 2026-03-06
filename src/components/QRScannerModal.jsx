@@ -60,13 +60,13 @@ const QRScannerModal = ({ isOpen, onClose, onScanSuccess }) => {
                         <div className="sm:flex sm:items-start w-full">
                             <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                                 <h3 className="text-xl leading-6 font-bold text-gray-900 dark:text-gray-100 mb-4" id="modal-title">
-                                    Scan Product QR
+                                    Scan QR or Barcode
                                 </h3>
 
                                 <div id="reader" className="w-full"></div>
 
                                 <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-                                    Point your camera at the product's QR code to automatically add it to the cart.
+                                    Point your camera at the product's barcode to automatically add it to the cart.
                                 </p>
                             </div>
                         </div>

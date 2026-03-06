@@ -9,12 +9,57 @@ import {
 } from '@heroicons/react/24/outline';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
+import JsBarcode from 'jsbarcode';
 
 const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort, sortConfig }) => {
     const isAdmin = user && user.role === 'admin';
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const { language } = useLanguage();
     const t = translations[language];
+
+    useEffect(() => {
+        products.forEach(product => {
+            if (product.barcode) {
+                try {
+                    JsBarcode(`#barcode-${product._id}`, product.barcode, {
+                        format: "CODE128",
+                        width: 1.5,
+                        height: 40,
+                        displayValue: true,
+                        fontSize: 12,
+                        margin: 0
+                    });
+                } catch (e) {
+                    console.error("Failed to render barcode", e);
+                }
+            }
+        });
+    }, [products]);
+
+    const handleDownloadBarcode = (product) => {
+        const svgElement = document.getElementById(`barcode-${product._id}`);
+        if (!svgElement) return;
+
+        const svgData = new XMLSerializer().serializeToString(svgElement);
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+        const img = new Image();
+        img.onload = () => {
+            canvas.width = img.width + 20;
+            canvas.height = img.height + 20;
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 10, 10);
+
+            const pngFile = canvas.toDataURL("image/png");
+            const a = document.createElement("a");
+            a.download = `Barcode-${product.productId || product.name}.png`;
+            a.href = pngFile;
+            a.click();
+        };
+        img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+        setOpenDropdownId(null);
+    };
 
     const toggleDropdown = (id) => {
         setOpenDropdownId(openDropdownId === id ? null : id);
@@ -63,6 +108,7 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
             <table className="min-w-full w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800 border-b">
                     <tr>
+                        <th scope="col" className="py-3 px-6">ID / Barcode</th>
                         <SortableHeader label={t?.productName || "Product Name"} sortKey="name" />
                         <SortableHeader label={t?.category || "Category"} sortKey="category" />
                         <SortableHeader label={t?.price || "Price"} sortKey="price" />
@@ -79,14 +125,26 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                 <tbody>
                     {products.length === 0 ? (
                         <tr className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
-                            <td colSpan={isAdmin ? 10 : 9} className="py-12 px-6 text-center text-gray-400">
+                            <td colSpan={isAdmin ? 11 : 10} className="py-12 px-6 text-center text-gray-400">
                                 {t?.noProductsFound || "No products found matching criteria"}
                             </td>
                         </tr>
                     ) : (
                         products.map((product) => (
                             <tr key={product._id} className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
-                                <td className="py-4 px-6 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">{product.name}</td>
+                                <td className="py-4 px-6">
+                                    {product.barcode ? (
+                                        <div className="bg-white p-1 rounded inline-block">
+                                            <svg id={`barcode-${product._id}`} className="max-w-[120px] max-h-[50px]"></svg>
+                                        </div>
+                                    ) : (
+                                        <span className="text-xs text-gray-400">No Barcode</span>
+                                    )}
+                                </td>
+                                <td className="py-4 px-6 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                                    <div>{product.name}</div>
+                                    {product.productId && <div className="text-xs text-gray-500 mt-1">{product.productId}</div>}
+                                </td>
                                 <td className="py-4 px-6">{product.category}</td>
                                 <td className="py-4 px-6">₹{(product.sellingPrice || product.price)}</td>
                                 <td className="py-4 px-6 font-medium text-emerald-600 dark:text-emerald-400">₹{product.profitPerUnit || 0}</td>
@@ -116,6 +174,14 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                                                     >
                                                         <PencilIcon className="h-4 w-4 mr-2" /> {t?.edit || "Edit"}
                                                     </button>
+                                                    {product.barcode && (
+                                                        <button
+                                                            onClick={() => handleDownloadBarcode(product)}
+                                                            className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:bg-gray-800 w-full text-left"
+                                                        >
+                                                            <QrCodeIcon className="h-4 w-4 mr-2" /> Download Barcode
+                                                        </button>
+                                                    )}
                                                     {product.qrCode && (
                                                         <a
                                                             href={product.qrCode}
