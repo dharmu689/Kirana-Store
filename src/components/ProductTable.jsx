@@ -11,7 +11,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
 import JsBarcode from 'jsbarcode';
 
-const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort, sortConfig }) => {
+const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort, sortConfig, selectedIds = [], onSelectProduct, onSelectAll }) => {
     const isAdmin = user && user.role === 'admin';
     const [openDropdownId, setOpenDropdownId] = useState(null);
     const { language } = useLanguage();
@@ -108,6 +108,16 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
             <table className="min-w-full w-full text-sm text-left text-gray-500">
                 <thead className="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-800 border-b">
                     <tr>
+                        <th scope="col" className="p-4">
+                            <div className="flex items-center">
+                                <input
+                                    type="checkbox"
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+                                    onChange={(e) => onSelectAll(e.target.checked)}
+                                    checked={products.length > 0 && selectedIds.length === products.length}
+                                />
+                            </div>
+                        </th>
                         <th scope="col" className="py-3 px-6">ID / Barcode</th>
                         <SortableHeader label={t?.productName || "Product Name"} sortKey="name" />
                         <SortableHeader label={t?.category || "Category"} sortKey="category" />
@@ -125,13 +135,23 @@ const ProductTable = ({ products, onEdit, onDelete, onAdjustStock, user, onSort,
                 <tbody>
                     {products.length === 0 ? (
                         <tr className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
-                            <td colSpan={isAdmin ? 11 : 10} className="py-12 px-6 text-center text-gray-400">
+                            <td colSpan={isAdmin ? 12 : 11} className="py-12 px-6 text-center text-gray-400">
                                 {t?.noProductsFound || "No products found matching criteria"}
                             </td>
                         </tr>
                     ) : (
                         products.map((product) => (
                             <tr key={product._id} className="bg-white dark:bg-gray-900 border-b hover:bg-gray-50 dark:bg-gray-800">
+                                <td className="w-4 p-4">
+                                    <div className="flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 cursor-pointer"
+                                            onChange={() => onSelectProduct(product._id)}
+                                            checked={selectedIds.includes(product._id)}
+                                        />
+                                    </div>
+                                </td>
                                 <td className="py-4 px-6">
                                     {product.barcode ? (
                                         <div className="bg-white p-1 rounded inline-block">

@@ -150,6 +150,35 @@ const getProductById = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Get single product by barcode
+// @route   GET /api/products/barcode/:barcode
+// @access  Public/Private
+const getProductByBarcode = asyncHandler(async (req, res) => {
+    // Find by either barcode field or productId field for safety
+    const product = await Product.findOne({
+        $or: [
+            { barcode: req.params.barcode },
+            { productId: req.params.barcode }
+        ]
+    });
+
+    if (product) {
+        let status = 'IN_STOCK';
+        if (product.quantity === 0) {
+            status = 'OUT_OF_STOCK';
+        } else if (product.quantity <= product.reorderLevel) {
+            status = 'LOW_STOCK';
+        }
+        res.json({
+            ...product.toObject(),
+            status
+        });
+    } else {
+        res.status(404);
+        throw new Error('Product not found');
+    }
+});
+
 // @desc    Update a product
 // @route   PUT /api/products/:id
 // @access  Private/Admin
@@ -243,6 +272,7 @@ module.exports = {
     createProduct,
     getProducts,
     getProductById,
+    getProductByBarcode,
     updateProduct,
     deleteProduct,
     adjustStock

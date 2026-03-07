@@ -8,6 +8,7 @@ import Receipt from './Receipt';
 
 const SaleForm = ({ onSaleAdded }) => {
     const receiptRef = useRef();
+    const barcodeInputRef = useRef(null);
     const [lastSale, setLastSale] = useState(null);
 
     const [products, setProducts] = useState([]);
@@ -31,6 +32,18 @@ const SaleForm = ({ onSaleAdded }) => {
 
     useEffect(() => {
         loadProducts();
+
+        // Aggressive Auto-Focus Logic for Hardware Scanner
+        const handleWindowClick = (e) => {
+            const activeTag = document.activeElement?.tagName;
+            // If user clicks outside inputs/buttons, re-focus the scanner input
+            if (activeTag !== 'INPUT' && activeTag !== 'SELECT' && activeTag !== 'BUTTON' && activeTag !== 'A') {
+                barcodeInputRef.current?.focus();
+            }
+        };
+
+        window.addEventListener('click', handleWindowClick);
+        return () => window.removeEventListener('click', handleWindowClick);
     }, []);
 
     const loadProducts = async () => {
@@ -92,22 +105,29 @@ const SaleForm = ({ onSaleAdded }) => {
         }
     };
 
-    const handleBarcodeSubmit = (e) => {
+    const handleBarcodeSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        if (!barcodeInput.trim()) return;
+        const barcode = barcodeInput.trim();
+        if (!barcode) return;
 
-        const product = products.find(p => p._id === barcodeInput.trim() || p.productId === barcodeInput.trim() || p.barcode === barcodeInput.trim());
-        if (product) {
-            addToCart(product, 1);
-            setBarcodeInput('');
-        } else {
-            setError(`Product with barcode "${barcodeInput}" not found.`);
-            setBarcodeInput('');
+        setBarcodeInput(''); // Clear immediately for rapid scanning
+
+        try {
+            // strict backend lookup for robustness
+            const product = await productService.getProductByBarcode(barcode);
+            if (product) {
+                addToCart(product, 1);
+            }
+        } catch (err) {
+            setError(`Product with barcode "${barcode}" not found.`);
         }
+
+        // Force focus back
+        setTimeout(() => barcodeInputRef.current?.focus(), 10);
     };
 
-    const handleScanSuccess = (decodedText) => {
+    const handleScanSuccess = async (decodedText) => {
         try {
             let scannedId = decodedText;
             try {
@@ -115,17 +135,15 @@ const SaleForm = ({ onSaleAdded }) => {
                 const qrData = JSON.parse(decodedText);
                 if (qrData.productId) scannedId = qrData.productId;
             } catch (jsonErr) {
-                // Expected if it's a standard barcode
+                // Standard Barcode
             }
 
-            const product = products.find(p => p._id === scannedId || p.productId === scannedId || p.barcode === scannedId);
+            const product = await productService.getProductByBarcode(scannedId.trim());
             if (product) {
                 addToCart(product, 1);
-            } else {
-                setError(`Scanned product "${scannedId}" not found in inventory.`);
             }
         } catch (e) {
-            setError('Error processing scanned code.');
+            setError(`Scanned product "${decodedText}" not found in inventory.`);
         }
     };
 
@@ -291,6 +309,7 @@ const SaleForm = ({ onSaleAdded }) => {
             {/* Hardware Scanner Input Form */}
             <form onSubmit={handleBarcodeSubmit} className="mb-6">
                 <input
+                    ref={barcodeInputRef}
                     type="text"
                     value={barcodeInput}
                     onChange={(e) => setBarcodeInput(e.target.value)}

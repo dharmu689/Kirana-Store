@@ -5,6 +5,11 @@ const getProducts = async (params = {}) => {
     return response.data;
 };
 
+const getProductByBarcode = async (barcode) => {
+    const response = await API.get(`/products/barcode/${barcode}`);
+    return response.data;
+};
+
 const createProduct = async (productData) => {
     const response = await API.post("/products", productData);
     return response.data;
@@ -42,6 +47,7 @@ const deleteCategory = async (id) => {
 
 const productService = {
     getProducts,
+    getProductByBarcode,
     createProduct,
     updateProduct,
     deleteProduct,

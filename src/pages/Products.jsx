@@ -3,6 +3,8 @@ import ProductTable from '../components/ProductTable';
 import ProductForm from '../components/ProductForm';
 import StockAdjustmentModal from '../components/StockAdjustmentModal';
 import CategoryManager from '../components/CategoryManager';
+import BarcodePreview from '../components/BarcodePreview';
+import BarcodeGrid from '../components/BarcodeGrid';
 import productService from '../services/productService';
 import authService from '../services/authService';
 import {
@@ -42,6 +44,12 @@ const Products = () => {
     const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
     const [currentProduct, setCurrentProduct] = useState(null);
     const [stockAdjustmentProduct, setStockAdjustmentProduct] = useState(null);
+    const [latestProduct, setLatestProduct] = useState(null);
+    const [isBarcodePreviewOpen, setIsBarcodePreviewOpen] = useState(false);
+
+    // Bulk Print State
+    const [selectedProductIds, setSelectedProductIds] = useState([]);
+    const [isPrintingBulk, setIsPrintingBulk] = useState(false);
 
     // Initial Load
     useEffect(() => {
@@ -132,11 +140,19 @@ const Products = () => {
         try {
             if (currentProduct) {
                 await productService.updateProduct(currentProduct._id, formData);
+                fetchProducts();
+                setIsProductModalOpen(false);
             } else {
-                await productService.createProduct(formData);
+                const response = await productService.createProduct(formData);
+                fetchProducts();
+                setIsProductModalOpen(false);
+                // Trigger Barcode Preview Modal for newly created product
+                // We assume response.product exists based on backend returning { success, product }
+                if (response && response.product) {
+                    setLatestProduct(response.product);
+                    setIsBarcodePreviewOpen(true);
+                }
             }
-            setIsProductModalOpen(false);
-            fetchProducts();
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to save product');
         }
@@ -232,7 +248,7 @@ const Products = () => {
         <div className="container mx-auto px-4 py-8 space-y-6">
 
             {/* Header & Quick Actions */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 print:hidden">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200">{t.products || "Products Inventory"}</h1>
                     <p className="text-gray-500 mt-1">{t?.manageStockDesc || "Manage stock, track expiry, and organize categories."}</p>
@@ -264,6 +280,14 @@ const Products = () => {
                         >
                             <FolderIcon className="h-4 w-4 mr-2" /> {t?.categories || "Categories"}
                         </button>
+                        {selectedProductIds.length > 0 && (
+                            <button
+                                onClick={() => setIsPrintingBulk(true)}
+                                className="flex items-center px-4 py-2 bg-indigo-600 border border-transparent text-white rounded-lg shadow-sm transition-all duration-300 hover-mac-folder text-sm font-bold"
+                            >
+                                Print Selected Barcodes ({selectedProductIds.length})
+                            </button>
+                        )}
                         <button
                             onClick={handleAddProduct}
                             className="flex items-center px-4 py-2 bg-[var(--color-brand-blue)] text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-[var(--color-brand-blue)]/30 transition-all text-sm hover-mac-folder"
@@ -275,7 +299,7 @@ const Products = () => {
             </div>
 
             {/* Metrics Summary (Optional, simple version) */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 print:hidden">
                 <div className="bg-white dark:bg-gray-900 p-4 rounded-xl shadow-sm border border-gray-100">
                     <p className="text-sm text-gray-500">{t?.totalValue || "Total Value"}</p>
                     <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -295,7 +319,7 @@ const Products = () => {
             </div>
 
             {/* Detailed Filters & Search */}
-            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 flex flex-col md:flex-row gap-4 items-center justify-between print:hidden">
                 <div className="relative w-full md:w-96">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <MagnifyingGlassIcon className="h-5 w-5 text-[var(--color-brand-blue)]" />
@@ -339,24 +363,48 @@ const Products = () => {
 
             {/* Error & Loading */}
             {error && (
-                <div className="bg-red-50 text-red-700 p-4 rounded-lg flex items-center">
+                <div className="bg-red-50 text-red-700 p-4 rounded-lg flex items-center print:hidden">
                     <span className="font-medium mr-2">Error:</span> {error}
                 </div>
             )}
 
             {isLoading ? (
-                <div className="flex justify-center py-12">
+                <div className="flex justify-center py-12 print:hidden">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 </div>
             ) : (
-                <ProductTable
-                    products={products}
-                    onEdit={handleEditProduct}
-                    onDelete={handleDeleteProduct}
-                    onAdjustStock={handleAdjustStock}
-                    onSort={handleSort}
-                    sortConfig={sortConfig}
-                    user={user}
+                <div className="print:hidden">
+                    <ProductTable
+                        products={products}
+                        onEdit={handleEditProduct}
+                        onDelete={handleDeleteProduct}
+                        onAdjustStock={handleAdjustStock}
+                        onSort={handleSort}
+                        sortConfig={sortConfig}
+                        user={user}
+                        selectedIds={selectedProductIds}
+                        onSelectProduct={(id) => {
+                            setSelectedProductIds(prev =>
+                                prev.includes(id) ? prev.filter(pId => pId !== id) : [...prev, id]
+                            );
+                        }}
+                        onSelectAll={(selectAll) => {
+                            if (selectAll) {
+                                setSelectedProductIds(products.map(p => p._id));
+                            } else {
+                                setSelectedProductIds([]);
+                            }
+                        }}
+                    />
+                </div>
+            )}
+
+            {/* Hidden component for actual printing */}
+            {isPrintingBulk && (
+                <BarcodeGrid
+                    products={products.filter(p => selectedProductIds.includes(p._id))}
+                    printTrigger={isPrintingBulk}
+                    onPrintComplete={() => setIsPrintingBulk(false)}
                 />
             )}
 
@@ -380,6 +428,12 @@ const Products = () => {
                 isOpen={isCategoryModalOpen}
                 onClose={() => setIsCategoryModalOpen(false)}
                 onUpdate={fetchCategories}
+            />
+
+            <BarcodePreview
+                isOpen={isBarcodePreviewOpen}
+                onClose={() => setIsBarcodePreviewOpen(false)}
+                product={latestProduct}
             />
         </div>
     );
