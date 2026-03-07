@@ -18,7 +18,7 @@ const Receipt = forwardRef(({ cartItems, totalAmount, paymentMethod, receiptNumb
                 ref={ref}
                 style={{
                     padding: '40px 50px',
-                    width: '794px', // Standard A4 width at 96 PPI
+                    width: '800px', // Exact match to pdf windowWidth to prevent cut-off
                     minHeight: '1123px', // Standard A4 length
                     backgroundColor: 'white',
                     color: '#1f2937', // text-gray-800

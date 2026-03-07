@@ -52,7 +52,6 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                 selectedCamera,
                 {
                     fps: 30,    // max fps for rapid parsing
-                    qrbox: { width: 250, height: 150 }, // standard barcode box
                     aspectRatio: 1.0, // strict 1:1 prevents weird mobile stretching
                     disableFlip: false, // allow omni-directional scanning (upside down, slanted)
                     formatsToSupport: [
@@ -139,19 +138,8 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                     {/* Modern UI Scanner Overlay */}
                     {isScanning && (
                         <div className="absolute inset-0 pointer-events-none z-20">
-                            {/* Animated Red Laser Line */}
+                            {/* Animated Red Laser Line (Full width now) */}
                             <div className="absolute left-0 right-0 h-0.5 bg-red-500/80 shadow-[0_0_15px_rgba(239,68,68,1)] animate-[scan_2s_ease-in-out_infinite]"></div>
-
-                            {/* HUD Targeting Corners */}
-                            <div className="absolute inset-4 opacity-50">
-                                <div className="absolute top-0 left-0 w-8 h-8 md:w-12 md:h-12 border-t-4 border-l-4 border-white rounded-tl-xl transition-all duration-300"></div>
-                                <div className="absolute top-0 right-0 w-8 h-8 md:w-12 md:h-12 border-t-4 border-r-4 border-white rounded-tr-xl transition-all duration-300"></div>
-                                <div className="absolute bottom-0 left-0 w-8 h-8 md:w-12 md:h-12 border-b-4 border-l-4 border-white rounded-bl-xl transition-all duration-300"></div>
-                                <div className="absolute bottom-0 right-0 w-8 h-8 md:w-12 md:h-12 border-b-4 border-r-4 border-white rounded-br-xl transition-all duration-300"></div>
-                            </div>
-
-                            {/* Darken outside of focus area (simulated) */}
-                            <div className="absolute inset-0 bg-black/10 mix-blend-multiply"></div>
                         </div>
                     )}
                 </div>
