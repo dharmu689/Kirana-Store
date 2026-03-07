@@ -127,19 +127,42 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                     </div>
                 </div>
 
-                <div className="flex-1 w-full bg-black/5 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[350px]">
+                <div className="flex-1 w-full bg-black/5 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[50vh] md:min-h-[350px]">
                     {!isScanning && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-                            <ArrowPathIcon className="h-8 w-8 text-gray-400 animate-spin mb-2" />
-                            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Initializing Lens...</p>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md">
+                            <ArrowPathIcon className="h-8 w-8 text-indigo-500 animate-spin mb-3" />
+                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Initializing Optical Lens...</p>
                         </div>
                     )}
                     <div id="camera-reader" className="w-full h-full"></div>
+
+                    {/* Modern UI Scanner Overlay */}
+                    {isScanning && (
+                        <div className="absolute inset-0 pointer-events-none z-20">
+                            {/* Animated Red Laser Line */}
+                            <div className="absolute left-0 right-0 h-0.5 bg-red-500/80 shadow-[0_0_15px_rgba(239,68,68,1)] animate-[scan_2s_ease-in-out_infinite]"></div>
+
+                            {/* HUD Targeting Corners */}
+                            <div className="absolute inset-4 opacity-50">
+                                <div className="absolute top-0 left-0 w-8 h-8 md:w-12 md:h-12 border-t-4 border-l-4 border-white rounded-tl-xl transition-all duration-300"></div>
+                                <div className="absolute top-0 right-0 w-8 h-8 md:w-12 md:h-12 border-t-4 border-r-4 border-white rounded-tr-xl transition-all duration-300"></div>
+                                <div className="absolute bottom-0 left-0 w-8 h-8 md:w-12 md:h-12 border-b-4 border-l-4 border-white rounded-bl-xl transition-all duration-300"></div>
+                                <div className="absolute bottom-0 right-0 w-8 h-8 md:w-12 md:h-12 border-b-4 border-r-4 border-white rounded-br-xl transition-all duration-300"></div>
+                            </div>
+
+                            {/* Darken outside of focus area (simulated) */}
+                            <div className="absolute inset-0 bg-black/10 mix-blend-multiply"></div>
+                        </div>
+                    )}
                 </div>
 
-                <div className="text-center py-2">
-                    <p className="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider">
-                        Align barcode inside the box. Scanner stays active.
+                <div className="text-center py-3 bg-gray-50 dark:bg-gray-900 rounded-xl mt-2">
+                    <p className="text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2">
+                        <span className="relative flex h-2 w-2">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                        </span>
+                        System Active & Scanning
                     </p>
                 </div>
 
@@ -149,7 +172,26 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                 {/* CSS to ensure html5-qrcode scales cleanly without weird stretching */}
                 {`
                     #camera-reader { width: 100%; border: none !important; text-align: center; }
-                    #camera-reader video { max-width: 100% !important; height: auto !important; border-radius: 0.75rem; margin: 0 auto; display: block; }
+                    #camera-reader video { max-width: 100% !important; height: auto !important; border-radius: 0.75rem; margin: 0 auto; display: block; object-fit: cover; min-height: 50vh; }
+                    
+                    @keyframes scan {
+                        0% { top: 10%; opacity: 0; }
+                        10% { opacity: 1; }
+                        90% { opacity: 1; }
+                        100% { top: 90%; opacity: 0; }
+                    }
+                    
+                    /* Hide html5-qrcode's ugly default permission buttons if they momentarily flash */
+                    #camera-reader button {
+                        background-color: #6366f1 !important;
+                        color: white !important;
+                        border-radius: 0.5rem !important;
+                        padding: 0.5rem 1rem !important;
+                        font-weight: 600 !important;
+                        border: none !important;
+                        margin-top: 1rem !important;
+                    }
+                    #camera-reader select { display: none !important; }
                 `}
             </style>
         </div>
