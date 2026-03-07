@@ -2,6 +2,19 @@ const mongoose = require('mongoose');
 
 const saleSchema = mongoose.Schema(
     {
+        receiptNumber: {
+            type: String,
+            required: true,
+            index: true
+        },
+        customerName: {
+            type: String,
+            default: ''
+        },
+        customerMobile: {
+            type: String,
+            default: ''
+        },
         product: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,

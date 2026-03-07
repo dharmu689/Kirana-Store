@@ -4,7 +4,8 @@ const {
     createSale,
     getAllSales,
     getSalesSummary,
-    getProfitSummary
+    getProfitSummary,
+    getSaleByReceipt
 } = require('../controllers/saleController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -12,5 +13,6 @@ router.post('/', protect, createSale);
 router.get('/', protect, getAllSales);
 router.get('/summary', protect, getSalesSummary);
 router.get('/profit-summary', protect, getProfitSummary);
+router.get('/receipt/:receiptNumber', protect, getSaleByReceipt);
 
 module.exports = router;

@@ -1,60 +1,81 @@
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 
-// @desc    Create new sale
+// @desc    Create new sale(s) from a cart
 // @route   POST /api/sales
 // @access  Private (Admin/Staff)
 const createSale = async (req, res) => {
     try {
-        const { product, quantitySold, paymentMethod } = req.body;
+        const { items, paymentMethod, customerName, customerMobile } = req.body;
 
-        const productItem = await Product.findById(product);
-
-        if (!productItem) {
-            res.status(404);
-            throw new Error('Product not found');
-        }
-
-        if (productItem.quantity < quantitySold) {
+        if (!items || items.length === 0) {
             res.status(400);
-            throw new Error('Insufficient stock');
+            throw new Error('No items provided');
         }
 
-        // Calculate total price and profit
-        let unitPrice = productItem.sellingPrice || productItem.price;
-        const totalPrice = quantitySold * unitPrice;
+        // Generate a unique receipt number based on timestamp and random digits
+        const receiptNumber = `REC-${Date.now().toString().slice(-6)}${Math.floor(E.random() * 1000).toString().padStart(3, '0')}`;
 
-        const totalProfit = (productItem.sellingPrice - productItem.purchasePrice) * quantitySold;
+        const createdSales = [];
 
-        // Create sale
-        const sale = await Sale.create({
-            product,
-            productName: productItem.name,
-            category: productItem.category,
-            quantitySold,
-            unitPrice,
-            totalPrice,
-            profit: totalProfit,
-            soldBy: req.user.id,
-            paymentMethod
-        });
+        // We process in a loop; in production a transaction or bulkWrite is better, 
+        // but to ensure individual product validations we iterate.
+        for (const item of items) {
+            const { product, quantitySold } = item;
 
-        // Deduct stock and update product sales stats
-        await Product.updateOne(
-            { _id: productItem._id },
-            {
-                $inc: {
-                    quantity: -quantitySold,
-                    totalSold: quantitySold,
-                    revenue: totalPrice
-                },
-                $set: {
-                    lastSoldDate: Date.now()
-                }
+            const productItem = await Product.findById(product);
+            if (!productItem) {
+                res.status(404);
+                throw new Error(`Product not found`);
             }
-        );
+            if (productItem.quantity < quantitySold) {
+                res.status(400);
+                throw new Error(`Insufficient stock for ${productItem.name}`);
+            }
 
-        res.status(201).json(sale);
+            let unitPrice = productItem.sellingPrice || productItem.price;
+            const totalPrice = quantitySold * unitPrice;
+            const totalProfit = (productItem.sellingPrice - productItem.purchasePrice) * quantitySold;
+
+            // Create individual sale record sharing the same receipt number
+            const sale = await Sale.create({
+                receiptNumber,
+                customerName: customerName || '',
+                customerMobile: customerMobile || '',
+                product,
+                productName: productItem.name,
+                category: productItem.category,
+                quantitySold,
+                unitPrice,
+                totalPrice,
+                profit: totalProfit,
+                soldBy: req.user.id,
+                paymentMethod
+            });
+
+            // Deduct stock and update product sales stats
+            await Product.updateOne(
+                { _id: productItem._id },
+                {
+                    $inc: {
+                        quantity: -quantitySold,
+                        totalSold: quantitySold,
+                        revenue: totalPrice
+                    },
+                    $set: {
+                        lastSoldDate: Date.now()
+                    }
+                }
+            );
+
+            createdSales.push(sale);
+        }
+
+        res.status(201).json({
+            success: true,
+            receiptNumber,
+            sales: createdSales
+        });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -144,9 +165,32 @@ const getProfitSummary = async (req, res) => {
     }
 }
 
+// @desc    Get sale by receipt number
+// @route   GET /api/sales/receipt/:receiptNumber
+// @access  Private (Admin/Staff)
+const getSaleByReceipt = async (req, res) => {
+    try {
+        const { receiptNumber } = req.params;
+        const sales = await Sale.find({ receiptNumber })
+            .populate('soldBy', 'name email')
+            .populate('product', 'name price productId barcode')
+            .sort({ createdAt: -1 });
+
+        if (!sales || sales.length === 0) {
+            res.status(404);
+            throw new Error('Receipt not found');
+        }
+
+        res.status(200).json(sales);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
 module.exports = {
     createSale,
     getAllSales,
     getSalesSummary,
-    getProfitSummary
+    getProfitSummary,
+    getSaleByReceipt
 };

@@ -1,84 +1,139 @@
-import React, { useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import React, { useEffect, useState, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { VideoCameraIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
-const CameraScanner = ({ isOpen, onClose, onScanSuccess }) => {
+const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
+    const [cameras, setCameras] = useState([]);
+    const [selectedCamera, setSelectedCamera] = useState('');
+    const [isScanning, setIsScanning] = useState(false);
+    const html5QrCodeRef = useRef(null);
+    const lastScanTimeRef = useRef(0);
+
+    // Fetch available cameras when component mounts
     useEffect(() => {
-        let scanner = null;
-        if (isOpen) {
-            scanner = new Html5QrcodeScanner(
-                "camera-reader",
-                { fps: 10, qrbox: { width: 250, height: 150 } }, // wider for barcodes
-                /* verbose= */ false
-            );
-
-            scanner.render(
-                (decodedText) => {
-                    // Feature 8: Stop scanner automatically
-                    onScanSuccess(decodedText);
-                    scanner.clear();
-                    onClose();
-                },
-                (errorMessage) => {
-                    // Ignore continuous background scan errors
-                }
-            );
-        }
+        Html5Qrcode.getCameras().then(devices => {
+            if (devices && devices.length) {
+                setCameras(devices);
+                // Try back camera by default if multiple, else first available
+                const backCamera = devices.find(d => d.label.toLowerCase().includes('back'));
+                setSelectedCamera(backCamera ? backCamera.id : devices[0].id);
+            }
+        }).catch(err => {
+            console.error("Camera detection failed", err);
+        });
 
         return () => {
-            if (scanner && scanner.getState && scanner.getState() !== 1) { // 1 is UNKNOWN
-                scanner.clear().catch(error => {
-                    console.error("Failed to clear html5QrcodeScanner.", error);
-                });
-            }
+            stopScanner();
         };
-    }, [isOpen, onScanSuccess, onClose]);
+    }, []);
+
+    // Start/Stop scanner strictly bound to isOpen AND scannerActive context
+    useEffect(() => {
+        if (isOpen && scannerActive && selectedCamera) {
+            startScanner();
+        } else {
+            stopScanner();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, scannerActive, selectedCamera]);
+
+    const startScanner = async () => {
+        try {
+            if (!html5QrCodeRef.current) {
+                html5QrCodeRef.current = new Html5Qrcode("camera-reader");
+            }
+
+            if (html5QrCodeRef.current.isScanning) {
+                await html5QrCodeRef.current.stop();
+            }
+
+            await html5QrCodeRef.current.start(
+                selectedCamera,
+                {
+                    fps: 15,    // higher fps for rapid parsing
+                    qrbox: { width: 300, height: 150 } // Wide box excellent for 1D barcodes
+                },
+                (decodedText) => {
+                    // Prevent rapid duplicate scans (wait 1.5s between identical scans)
+                    const now = Date.now();
+                    if (now - lastScanTimeRef.current > 1500) {
+                        lastScanTimeRef.current = now;
+                        // Important: Do NOT stop the scanner. Send the code up.
+                        onScanSuccess(decodedText);
+                    }
+                },
+                (errorMessage) => {
+                    // background noise
+                }
+            );
+            setIsScanning(true);
+        } catch (err) {
+            console.error("Failed to start scanner", err);
+            setIsScanning(false);
+        }
+    };
+
+    const stopScanner = async () => {
+        if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+            try {
+                await html5QrCodeRef.current.stop();
+                setIsScanning(false);
+            } catch (err) {
+                console.error("Failed to stop scanner", err);
+            }
+        }
+    };
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-500/75 dark:bg-gray-900/90 flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col items-center p-6 border border-gray-100 dark:border-gray-700">
+        <div className="w-full flex justify-center mt-4 border border-gray-100 dark:border-gray-800 rounded-2xl bg-white dark:bg-gray-800 shadow-sm p-4 h-full">
+            <div className="w-full max-w-lg flex flex-col h-full">
 
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
-                    Scan Product
-                </h2>
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
+                        <VideoCameraIcon className="h-5 w-5 text-indigo-500" />
+                        Live Camera Scanner
+                    </h2>
 
-                {/* Feature 6: Scanner modal design - Camera View */}
-                <div className="w-full bg-black/5 rounded-xl overflow-hidden mb-4 border-2 border-dashed border-gray-300 dark:border-gray-600 relative min-h-[300px] flex items-center justify-center">
+                    <div className="flex items-center">
+                        <select
+                            className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-lg text-sm px-3 py-1.5 focus:ring-indigo-500 focus:border-indigo-500 max-w-[200px]"
+                            value={selectedCamera}
+                            onChange={(e) => setSelectedCamera(e.target.value)}
+                        >
+                            {cameras.map(camera => (
+                                <option key={camera.id} value={camera.id}>
+                                    {camera.label || `Camera ${camera.id}`}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div className="flex-1 w-full bg-black/5 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[350px]">
+                    {!isScanning && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+                            <ArrowPathIcon className="h-8 w-8 text-gray-400 animate-spin mb-2" />
+                            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Initializing Lens...</p>
+                        </div>
+                    )}
                     <div id="camera-reader" className="w-full h-full"></div>
                 </div>
 
-                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-6 text-center">
-                    Align barcode inside the box.
-                </p>
+                <div className="text-center py-2">
+                    <p className="text-gray-500 dark:text-gray-400 text-xs font-medium uppercase tracking-wider">
+                        Align barcode inside the box. Scanner stays active.
+                    </p>
+                </div>
 
-                {/* Cancel button below camera */}
-                <button
-                    onClick={onClose}
-                    className="w-full py-3 px-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-xl font-bold transition-colors"
-                >
-                    Cancel
-                </button>
             </div>
 
             <style>
-                {/* CSS override to fix html5-qrcode ugly default UI */}
+                {/* CSS to ensure html5-qrcode scales cleanly in its container */}
                 {`
                     #camera-reader { width: 100%; border: none !important; }
-                    #camera-reader img { display: none !important; }
-                    #camera-reader button { 
-                        padding: 8px 16px; 
-                        background: var(--color-brand-blue, #3b82f6); 
-                        color: white; 
-                        border-radius: 8px; 
-                        border: none;
-                        font-weight: 600;
-                        margin: 10px 0;
-                        cursor: pointer;
-                    }
-                    #camera-reader a { display: none !important; }
-                    #camera-reader__scan_region { min-height: 250px; display: flex; align-items: center; justify-content: center; background: black; }
-                    #camera-reader__dashboard_section_csr span { color: transparent !important; }
+                    #camera-reader video { object-fit: cover !important; border-radius: 0.75rem; }
                 `}
             </style>
         </div>

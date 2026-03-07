@@ -1,13 +1,13 @@
 import React, { forwardRef } from 'react';
 
-const Receipt = forwardRef(({ cartItems, totalAmount, paymentMethod }, ref) => {
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-IN', {
+const Receipt = forwardRef(({ cartItems, totalAmount, paymentMethod, receiptNumber, customerName, customerMobile, dateOverride }, ref) => {
+    const receiptDate = dateOverride ? new Date(dateOverride) : new Date();
+    const formattedDate = receiptDate.toLocaleDateString('en-IN', {
         day: '2-digit',
         month: 'short',
         year: 'numeric'
     });
-    const formattedTime = today.toLocaleTimeString('en-IN', {
+    const formattedTime = receiptDate.toLocaleTimeString('en-IN', {
         hour: '2-digit',
         minute: '2-digit'
     });
@@ -27,13 +27,23 @@ const Receipt = forwardRef(({ cartItems, totalAmount, paymentMethod }, ref) => {
                 }}
             >
                 {/* Header */}
-                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <h2 style={{ margin: '0 0 5px 0', fontSize: '20px', fontWeight: 'bold' }}>KiranaSmart Store</h2>
+                <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+                    <h2 style={{ margin: '0 0 5px 0', fontSize: '20px', fontWeight: 'bold' }}>KiranaSmart POS</h2>
                     <p style={{ margin: '0', fontSize: '12px' }}>Your trusted neighborhood store</p>
+                    <p style={{ margin: '5px 0 0 0', fontSize: '12px', fontWeight: 'bold' }}>Receipt No: {receiptNumber || 'N/A'}</p>
                     <p style={{ margin: '0', fontSize: '12px' }}>Date: {formattedDate} {formattedTime}</p>
                 </div>
 
-                <div style={{ borderBottom: '1px dashed #ccc', marginBottom: '15px' }}></div>
+                {/* Customer Details */}
+                {(customerName || customerMobile) && (
+                    <div style={{ marginBottom: '15px', fontSize: '12px' }}>
+                        <div style={{ borderBottom: '1px dashed #ccc', marginBottom: '5px' }}></div>
+                        {customerName && <p style={{ margin: '2px 0' }}><strong>Customer:</strong> {customerName}</p>}
+                        {customerMobile && <p style={{ margin: '2px 0' }}><strong>Mobile:</strong> {customerMobile}</p>}
+                    </div>
+                )}
+
+                <div style={{ borderBottom: '1px dashed #ccc', marginBottom: '10px' }}></div>
 
                 {/* Items */}
                 <table style={{ width: '100%', marginBottom: '15px', borderCollapse: 'collapse' }}>

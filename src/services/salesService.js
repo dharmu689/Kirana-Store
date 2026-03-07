@@ -24,11 +24,18 @@ const getProfitSummary = async () => {
     return response.data;
 };
 
+// Get sale by receipt
+const getSaleByReceipt = async (receiptNumber) => {
+    const response = await API.get(`/sales/receipt/${receiptNumber}`);
+    return response.data;
+};
+
 const salesService = {
     createSale,
     getSales,
     getSalesSummary,
-    getProfitSummary
+    getProfitSummary,
+    getSaleByReceipt
 };
 
 export default salesService;
