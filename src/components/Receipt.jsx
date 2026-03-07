@@ -17,8 +17,8 @@ const Receipt = forwardRef(({ cartItems, totalAmount, paymentMethod, receiptNumb
             <div
                 ref={ref}
                 style={{
-                    padding: '30px',
-                    width: '350px',
+                    padding: '20px',
+                    width: '320px',
                     backgroundColor: 'white',
                     color: 'black',
                     fontFamily: 'monospace',

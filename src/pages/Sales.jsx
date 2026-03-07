@@ -86,19 +86,24 @@ const Sales = () => {
         }
 
         playBeep();
-        const existingItemIndex = cart.findIndex((item) => item.product._id === product._id);
 
-        if (existingItemIndex > -1) {
-            const newCart = [...cart];
-            if (newCart[existingItemIndex].quantitySold < product.quantity) {
-                newCart[existingItemIndex].quantitySold += 1;
-                setCart(newCart);
+        setCart((prevCart) => {
+            const existingItemIndex = prevCart.findIndex((item) => item.product._id === product._id);
+            if (existingItemIndex > -1) {
+                const newCart = [...prevCart];
+                if (newCart[existingItemIndex].quantitySold < product.quantity) {
+                    newCart[existingItemIndex] = {
+                        ...newCart[existingItemIndex],
+                        quantitySold: newCart[existingItemIndex].quantitySold + 1
+                    };
+                    return newCart;
+                } else {
+                    return prevCart; // cannot add more than stock
+                }
             } else {
-                playErrorBeep(); // cannot add more than stock
+                return [...prevCart, { product, quantitySold: 1 }];
             }
-        } else {
-            setCart([...cart, { product, quantitySold: 1 }]);
-        }
+        });
     };
 
     const handleBarcodeScan = async (barcode) => {
@@ -189,11 +194,11 @@ const Sales = () => {
     useEffect(() => {
         if (reprintData && receiptRef.current) {
             const opt = {
-                margin: 0,
+                margin: 5,
                 filename: `${reprintData.receiptNumber}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'mm', format: [80, 200], orientation: 'portrait' }
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 400 },
+                jsPDF: { unit: 'mm', format: [100, 250], orientation: 'portrait' }
             };
             html2pdf().from(receiptRef.current).set(opt).save().then(() => {
                 setReprintData(null);
