@@ -126,14 +126,14 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                     </div>
                 </div>
 
-                <div className="flex-1 w-full bg-black/5 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[50vh] md:min-h-[350px]">
+                <div className="w-full bg-black/10 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[300px] xl:min-h-[400px]">
                     {!isScanning && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md">
                             <ArrowPathIcon className="h-8 w-8 text-indigo-500 animate-spin mb-3" />
                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Initializing Optical Lens...</p>
                         </div>
                     )}
-                    <div id="camera-reader" className="w-full h-full"></div>
+                    <div id="camera-reader" className="w-full h-full flex items-center justify-center"></div>
 
                     {/* Modern UI Scanner Overlay */}
                     {isScanning && (
@@ -160,7 +160,15 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                 {/* CSS to ensure html5-qrcode scales cleanly without weird stretching */}
                 {`
                     #camera-reader { width: 100%; border: none !important; text-align: center; }
-                    #camera-reader video { max-width: 100% !important; height: auto !important; border-radius: 0.75rem; margin: 0 auto; display: block; object-fit: cover; min-height: 50vh; }
+                    #camera-reader video { 
+                        width: 100% !important; 
+                        height: auto !important; 
+                        max-height: 60vh !important;
+                        border-radius: 0.75rem; 
+                        margin: 0 auto; 
+                        display: block; 
+                        object-fit: contain !important; 
+                    }
                     
                     @keyframes scan {
                         0% { top: 10%; opacity: 0; }
