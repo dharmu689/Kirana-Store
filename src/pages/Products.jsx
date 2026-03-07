@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useEffect, useState } from "react";
 import ProductTable from '../components/ProductTable';
 import ProductForm from '../components/ProductForm';
 import StockAdjustmentModal from '../components/StockAdjustmentModal';
