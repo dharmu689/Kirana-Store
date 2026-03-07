@@ -51,7 +51,8 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                 selectedCamera,
                 {
                     fps: 15,    // higher fps for rapid parsing
-                    qrbox: { width: 300, height: 150 } // Wide box excellent for 1D barcodes
+                    qrbox: { width: 250, height: 150 }, // standard barcode box
+                    aspectRatio: 1.0 // strict 1:1 prevents weird mobile stretching 
                 },
                 (decodedText) => {
                     // Prevent rapid duplicate scans (wait 1.5s between identical scans)
@@ -130,10 +131,10 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
             </div>
 
             <style>
-                {/* CSS to ensure html5-qrcode scales cleanly in its container */}
+                {/* CSS to ensure html5-qrcode scales cleanly without weird stretching */}
                 {`
-                    #camera-reader { width: 100%; border: none !important; }
-                    #camera-reader video { object-fit: cover !important; border-radius: 0.75rem; }
+                    #camera-reader { width: 100%; border: none !important; text-align: center; }
+                    #camera-reader video { max-width: 100% !important; height: auto !important; border-radius: 0.75rem; margin: 0 auto; display: block; }
                 `}
             </style>
         </div>

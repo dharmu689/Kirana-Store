@@ -34,6 +34,9 @@ const Sales = () => {
     const [paymentMethod, setPaymentMethod] = useState('Cash');
     const [isProcessing, setIsProcessing] = useState(false);
 
+    // Cache for products to avoid stale closure in scanner callback
+    const productsRef = useRef([]);
+
     // Receipt Printing State
     const [reprintData, setReprintData] = useState(null);
     const [isReceiptHistoryOpen, setIsReceiptHistoryOpen] = useState(false);
@@ -68,6 +71,7 @@ const Sales = () => {
         try {
             const data = await productService.getProducts();
             setProducts(data);
+            productsRef.current = data; // Keep ref updated for scanner
         } catch (error) {
             console.error('Error fetching products', error);
         }

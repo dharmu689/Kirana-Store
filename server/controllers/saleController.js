@@ -14,7 +14,7 @@ const createSale = async (req, res) => {
         }
 
         // Generate a unique receipt number based on timestamp and random digits
-        const receiptNumber = `REC-${Date.now().toString().slice(-6)}${Math.floor(E.random() * 1000).toString().padStart(3, '0')}`;
+        const receiptNumber = `REC-${Date.now().toString().slice(-6)}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
 
         const createdSales = [];
 
