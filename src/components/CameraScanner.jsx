@@ -16,8 +16,13 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
             if (devices && devices.length) {
                 setCameras(devices);
                 // Try back camera by default if multiple, else first available
-                const backCamera = devices.find(d => d.label.toLowerCase().includes('back'));
-                setSelectedCamera(backCamera ? backCamera.id : devices[0].id);
+                const backCamera = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment'));
+                if (backCamera) {
+                    setSelectedCamera(backCamera.id);
+                } else {
+                    // fallback exact mobile facingMode constraint instead of string ID if on phone
+                    setSelectedCamera(devices[0].id);
+                }
             }
         }).catch(err => {
             console.error("Camera detection failed", err);
@@ -48,8 +53,11 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                 await html5QrCodeRef.current.stop();
             }
 
+            // On mobile, force rear camera if possible by passing facingMode instead of deviceId
+            const cameraConfig = selectedCamera ? selectedCamera : { facingMode: "environment" };
+
             await html5QrCodeRef.current.start(
-                selectedCamera,
+                cameraConfig,
                 {
                     fps: 30,    // max fps for rapid parsing
                     aspectRatio: 1.0, // strict 1:1 prevents weird mobile stretching
@@ -126,14 +134,14 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
                     </div>
                 </div>
 
-                <div className="w-full bg-black/10 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[300px] xl:min-h-[400px]">
+                <div className="w-full bg-black/10 rounded-xl overflow-hidden mb-2 relative flex items-center justify-center min-h-[50vh] xl:min-h-[400px]">
                     {!isScanning && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-white/50 dark:bg-gray-800/50 backdrop-blur-md">
                             <ArrowPathIcon className="h-8 w-8 text-indigo-500 animate-spin mb-3" />
                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Initializing Optical Lens...</p>
                         </div>
                     )}
-                    <div id="camera-reader" className="w-full h-full flex items-center justify-center"></div>
+                    <div id="camera-reader" className="w-full h-full flex flex-col items-center justify-center"></div>
 
                     {/* Modern UI Scanner Overlay */}
                     {isScanning && (

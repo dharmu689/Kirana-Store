@@ -244,10 +244,10 @@ const Sales = () => {
             </div>
 
             {/*  40/60 PROFESSIONAL POS GRID */}
-            <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 lg:h-[700px]">
+            <div className="flex flex-col xl:flex-row gap-6 xl:h-[700px]">
 
                 {/* LEFT PANE (40%) - Input Source */}
-                <div className="xl:col-span-2 flex flex-col h-full bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
+                <div className="w-full xl:w-2/5 flex flex-col min-h-[500px] xl:min-h-0 h-full bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 overflow-hidden">
                     <div className="flex border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 p-2 gap-2">
                         <button
                             className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold transition-all ${isScannerMode ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
@@ -280,7 +280,7 @@ const Sales = () => {
                 </div>
 
                 {/* RIGHT PANE (60%) - CartPanel component */}
-                <div className="xl:col-span-3 h-[600px] xl:h-[700px]">
+                <div className="w-full xl:w-3/5 h-[600px] xl:h-[700px]">
                     <CartPanel
                         cart={cart}
                         updateQuantity={updateQuantity}
