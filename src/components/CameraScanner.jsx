@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { VideoCameraIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
 const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
@@ -8,6 +8,7 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
     const [isScanning, setIsScanning] = useState(false);
     const html5QrCodeRef = useRef(null);
     const lastScanTimeRef = useRef(0);
+    const lastScannedCodeRef = useRef('');
 
     // Fetch available cameras when component mounts
     useEffect(() => {
@@ -50,18 +51,32 @@ const CameraScanner = ({ isOpen, onScanSuccess, scannerActive }) => {
             await html5QrCodeRef.current.start(
                 selectedCamera,
                 {
-                    fps: 15,    // higher fps for rapid parsing
+                    fps: 30,    // max fps for rapid parsing
                     qrbox: { width: 250, height: 150 }, // standard barcode box
-                    aspectRatio: 1.0 // strict 1:1 prevents weird mobile stretching 
+                    aspectRatio: 1.0, // strict 1:1 prevents weird mobile stretching
+                    disableFlip: false, // allow omni-directional scanning (upside down, slanted)
+                    formatsToSupport: [
+                        Html5QrcodeSupportedFormats.CODE_128,
+                        Html5QrcodeSupportedFormats.CODE_39,
+                        Html5QrcodeSupportedFormats.CODE_93,
+                        Html5QrcodeSupportedFormats.EAN_13,
+                        Html5QrcodeSupportedFormats.EAN_8,
+                        Html5QrcodeSupportedFormats.UPC_A,
+                        Html5QrcodeSupportedFormats.UPC_E,
+                        Html5QrcodeSupportedFormats.QR_CODE
+                    ]
                 },
                 (decodedText) => {
-                    // Prevent rapid duplicate scans (wait 1.5s between identical scans)
                     const now = Date.now();
-                    if (now - lastScanTimeRef.current > 1500) {
-                        lastScanTimeRef.current = now;
-                        // Important: Do NOT stop the scanner. Send the code up.
-                        onScanSuccess(decodedText);
+                    // Prevent rapid duplicate scans of the SAME barcode (1.5s cooldown)
+                    if (decodedText === lastScannedCodeRef.current && now - lastScanTimeRef.current < 1500) {
+                        return; // ignore exact duplicate too fast
                     }
+
+                    // Accept scan if it's a new product, or if enough time passed for the same product
+                    lastScannedCodeRef.current = decodedText;
+                    lastScanTimeRef.current = now;
+                    onScanSuccess(decodedText);
                 },
                 (errorMessage) => {
                     // background noise
