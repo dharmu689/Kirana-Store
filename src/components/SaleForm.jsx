@@ -3,7 +3,7 @@ import { QrCodeIcon, ShoppingCartIcon, XMarkIcon, PlusIcon, MinusIcon, PrinterIc
 import html2pdf from 'html2pdf.js';
 import productService from '../services/productService';
 import salesService from '../services/salesService';
-import QRScannerModal from './QRScannerModal';
+import CameraScanner from './CameraScanner';
 import Receipt from './Receipt';
 
 const SaleForm = ({ onSaleAdded }) => {
@@ -274,7 +274,7 @@ const SaleForm = ({ onSaleAdded }) => {
                     className="flex items-center px-4 py-2 bg-[var(--color-brand-orange)] text-white rounded-lg shadow-md hover:bg-orange-600 transition duration-200 font-bold hover-mac-folder"
                 >
                     <QrCodeIcon className="h-5 w-5 mr-2" />
-                    Scan QR
+                    Scan Product
                 </button>
             </div>
 
@@ -457,7 +457,7 @@ const SaleForm = ({ onSaleAdded }) => {
                 </div>
             </div>
 
-            <QRScannerModal
+            <CameraScanner
                 isOpen={isScannerOpen}
                 onClose={() => setIsScannerOpen(false)}
                 onScanSuccess={handleScanSuccess}
