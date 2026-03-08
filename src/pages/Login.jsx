@@ -60,14 +60,14 @@ const Login = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-[420px] w-[90%] mx-auto z-10 relative">
                 <div className="flex flex-col items-center mb-6 z-10 relative">
                     <img
-                        src="/logo.png"
+                        src="/KSfavicon.svg"
                         alt="KiranaSmart Logo"
                         className="w-20 h-auto mb-3"
                     />
-                    <h1 className="text-2xl font-bold">
+                    {/* <h1 className="text-2xl font-bold">
                         <span className="text-blue-600">Kirana</span>
                         <span className="text-orange-500">Smart</span>
-                    </h1>
+                    </h1> */}
                 </div>
 
                 <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">
