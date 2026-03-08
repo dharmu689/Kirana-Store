@@ -118,6 +118,21 @@ const getDashboardProfit = asyncHandler(async (req, res) => {
             }
         ]);
 
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const sevenDaysProfit = await Sale.aggregate([
+            {
+                $match: { createdAt: { $gte: sevenDaysAgo } }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: "$profit" }
+                }
+            }
+        ]);
+
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
@@ -136,6 +151,7 @@ const getDashboardProfit = asyncHandler(async (req, res) => {
         res.json({
             totalProfit: totalProfit[0]?.total || 0,
             oneDayProfit: oneDayProfit[0]?.total || 0,
+            sevenDaysProfit: sevenDaysProfit[0]?.total || 0,
             thirtyDaysProfit: thirtyDaysProfit[0]?.total || 0
         });
     } catch (error) {

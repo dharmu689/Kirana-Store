@@ -13,6 +13,7 @@ const Dashboard = () => {
   const [profitData, setProfitData] = useState({
     totalProfit: 0,
     oneDayProfit: 0,
+    sevenDaysProfit: 0,
     thirtyDaysProfit: 0
   });
   const [topProducts, setTopProducts] = useState([]);
@@ -137,6 +138,26 @@ const Dashboard = () => {
             >
               1 Year Profit
             </button>
+            <button
+              onClick={() => setSelectedPeriod("1week")}
+              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
+                    ${selectedPeriod === "1week"
+                  ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-purple-100 dark:hover:bg-gray-700"
+                }`}
+            >
+              1 Week
+            </button>
+            <button
+              onClick={() => setSelectedPeriod("1day")}
+              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
+                    ${selectedPeriod === "1day"
+                  ? "bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/30"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-pink-100 dark:hover:bg-gray-700"
+                }`}
+            >
+              1 Day
+            </button>
           </div>
 
           <motion.p
@@ -149,8 +170,12 @@ const Dashboard = () => {
             ₹{
               (selectedPeriod === "total"
                 ? profitData?.totalProfit
-                : yearlyProfit.reduce((sum, item) => sum + item.profit, 0)
-              )?.toLocaleString()
+                : selectedPeriod === "1year"
+                  ? yearlyProfit.reduce((sum, item) => sum + item.profit, 0)
+                  : selectedPeriod === "1week"
+                    ? profitData?.sevenDaysProfit
+                    : profitData?.oneDayProfit
+              )?.toLocaleString() || 0
             }
           </motion.p>
 
