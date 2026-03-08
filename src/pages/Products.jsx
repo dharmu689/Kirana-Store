@@ -181,9 +181,9 @@ const Products = () => {
             const text = e.target.result;
             // Simple CSV parser: assuming header is row 0
             const rows = text.split('\n').map(row => row.split(','));
-            const header = rows[0]; // Name, Category, Price, Quantity...
+            const header = rows[0]; // Name, Category, Purchase Price, Selling Price, Unit, Quantity, Reorder Level, Expiry Date
             // Need robust parsing, but for demo simple:
-            // Assume format: Name,Category,Price,Quantity,ReorderLevel,ExpiryDate
+            // Assume format: Name,Category,Purchase Price,Selling Price,Unit,Quantity,Reorder Level,Expiry Date
 
             let successCount = 0;
             let failCount = 0;
@@ -191,19 +191,21 @@ const Products = () => {
             // Start from index 1 (skip header)
             for (let i = 1; i < rows.length; i++) {
                 const row = rows[i];
-                if (row.length < 4) continue; // Skip empty/invalid
+                if (row.length < 8) continue; // Skip empty/invalid
 
-                const [name, category, price, quantity, reorderLevel, expiryDate] = row;
-                if (!name || !price) continue;
+                const [name, category, purchasePrice, sellingPrice, unit, quantity, reorderLevel, expiryDate] = row;
+                if (!name || !sellingPrice) continue;
 
                 try {
                     await productService.createProduct({
                         name: name.trim(),
                         category: category?.trim() || 'Uncategorized',
-                        price: Number(price),
+                        purchasePrice: Number(purchasePrice) || 0,
+                        price: Number(sellingPrice),
+                        unit: unit?.trim() || 'piece',
                         quantity: Number(quantity) || 0,
                         reorderLevel: Number(reorderLevel) || 10,
-                        expiryDate: expiryDate ? new Date(expiryDate) : null
+                        expiryDate: (expiryDate && expiryDate.trim()) ? new Date(expiryDate.trim()) : null
                     });
                     successCount++;
                 } catch (err) {
@@ -220,8 +222,8 @@ const Products = () => {
 
     // Sample CSV Export Handler
     const handleDownloadSampleCSV = () => {
-        const headers = ['Name', 'Category', 'Price', 'Quantity', 'ReorderLevel', 'ExpiryDate'];
-        const sampleRow = ['Sample Product', 'Snacks', '150', '25', '5', ''];
+        const headers = ['Name', 'Category', 'Purchase Price', 'Selling Price', 'Unit', 'Quantity', 'Reorder Level', 'Expiry Date'];
+        const sampleRow = ['Sample Product', 'Snacks', '100', '150', 'piece', '25', '5', ''];
 
         const csvContent = "data:text/csv;charset=utf-8,"
             + headers.join(",") + "\n"
