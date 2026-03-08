@@ -11,6 +11,21 @@
 
     /* Expanding standard spacing for more fluid animations */
     --animate-mac-bounce: mac-bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    --animate-gradient-move: gradientMove 12s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 @keyframes mac-bounce {

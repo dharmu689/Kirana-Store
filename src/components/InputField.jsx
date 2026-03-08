@@ -29,9 +29,9 @@ const InputField = ({
                     value={value}
                     onChange={onChange}
                     className={clsx(
-                        "block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5 transition-colors",
+                        "block w-full rounded-xl border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm sm:text-sm py-2 px-3 h-12 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:shadow-lg hover:border-gray-300 dark:hover:border-gray-500",
                         Icon ? "pl-10" : "pl-3",
-                        error ? "border-red-300 focus:border-red-500 focus:ring-red-500" : "border-gray-300 dark:border-gray-600"
+                        error && "border-red-300 focus:border-red-500 focus:ring-red-400 shadow-[0_0_10px_rgba(239,68,68,0.2)]"
                     )}
                     placeholder={placeholder}
                 />
