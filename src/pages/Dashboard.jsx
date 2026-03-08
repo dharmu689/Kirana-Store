@@ -7,6 +7,7 @@ import { ArrowRight, Activity, TrendingUp } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
 import { motion } from 'framer-motion';
+import AIChatAssistant from '../components/AIChatAssistant';
 
 const Dashboard = () => {
   const [summaryData, setSummaryData] = useState(null);
@@ -283,6 +284,9 @@ const Dashboard = () => {
         </div>
 
       </div>
+
+      {/* Floating AI Chat Assistant */}
+      <AIChatAssistant />
     </div>
   );
 };

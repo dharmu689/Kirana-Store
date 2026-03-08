@@ -61,6 +61,7 @@ app.use('/api/settings', require('./routes/storeSettingsRoutes'));
 app.use('/api/settings', require('./routes/systemPreferencesRoutes'));
 app.use('/api/settings/notifications', require('./routes/notificationSettingsRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes'));
 
 // Basic route
 app.get('/', (req, res) => {
