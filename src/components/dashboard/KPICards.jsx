@@ -40,11 +40,19 @@ const KPICards = ({ data }) => {
             icon: AlertTriangle,
             color: 'bg-orange-100 text-[var(--color-brand-orange)] dark:bg-[var(--color-brand-orange)]/20',
             path: '/reorder'
+        },
+        {
+            title: t?.totalInventory || 'Total Inventory',
+            value: data !== null ? data.totalProducts : '...',
+            subtext: t?.totalProducts || 'Products in inventory',
+            icon: Package,
+            color: 'bg-purple-100 text-purple-600 dark:bg-purple-900/30',
+            path: '/products'
         }
     ];
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
             {displayData.map((item, index) => {
                 const Icon = item.icon;
                 return (

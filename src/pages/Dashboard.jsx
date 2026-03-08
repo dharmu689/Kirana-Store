@@ -15,7 +15,10 @@ const Dashboard = () => {
     oneDayProfit: 0,
     thirtyDaysProfit: 0
   });
-  const [selectedPeriod, setSelectedPeriod] = useState("1day");
+  const [topProducts, setTopProducts] = useState([]);
+  const [lowSellingProducts, setLowSellingProducts] = useState([]);
+  const [yearlyProfit, setYearlyProfit] = useState([]);
+  const [selectedPeriod, setSelectedPeriod] = useState("total");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -29,6 +32,15 @@ const Dashboard = () => {
 
       const pData = await dashboardService.getDashboardProfit();
       setProfitData(pData);
+
+      const topProd = await dashboardService.getTopProducts();
+      setTopProducts(topProd);
+
+      const lowProd = await dashboardService.getLowSellingProducts();
+      setLowSellingProducts(lowProd);
+
+      const yearProf = await dashboardService.getYearlyProfit();
+      setYearlyProfit(yearProf);
     } catch (error) {
       console.error("Failed to fetch dashboard summary", error);
     } finally {
@@ -89,30 +101,6 @@ const Dashboard = () => {
 
       {/* Profit Analytics Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-        {/* Total Profit Card */}
-        <motion.div
-          whileHover={{ scale: 1.03 }}
-          transition={{ type: "spring", stiffness: 200 }}
-          className="relative overflow-hidden bg-gradient-to-br from-green-500/10 to-emerald-600/10 
-                        dark:from-green-900/30 dark:to-emerald-800/30
-                        backdrop-blur-xl p-6 rounded-2xl shadow-xl 
-                        border border-green-200/40 dark:border-green-700/40 
-                        hover:shadow-green-500/30 transition-all duration-300"
-        >
-
-          <h3 className="text-gray-700 dark:text-gray-300 font-semibold tracking-wide">
-            💰 Total Profit
-          </h3>
-
-          <p className="text-3xl font-black text-green-600 dark:text-green-400 mt-3">
-            ₹{profitData?.totalProfit?.toLocaleString()}
-          </p>
-
-          <div className="absolute top-0 right-0 w-20 h-20 bg-green-400/10 rounded-full blur-2xl"></div>
-        </motion.div>
-
-
         {/* Profit Switch Section */}
         <motion.div
           whileHover={{ scale: 1.03 }}
@@ -128,30 +116,27 @@ const Dashboard = () => {
             📊 Profit Overview
           </h3>
 
-          <div className="flex gap-3 mb-6">
-
+          <div className="flex gap-3 mb-6 flex-wrap">
             <button
-              onClick={() => setSelectedPeriod("1day")}
+              onClick={() => setSelectedPeriod("total")}
               className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
-                    ${selectedPeriod === "1day"
+                    ${selectedPeriod === "total"
                   ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700"
                 }`}
             >
-              1 Day
+              Total Profit
             </button>
-
             <button
-              onClick={() => setSelectedPeriod("30days")}
+              onClick={() => setSelectedPeriod("1year")}
               className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
-                    ${selectedPeriod === "30days"
+                    ${selectedPeriod === "1year"
                   ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
                   : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-gray-700"
                 }`}
             >
-              30 Days
+              1 Year Profit
             </button>
-
           </div>
 
           <motion.p
@@ -162,9 +147,9 @@ const Dashboard = () => {
             className="text-3xl font-black text-green-500 dark:text-green-400"
           >
             ₹{
-              (selectedPeriod === "1day"
-                ? profitData?.oneDayProfit
-                : profitData?.thirtyDaysProfit
+              (selectedPeriod === "total"
+                ? profitData?.totalProfit
+                : yearlyProfit.reduce((sum, item) => sum + item.profit, 0)
               )?.toLocaleString()
             }
           </motion.p>
@@ -174,18 +159,91 @@ const Dashboard = () => {
 
       </div>
 
-      {/* Row 2 - Sales Trend Chart */}
-      <div className="w-full h-80 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50">
-        <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">{t?.salesTrend || "Sales Trend (30 Days)"}</h3>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={summaryData?.salesTrend || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-            <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#6B7280' }} tickFormatter={(str) => str?.slice(5) || ''} />
-            <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
-            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
-            <Line type="monotone" dataKey="sales" stroke="var(--color-brand-blue)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* Row 2 - Sales & Analytics Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sales Trend Chart */}
+        <div className="w-full h-80 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50 hover-mac-folder transition-all duration-300">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">{t?.salesTrend || "Sales Trend (30 Days)"}</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={summaryData?.salesTrend || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#6B7280' }} tickFormatter={(str) => str?.slice(5) || ''} />
+              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
+              <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+              <Line type="monotone" dataKey="sales" stroke="var(--color-brand-blue)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* 1 Year Profit Chart */}
+        <div className="w-full h-80 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50 hover-mac-folder transition-all duration-300">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Profit Overview (1 Year)</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={yearlyProfit || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#6B7280' }} />
+              <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
+              <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+              <Line type="monotone" dataKey="profit" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Row 3 - Product Analytics Lists */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6">
+
+        {/* Top Selling Products */}
+        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50 hover-mac-folder transition-all duration-300">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
+            ⭐ Top Selling Products
+          </h3>
+          <div className="space-y-4">
+            {topProducts.length > 0 ? topProducts.map((product, index) => (
+              <div key={product._id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center space-x-3">
+                  <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] font-bold text-sm">
+                    {index + 1}
+                  </span>
+                  <span className="font-semibold text-gray-800 dark:text-gray-200">{product.name}</span>
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-[var(--color-brand-blue)]">{product.totalSold} sales</div>
+                </div>
+              </div>
+            )) : (
+              <p className="text-gray-500 text-sm">No sales data available yet.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Low Selling Products */}
+        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50 hover-mac-folder transition-all duration-300">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center text-orange-500">
+            ⚠️ Low Selling Products
+          </h3>
+          <div className="space-y-4">
+            {lowSellingProducts.length > 0 ? lowSellingProducts.map((product) => {
+              const daysAgo = product.lastSoldDate
+                ? Math.floor((new Date() - new Date(product.lastSoldDate)) / (1000 * 60 * 60 * 24))
+                : 'N/A';
+
+              return (
+                <div key={product._id} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center space-x-3">
+                    <span className="font-semibold text-gray-800 dark:text-gray-200">{product.name}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-sm font-medium text-orange-500">Last sold {daysAgo} days ago</div>
+                  </div>
+                </div>
+              );
+            }) : (
+              <p className="text-gray-500 text-sm">All products are selling well!</p>
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );
