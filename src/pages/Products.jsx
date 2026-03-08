@@ -201,6 +201,7 @@ const Products = () => {
                         name: name.trim(),
                         category: category?.trim() || 'Uncategorized',
                         purchasePrice: Number(purchasePrice) || 0,
+                        sellingPrice: Number(sellingPrice),
                         price: Number(sellingPrice),
                         unit: unit?.trim() || 'piece',
                         quantity: Number(quantity) || 0,

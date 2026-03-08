@@ -6,7 +6,7 @@ const QRCode = require('qrcode');
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime, purchasePrice, sellingPrice, margin } = req.body;
+    const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime, purchasePrice, sellingPrice, margin, unit } = req.body;
 
     // Generate unique productId like PROD-0001
     const lastProduct = await Product.findOne({}, {}, { sort: { 'createdAt': -1 } });
@@ -33,6 +33,7 @@ const createProduct = asyncHandler(async (req, res) => {
         reorderLevel,
         expiryDate,
         supplierLeadTime,
+        unit,
         createdBy: req.user._id
     });
 
