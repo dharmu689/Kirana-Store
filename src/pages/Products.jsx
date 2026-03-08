@@ -218,6 +218,24 @@ const Products = () => {
         event.target.value = ''; // Reset
     };
 
+    // Sample CSV Export Handler
+    const handleDownloadSampleCSV = () => {
+        const headers = ['Name', 'Category', 'Price', 'Quantity', 'ReorderLevel', 'ExpiryDate'];
+        const sampleRow = ['Sample Product', 'Snacks', '150', '25', '5', ''];
+
+        const csvContent = "data:text/csv;charset=utf-8,"
+            + headers.join(",") + "\n"
+            + sampleRow.join(",");
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "sample_product_import.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     // Export Handler (Simple CSV)
     const handleExport = () => {
         const headers = ['Name', 'Category', 'Price', 'Quantity', 'Reorder Level', 'Status', 'Expiry'];
@@ -262,6 +280,12 @@ const Products = () => {
                             accept=".csv"
                             onChange={handleFileChange}
                         />
+                        <button
+                            onClick={handleDownloadSampleCSV}
+                            className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-[var(--color-brand-blue)] dark:text-blue-400 rounded-lg hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-all duration-300 hover-mac-folder text-sm font-medium"
+                        >
+                            <ArrowDownTrayIcon className="h-4 w-4 mr-2" /> {t?.sampleCSV || "Sample CSV"}
+                        </button>
                         <button
                             onClick={handleImportClick}
                             className="flex items-center px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:text-[var(--color-brand-blue)] hover:bg-gray-50 dark:bg-gray-800 shadow-sm transition-all duration-300 hover-mac-folder text-sm font-medium"
