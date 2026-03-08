@@ -61,8 +61,12 @@ const Register = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-800 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mx-auto shadow-lg shadow-blue-200">
-                    <span className="text-white font-bold text-2xl">K</span>
+                <div className="flex flex-col items-center mb-6">
+                    <img
+                        src="/KiranaSmart.svg"
+                        alt="KiranaSmart Logo"
+                        className="w-20 h-auto mb-4"
+                    />
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100">
                     Create account
