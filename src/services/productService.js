@@ -10,6 +10,11 @@ const getProductByBarcode = async (barcode) => {
     return response.data;
 };
 
+const getLowStockProducts = async () => {
+    const response = await API.get('/products/low-stock');
+    return response.data;
+};
+
 const createProduct = async (productData) => {
     const response = await API.post("/products", productData);
     return response.data;
@@ -55,6 +60,7 @@ const productService = {
     getCategories,
     createCategory,
     deleteCategory,
+    getLowStockProducts,
 };
 
 export default productService;

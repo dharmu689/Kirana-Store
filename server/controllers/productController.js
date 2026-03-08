@@ -152,6 +152,19 @@ const getProductById = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Get low stock products
+// @route   GET /api/products/low-stock
+// @access  Private
+const getLowStockProducts = asyncHandler(async (req, res) => {
+    // Find products where quantity <= reorderLevel and quantity > 0 (to not overlap with out-of-stock completely, though usually low stock includes out of stock. As per requirements: stock <= 10 or stock <= reorderLevel)
+    const lowStockProducts = await Product.find({
+        userId: req.user.id,
+        $expr: { $lte: ['$quantity', '$reorderLevel'] }
+    }).sort({ quantity: 1 });
+
+    res.json(lowStockProducts);
+});
+
 // @desc    Get single product by barcode
 // @route   GET /api/products/barcode/:barcode
 // @access  Public/Private
@@ -278,5 +291,6 @@ module.exports = {
     getProductByBarcode,
     updateProduct,
     deleteProduct,
-    adjustStock
+    adjustStock,
+    getLowStockProducts
 };

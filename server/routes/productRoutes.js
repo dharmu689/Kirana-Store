@@ -7,7 +7,8 @@ const {
     getProductByBarcode,
     updateProduct,
     deleteProduct,
-    adjustStock
+    adjustStock,
+    getLowStockProducts
 } = require('../controllers/productController');
 const { protect, admin } = require('../middleware/authMiddleware');
 
@@ -15,6 +16,7 @@ router.route('/')
     .get(protect, getProducts)
     .post(protect, admin, createProduct);
 
+router.get('/low-stock', protect, getLowStockProducts);
 router.get('/barcode/:barcode', protect, getProductByBarcode);
 
 router.route('/:id')

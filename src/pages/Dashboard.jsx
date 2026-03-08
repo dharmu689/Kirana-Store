@@ -8,6 +8,9 @@ import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
 import { motion } from 'framer-motion';
 import AIChatAssistant from '../components/AIChatAssistant';
+import productService from '../services/productService';
+import VendorOrderModal from '../components/VendorOrderModal';
+import vendorOrderService from '../services/vendorOrderService';
 
 const Dashboard = () => {
   const [summaryData, setSummaryData] = useState(null);
@@ -20,8 +23,14 @@ const Dashboard = () => {
   const [topProducts, setTopProducts] = useState([]);
   const [lowSellingProducts, setLowSellingProducts] = useState([]);
   const [profitChartData, setProfitChartData] = useState([]);
+  const [lowStockProducts, setLowStockProducts] = useState([]);
   const [selectedPeriod, setSelectedPeriod] = useState("1day");
   const [loading, setLoading] = useState(true);
+
+  // Reorder Modal State
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedReorderProduct, setSelectedReorderProduct] = useState(null);
+
   const navigate = useNavigate();
   const { language } = useLanguage();
   const t = translations[language];
@@ -43,6 +52,9 @@ const Dashboard = () => {
 
       const chartData = await dashboardService.getProfitChartData(selectedPeriod);
       setProfitChartData(chartData);
+
+      const lstProducts = await productService.getLowStockProducts();
+      setLowStockProducts(lstProducts);
     } catch (error) {
       console.error("Failed to fetch dashboard summary", error);
     } finally {
@@ -284,6 +296,63 @@ const Dashboard = () => {
         </div>
 
       </div>
+
+      {/* Row 4 - Low Stock Reorder Section */}
+      <div className="grid grid-cols-1 gap-6 pb-6">
+        <div className="bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-6 rounded-xl shadow-lg border border-red-100/50 dark:border-red-900/50 hover-mac-folder transition-all duration-300">
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4 flex items-center text-red-500">
+            ⚠️ Low Stock Products
+          </h3>
+          <div className="space-y-4">
+            {lowStockProducts.length > 0 ? lowStockProducts.map((product) => (
+              <div key={product._id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-100 dark:border-red-900/50 gap-3">
+                <div className="flex items-center space-x-3">
+                  <span className="font-semibold text-gray-800 dark:text-gray-200">
+                    <span className="text-red-500 mr-2">⚠</span>
+                    {product.name}
+                  </span>
+                  <span className="px-2 py-1 bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400 text-xs font-bold rounded-full">
+                    Stock: {product.quantity}
+                  </span>
+                </div>
+                <div className="text-right w-full sm:w-auto">
+                  <button
+                    onClick={() => {
+                      setSelectedReorderProduct(product);
+                      setIsOrderModalOpen(true);
+                    }}
+                    className="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-lg shadow-sm transition-all duration-300 flex items-center justify-center"
+                  >
+                    Order From Vendor
+                  </button>
+                </div>
+              </div>
+            )) : (
+              <p className="text-gray-500 text-sm">All products are adequately stocked.</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <VendorOrderModal
+        isOpen={isOrderModalOpen}
+        onClose={() => {
+          setIsOrderModalOpen(false);
+          setSelectedReorderProduct(null);
+        }}
+        product={selectedReorderProduct}
+        onPlaceOrder={async (orderData) => {
+          try {
+            await vendorOrderService.createOrder(orderData);
+            alert('Order placed successfully!');
+            setIsOrderModalOpen(false);
+            setSelectedReorderProduct(null);
+          } catch (err) {
+            console.error('Order Error:', err);
+            alert('Failed to place order. ' + (err.response?.data?.message || ''));
+          }
+        }}
+      />
 
       {/* Floating AI Chat Assistant */}
       <AIChatAssistant />
