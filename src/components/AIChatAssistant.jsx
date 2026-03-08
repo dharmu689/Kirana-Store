@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Mic, Trash2, Loader2, MicOff } from 'lucide-react';
+import { MessageSquare, X, Send, Trash2, Loader2 } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import SuggestedActions from './SuggestedActions';
 import chatService from '../services/chatService';
+import VoiceInput from './VoiceInput';
 
 const AIChatAssistant = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -12,10 +13,8 @@ const AIChatAssistant = () => {
     ]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [isListening, setIsListening] = useState(false);
 
     const messagesEndRef = useRef(null);
-    const recognitionRef = useRef(null);
 
     // Auto-scroll to bottom of chat
     const scrollToBottom = () => {
@@ -25,50 +24,6 @@ const AIChatAssistant = () => {
     useEffect(() => {
         scrollToBottom();
     }, [messages, isTyping]);
-
-    // Setup Web Speech API Request
-    useEffect(() => {
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = false;
-            recognitionRef.current.interimResults = false;
-            recognitionRef.current.lang = 'en-US';
-
-            recognitionRef.current.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                setInput(transcript);
-                setIsListening(false);
-            };
-
-            recognitionRef.current.onerror = (event) => {
-                console.error("Speech recognition error:", event.error);
-                setIsListening(false);
-            };
-
-            recognitionRef.current.onend = () => {
-                setIsListening(false);
-            };
-        }
-    }, []);
-
-    const toggleListen = () => {
-        if (isListening) {
-            recognitionRef.current?.stop();
-            setIsListening(false);
-        } else {
-            if (recognitionRef.current) {
-                try {
-                    recognitionRef.current.start();
-                    setIsListening(true);
-                } catch (e) {
-                    console.error(e);
-                }
-            } else {
-                alert("Speech recognition isn't supported in this browser.");
-            }
-        }
-    };
 
     const handleSendMessage = async (text = input) => {
         if (!text.trim()) return;
@@ -88,6 +43,10 @@ const AIChatAssistant = () => {
         } finally {
             setIsTyping(false);
         }
+    };
+
+    const handleVoiceResult = (text) => {
+        setInput((prev) => prev ? `${prev} ${text}` : text);
     };
 
     const handleKeyDown = (e) => {
@@ -165,13 +124,7 @@ const AIChatAssistant = () => {
                                 />
                             </div>
 
-                            <button
-                                onClick={toggleListen}
-                                className={`p-3 rounded-xl transition-colors flex-shrink-0 ${isListening ? 'bg-red-500 text-white animate-pulse' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-blue-500'}`}
-                                title={isListening ? "Stop listening" : "Voice input"}
-                            >
-                                {isListening ? <MicOff size={20} /> : <Mic size={20} />}
-                            </button>
+                            <VoiceInput onResult={handleVoiceResult} isTyping={isTyping} />
 
                             <button
                                 onClick={() => handleSendMessage()}
