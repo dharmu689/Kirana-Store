@@ -69,13 +69,14 @@ const Register = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-[420px] w-[90%] mx-auto z-10 relative">
                 <div className="flex flex-col items-center mb-6 z-10 relative">
                     <img
-                        src="/KiranaSmart.svg"
+                        src="/logo.png"
                         alt="KiranaSmart Logo"
-                        className="w-[90px] h-auto mb-2 drop-shadow-sm"
+                        className="w-20 h-auto mb-3"
                     />
-                    <span className="text-2xl font-bold tracking-tight text-[#2563eb] dark:text-blue-400 drop-shadow-sm">
-                        Kirana<span className="text-[#f97316]">Smart</span>
-                    </span>
+                    <h1 className="text-2xl font-bold">
+                        <span className="text-blue-600">Kirana</span>
+                        <span className="text-orange-500">Smart</span>
+                    </h1>
                 </div>
 
                 <h2 className="text-center text-3xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">
@@ -92,7 +93,7 @@ const Register = () => {
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="backdrop-blur-xl bg-white/70 dark:bg-gray-900/70 border border-white/40 dark:border-gray-700/50 py-8 px-4 sm:px-10 shadow-[0_20px_60px_rgba(0,0,0,0.08)] dark:shadow-[0_20px_60px_rgba(0,0,0,0.3)] rounded-3xl"
+                    className="bg-white border border-gray-200 py-8 px-4 sm:px-10 shadow-xl rounded-3xl"
                 >
                     {error && (
                         <div className="mb-6 bg-red-50/80 backdrop-blur-sm border-l-4 border-red-500 p-4 rounded-xl flex items-start shadow-sm">
@@ -156,7 +157,7 @@ const Register = () => {
                                     name="role"
                                     value={role}
                                     onChange={handleChange}
-                                    className="block w-full pl-10 pr-10 rounded-xl border-gray-200 dark:border-gray-600 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm sm:text-sm py-2 px-3 h-12 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 focus:shadow-lg hover:border-gray-300 dark:hover:border-gray-500 appearance-none"
+                                    className="block w-full h-12 pl-10 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white appearance-none"
                                 >
                                     <option value="staff">Staff Member</option>
                                     <option value="admin">Store Admin</option>
