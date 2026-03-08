@@ -5,14 +5,12 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
     const [formData, setFormData] = useState({
         name: '',
         category: '',
-        price: '',
         purchasePrice: '',
         sellingPrice: '',
-        margin: '',
+        unit: '',
         quantity: '',
         reorderLevel: '',
-        expiryDate: '',
-        supplierLeadTime: ''
+        expiryDate: ''
     });
 
     useEffect(() => {
@@ -25,60 +23,29 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
             setFormData({
                 name: initialData.name || '',
                 category: initialData.category || '',
-                price: initialData.price || '',
                 purchasePrice: initialData.purchasePrice || '',
                 sellingPrice: initialData.sellingPrice || '',
-                margin: initialData.margin || '',
+                unit: initialData.unit || '',
                 quantity: initialData.quantity || '',
                 reorderLevel: initialData.reorderLevel || '',
-                expiryDate: formattedDate,
-                supplierLeadTime: initialData.supplierLeadTime || ''
+                expiryDate: formattedDate
             });
         } else {
             setFormData({
                 name: '',
                 category: '',
-                price: '',
                 purchasePrice: '',
                 sellingPrice: '',
-                margin: '',
+                unit: '',
                 quantity: '',
                 reorderLevel: '',
-                expiryDate: '',
-                supplierLeadTime: ''
+                expiryDate: ''
             });
         }
     }, [initialData, isOpen]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        if (name === "margin" && formData.purchasePrice) {
-            const pb = parseFloat(formData.purchasePrice) || 0;
-            const marginVal = parseFloat(value) || 0;
-            const calculatedSelling = pb + (pb * marginVal) / 100;
-
-            setFormData(prev => ({
-                ...prev,
-                margin: value,
-                sellingPrice: Math.round(calculatedSelling)
-            }));
-            return;
-        }
-
-        if (name === "purchasePrice" && formData.margin) {
-            const pb = parseFloat(value) || 0;
-            const marginVal = parseFloat(formData.margin) || 0;
-            const calculatedSelling = pb + (pb * marginVal) / 100;
-
-            setFormData(prev => ({
-                ...prev,
-                purchasePrice: value,
-                sellingPrice: Math.round(calculatedSelling)
-            }));
-            return;
-        }
-
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -88,7 +55,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
             alert('Selling Price must be greater than 0');
             return;
         }
-        onSubmit(formData);
+        onSubmit({ ...formData, price: formData.sellingPrice }); // fallback price for backend wrapper
     };
 
     if (!isOpen) return null;
@@ -166,39 +133,23 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Margin (%)</label>
-                            <input
-                                type="number"
-                                name="margin"
-                                value={formData.margin}
-                                onChange={handleChange}
-                                min="0"
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Selling Price</label>
-                            <input
-                                type="number"
-                                name="sellingPrice"
-                                value={formData.sellingPrice}
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit</label>
+                            <select
+                                name="unit"
+                                value={formData.unit}
                                 onChange={handleChange}
                                 required
-                                min="0"
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Old Price / MSRP</label>
-                            <input
-                                type="number"
-                                name="price"
-                                value={formData.price}
-                                onChange={handleChange}
-                                required
-                                min="0"
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                            />
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+                            >
+                                <option value="" disabled>Select Unit ▼</option>
+                                <option value="kg">kg</option>
+                                <option value="g">g</option>
+                                <option value="liter">liter</option>
+                                <option value="ml">ml</option>
+                                <option value="piece">piece</option>
+                                <option value="packet">packet</option>
+                                <option value="box">box</option>
+                            </select>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Quantity</label>
@@ -209,7 +160,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                                 onChange={handleChange}
                                 required
                                 min="0"
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900"
                             />
                         </div>
                         <div>
@@ -221,18 +172,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                                 onChange={handleChange}
                                 required
                                 min="0"
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Supplier Lead Time (Days)</label>
-                            <input
-                                type="number"
-                                name="supplierLeadTime"
-                                value={formData.supplierLeadTime}
-                                onChange={handleChange}
-                                min="0"
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900"
                             />
                         </div>
                         <div>
@@ -242,7 +182,7 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                                 name="expiryDate"
                                 value={formData.expiryDate}
                                 onChange={handleChange}
-                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900"
                             />
                         </div>
                     </div>

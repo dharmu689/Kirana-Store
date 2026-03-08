@@ -16,6 +16,8 @@ const SaleForm = ({ onSaleAdded }) => {
     // Cart State
     const [cart, setCart] = useState([]);
     const [paymentMethod, setPaymentMethod] = useState('Cash');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     // Form Selection State
     const [selectedProductId, setSelectedProductId] = useState('');
@@ -252,6 +254,11 @@ const SaleForm = ({ onSaleAdded }) => {
         return total + (itemPrice * item.quantitySold);
     }, 0).toFixed(2);
 
+    const indexOfLastItem = currentPage * rowsPerPage;
+    const indexOfFirstItem = indexOfLastItem - rowsPerPage;
+    const currentCartItems = cart.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(cart.length / rowsPerPage);
+
     return (
         <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 mb-6 relative">
 
@@ -378,7 +385,16 @@ const SaleForm = ({ onSaleAdded }) => {
                     </div>
                 ) : (
                     <ul className="divide-y divide-gray-100 dark:divide-gray-800">
-                        {cart.map((item) => {
+                        <li className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-100 dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 rounded-t-lg border-b border-gray-200 dark:border-gray-700">
+                            <div className="flex-1">Product</div>
+                            <div className="flex items-center gap-4 w-full sm:w-auto justify-end sm:justify-start">
+                                <div className="w-32 text-center">Quantity</div>
+                                <div className="w-20 text-right">Price</div>
+                                <div className="w-20 text-right">Subtotal</div>
+                                <div className="w-8"></div>
+                            </div>
+                        </li>
+                        {currentCartItems.map((item) => {
                             const price = item.product.sellingPrice || item.product.price;
                             const itemTotal = price * item.quantitySold;
                             return (
@@ -390,7 +406,7 @@ const SaleForm = ({ onSaleAdded }) => {
 
                                     <div className="flex items-center gap-4">
                                         {/* Quantity Controls */}
-                                        <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden">
+                                        <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden w-32 justify-center">
                                             <button
                                                 onClick={() => updateCartQuantity(item.product._id, item.quantitySold - 1)}
                                                 className="px-2 py-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -408,22 +424,71 @@ const SaleForm = ({ onSaleAdded }) => {
                                             </button>
                                         </div>
 
+                                        <div className="w-20 text-right text-sm text-gray-600 dark:text-gray-400">
+                                            ₹{(price).toFixed(2)}
+                                        </div>
+
                                         <div className="w-20 text-right font-bold text-[var(--color-brand-blue)]">
                                             ₹{itemTotal.toFixed(2)}
                                         </div>
 
-                                        <button
-                                            onClick={() => removeFromCart(item.product._id)}
-                                            className="text-red-400 hover:text-red-600 p-1"
-                                            title="Remove item"
-                                        >
-                                            <XMarkIcon className="h-5 w-5" />
-                                        </button>
+                                        <div className="w-8 flex justify-end">
+                                            <button
+                                                onClick={() => removeFromCart(item.product._id)}
+                                                className="text-red-400 hover:text-red-600 p-1"
+                                                title="Remove item"
+                                            >
+                                                <XMarkIcon className="h-5 w-5" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </li>
                             );
                         })}
                     </ul>
+                )}
+
+                {cart.length > rowsPerPage && (
+                    <div className="bg-white dark:bg-gray-800 px-4 py-3 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div className="text-sm text-gray-700 dark:text-gray-300">
+                            Showing {indexOfFirstItem + 1}–{Math.min(indexOfLastItem, cart.length)} of {cart.length} products
+                        </div>
+                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                            <div className="flex items-center gap-2">
+                                <label className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Rows per page:</label>
+                                <select
+                                    value={rowsPerPage}
+                                    onChange={(e) => {
+                                        setRowsPerPage(Number(e.target.value));
+                                        setCurrentPage(1);
+                                    }}
+                                    className="border border-gray-300 dark:border-gray-600 rounded-md text-sm p-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200"
+                                >
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                </select>
+                            </div>
+                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                {[...Array(totalPages)].map((_, i) => (
+                                    <button
+                                        key={i + 1}
+                                        onClick={() => setCurrentPage(i + 1)}
+                                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${currentPage === i + 1 ? 'z-10 bg-blue-50 border-blue-500 text-blue-600 dark:bg-blue-900/50 dark:border-blue-500 dark:text-blue-200' : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                                    >
+                                        Page {i + 1}
+                                    </button>
+                                ))}
+                                <button
+                                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                                >
+                                    Next
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
                 )}
             </div>
 

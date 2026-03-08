@@ -54,8 +54,11 @@ const productSchema = mongoose.Schema(
         },
         supplierLeadTime: {
             type: Number,
-            required: [true, 'Please add supplier lead time'],
+            required: false,
             default: 1 // in days
+        },
+        unit: {
+            type: String
         },
         avgDailyDemand: {
             type: Number,
