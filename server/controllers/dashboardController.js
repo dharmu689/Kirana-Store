@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 const Sale = require('../models/Sale');
@@ -11,7 +12,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     startOfToday.setHours(0, 0, 0, 0);
 
     const todaySales = await Sale.aggregate([
-        { $match: { saleDate: { $gte: startOfToday } } },
+        { $match: { saleDate: { $gte: startOfToday }, userId: new mongoose.Types.ObjectId(req.user.id) } },
         {
             $group: {
                 _id: null,
@@ -27,7 +28,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     startOfMonth.setHours(0, 0, 0, 0);
 
     const monthlySales = await Sale.aggregate([
-        { $match: { saleDate: { $gte: startOfMonth } } },
+        { $match: { saleDate: { $gte: startOfMonth }, userId: new mongoose.Types.ObjectId(req.user.id) } },
         {
             $group: {
                 _id: null,
@@ -38,16 +39,17 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     const monthlyRevenue = monthlySales[0]?.monthlyRevenue || 0;
 
     // 3. Total Orders
-    const totalOrders = await Sale.countDocuments();
+    const totalOrders = await Sale.countDocuments({ userId: req.user.id });
 
     // 4. Low Stock Count
     const lowStockCount = await Product.countDocuments({
         $expr: { $lte: ['$quantity', '$reorderLevel'] },
-        quantity: { $gt: 0 }
+        quantity: { $gt: 0 },
+        userId: req.user.id
     });
 
     // 4b. Total Products Count
-    const totalProducts = await Product.countDocuments();
+    const totalProducts = await Product.countDocuments({ userId: req.user.id });
 
     // 5. Sales Trend
     const thirtyDaysAgo = new Date();
@@ -65,7 +67,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     }
 
     const salesData = await Sale.aggregate([
-        { $match: { saleDate: { $gte: thirtyDaysAgo } } },
+        { $match: { saleDate: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
         {
             $group: {
                 _id: { $dateToString: { format: "%Y-%m-%d", date: "$saleDate" } },
@@ -95,6 +97,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
 const getDashboardProfit = asyncHandler(async (req, res) => {
     try {
         const totalProfit = await Sale.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
             {
                 $group: {
                     _id: null,
@@ -108,7 +111,7 @@ const getDashboardProfit = asyncHandler(async (req, res) => {
 
         const oneDayProfit = await Sale.aggregate([
             {
-                $match: { createdAt: { $gte: today } }
+                $match: { createdAt: { $gte: today }, userId: new mongoose.Types.ObjectId(req.user.id) }
             },
             {
                 $group: {
@@ -123,7 +126,7 @@ const getDashboardProfit = asyncHandler(async (req, res) => {
 
         const sevenDaysProfit = await Sale.aggregate([
             {
-                $match: { createdAt: { $gte: sevenDaysAgo } }
+                $match: { createdAt: { $gte: sevenDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) }
             },
             {
                 $group: {
@@ -138,7 +141,7 @@ const getDashboardProfit = asyncHandler(async (req, res) => {
 
         const thirtyDaysProfit = await Sale.aggregate([
             {
-                $match: { createdAt: { $gte: thirtyDaysAgo } }
+                $match: { createdAt: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) }
             },
             {
                 $group: {
@@ -164,7 +167,7 @@ const getDashboardProfit = asyncHandler(async (req, res) => {
 // @access  Private
 const getTopProducts = asyncHandler(async (req, res) => {
     try {
-        const topProducts = await Product.find()
+        const topProducts = await Product.find({ userId: req.user.id })
             .sort({ totalSold: -1 })
             .limit(5)
             .select('name totalSold revenue');
@@ -181,7 +184,7 @@ const getTopProducts = asyncHandler(async (req, res) => {
 const getLowSellingProducts = asyncHandler(async (req, res) => {
     try {
         // Find products that have been sold at least once but not recently
-        const lowProducts = await Product.find({ lastSoldDate: { $ne: null } })
+        const lowProducts = await Product.find({ lastSoldDate: { $ne: null }, userId: req.user.id })
             .sort({ lastSoldDate: 1 }) // oldest first
             .limit(5)
             .select('name lastSoldDate totalSold');
@@ -274,6 +277,7 @@ const getProfitChartData = asyncHandler(async (req, res) => {
             });
         }
 
+        matchStage.userId = new mongoose.Types.ObjectId(req.user.id);
         const chartData = await Sale.aggregate([
             { $match: matchStage },
             { $group: groupStage },

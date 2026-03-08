@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const saleSchema = mongoose.Schema(
     {
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
         receiptNumber: {
             type: String,
             required: true,

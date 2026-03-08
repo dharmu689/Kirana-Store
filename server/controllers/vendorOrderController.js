@@ -14,17 +14,18 @@ const placeOrder = async (req, res) => {
         const { product, vendor, quantity, deliveryAddress } = req.body;
 
         // Validations
-        const foundProduct = await Product.findById(product);
+        const foundProduct = await Product.findOne({ _id: product, userId: req.user.id });
         if (!foundProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        const foundVendor = await Vendor.findById(vendor);
+        const foundVendor = await Vendor.findOne({ _id: vendor, userId: req.user.id });
         if (!foundVendor) {
             return res.status(404).json({ message: 'Vendor not found' });
         }
 
         const vendorOrder = await VendorOrder.create({
+            userId: req.user.id,
             product,
             vendor,
             quantity,
@@ -82,7 +83,7 @@ const placeOrder = async (req, res) => {
 // @access  Private
 const getOrders = async (req, res) => {
     try {
-        const orders = await VendorOrder.find({})
+        const orders = await VendorOrder.find({ userId: req.user.id })
             .populate('product', 'name price')
             .populate('vendor', 'name contactPerson phone')
             .sort('-createdAt');
@@ -104,7 +105,7 @@ const updateOrderStatus = async (req, res) => {
             return res.status(400).json({ message: 'Invalid status' });
         }
 
-        const order = await VendorOrder.findById(req.params.id);
+        const order = await VendorOrder.findOne({ _id: req.params.id, userId: req.user.id });
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });

@@ -10,6 +10,7 @@ const addVendor = asyncHandler(async (req, res) => {
         const { name, contactPerson, phone, email, address, productsSupplied } = req.body;
 
         const vendor = await Vendor.create({
+            userId: req.user.id,
             name,
             contactPerson,
             phone,
@@ -32,7 +33,7 @@ const addVendor = asyncHandler(async (req, res) => {
 // @access  Private
 const getVendors = asyncHandler(async (req, res) => {
     try {
-        const vendors = await Vendor.find({}).populate('productsSupplied', 'name price');
+        const vendors = await Vendor.find({ userId: req.user.id }).populate('productsSupplied', 'name price');
         res.json(vendors);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -44,7 +45,7 @@ const getVendors = asyncHandler(async (req, res) => {
 // @access  Private
 const getVendorById = asyncHandler(async (req, res) => {
     try {
-        const vendor = await Vendor.findById(req.params.id).populate('productsSupplied', 'name price');
+        const vendor = await Vendor.findOne({ _id: req.params.id, userId: req.user.id }).populate('productsSupplied', 'name price');
 
         if (vendor) {
             res.json(vendor);
@@ -61,8 +62,8 @@ const getVendorById = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const updateVendor = asyncHandler(async (req, res) => {
     try {
-        const vendor = await Vendor.findByIdAndUpdate(
-            req.params.id,
+        const vendor = await Vendor.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user.id },
             req.body,
             { new: true, runValidators: true }
         );
@@ -82,7 +83,7 @@ const updateVendor = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const deleteVendor = asyncHandler(async (req, res) => {
     try {
-        const vendor = await Vendor.findByIdAndDelete(req.params.id);
+        const vendor = await Vendor.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
 
         if (!vendor) {
             return res.status(404).json({ message: 'Vendor not found' });
@@ -101,8 +102,8 @@ const getBestVendorForProduct = asyncHandler(async (req, res) => {
     try {
         const { productId } = req.params;
 
-        // Find all vendors supplying the product explicitly
-        const vendors = await Vendor.find({ productsSupplied: productId }).populate('productsSupplied', 'name price');
+        // Find all vendors supplying the product explicitly for this user
+        const vendors = await Vendor.find({ productsSupplied: productId, userId: req.user.id }).populate('productsSupplied', 'name price');
 
         if (!vendors || vendors.length === 0) {
             return res.status(404).json({ message: 'No vendors found supplying this target product.' });

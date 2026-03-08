@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 const Sale = require('../models/Sale');
@@ -21,7 +22,7 @@ const chatWithAI = asyncHandler(async (req, res) => {
             startOfToday.setHours(0, 0, 0, 0);
 
             const todaySales = await Sale.aggregate([
-                { $match: { saleDate: { $gte: startOfToday } } },
+                { $match: { saleDate: { $gte: startOfToday }, userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, total: { $sum: '$totalPrice' }, count: { $sum: 1 } } }
             ]);
 
@@ -30,7 +31,7 @@ const chatWithAI = asyncHandler(async (req, res) => {
             reply = `Today's sales are ₹${total.toLocaleString()} across ${count} transactions.`;
 
         } else if (query.includes('fast moving') || query.includes('top selling')) {
-            const topProducts = await Product.find()
+            const topProducts = await Product.find({ userId: req.user.id })
                 .sort({ totalSold: -1 })
                 .limit(5);
 
@@ -46,7 +47,8 @@ const chatWithAI = asyncHandler(async (req, res) => {
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
             const slowProducts = await Product.find({
-                lastSoldDate: { $lte: thirtyDaysAgo, $ne: null }
+                lastSoldDate: { $lte: thirtyDaysAgo, $ne: null },
+                userId: req.user.id
             }).sort({ lastSoldDate: 1 }).limit(5);
 
             if (slowProducts.length > 0) {
@@ -61,7 +63,8 @@ const chatWithAI = asyncHandler(async (req, res) => {
 
         } else if (query.includes('restock') || query.includes('low quantity')) {
             const lowStock = await Product.find({
-                $expr: { $lte: ['$quantity', '$reorderLevel'] }
+                $expr: { $lte: ['$quantity', '$reorderLevel'] },
+                userId: req.user.id
             });
 
             if (lowStock.length > 0) {
@@ -73,6 +76,7 @@ const chatWithAI = asyncHandler(async (req, res) => {
 
         } else if (query.includes('category analytics') || query.includes('by category')) {
             const categories = await Sale.aggregate([
+                { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: '$category', totalSales: { $sum: '$totalPrice' } } },
                 { $sort: { totalSales: -1 } },
                 { $limit: 5 }
@@ -89,7 +93,7 @@ const chatWithAI = asyncHandler(async (req, res) => {
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
             const pastSales = await Sale.aggregate([
-                { $match: { saleDate: { $gte: thirtyDaysAgo } } },
+                { $match: { saleDate: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, totalSales: { $sum: '$totalPrice' } } }
             ]);
 
@@ -107,12 +111,12 @@ const chatWithAI = asyncHandler(async (req, res) => {
             const startOfLastWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 14);
 
             const thisWeekSales = await Sale.aggregate([
-                { $match: { saleDate: { $gte: startOfThisWeek, $lt: now } } },
+                { $match: { saleDate: { $gte: startOfThisWeek, $lt: now }, userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, total: { $sum: '$totalPrice' } } }
             ]);
 
             const lastWeekSales = await Sale.aggregate([
-                { $match: { saleDate: { $gte: startOfLastWeek, $lt: startOfThisWeek } } },
+                { $match: { saleDate: { $gte: startOfLastWeek, $lt: startOfThisWeek }, userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, total: { $sum: '$totalPrice' } } }
             ]);
 
@@ -131,12 +135,12 @@ const chatWithAI = asyncHandler(async (req, res) => {
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
             const todayProfit = await Sale.aggregate([
-                { $match: { saleDate: { $gte: startOfToday } } },
+                { $match: { saleDate: { $gte: startOfToday }, userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, total: { $sum: '$profit' } } }
             ]);
 
             const weeklyProfit = await Sale.aggregate([
-                { $match: { saleDate: { $gte: sevenDaysAgo } } },
+                { $match: { saleDate: { $gte: sevenDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, total: { $sum: '$profit' } } }
             ]);
 
@@ -146,8 +150,9 @@ const chatWithAI = asyncHandler(async (req, res) => {
             reply = `Today's profit is ₹${tProf.toLocaleString()}, and your total profit for the last 7 days is ₹${wProf.toLocaleString()}.`;
 
         } else if (query.includes('inventory overview') || query.includes('total products')) {
-            const totalDocs = await Product.countDocuments();
+            const totalDocs = await Product.countDocuments({ userId: req.user.id });
             const stockUnits = await Product.aggregate([
+                { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
                 { $group: { _id: null, total: { $sum: '$quantity' } } }
             ]);
 
@@ -160,7 +165,8 @@ const chatWithAI = asyncHandler(async (req, res) => {
             sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
             const expiring = await Product.find({
-                expiryDate: { $gte: today, $lte: sevenDaysFromNow }
+                expiryDate: { $gte: today, $lte: sevenDaysFromNow },
+                userId: req.user.id
             }).limit(5).select('name expiryDate');
 
             if (expiring.length > 0) {

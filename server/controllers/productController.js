@@ -20,6 +20,7 @@ const createProduct = asyncHandler(async (req, res) => {
     }
 
     const product = await Product.create({
+        userId: req.user.id,
         productId: newProductId,
         barcode: newProductId, // using productId as barcode content
         name,
@@ -61,7 +62,7 @@ const getProducts = asyncHandler(async (req, res) => {
     const { keyword, category, status, sort, page = 1, limit = 100 } = req.query; // Default limit 100 for now
 
     // 1. Filter: Keyword (Name or Category)
-    let query = {};
+    let query = { userId: req.user.id };
 
     if (keyword) {
         query.$or = [
@@ -131,7 +132,7 @@ const getProducts = asyncHandler(async (req, res) => {
 // @route   GET /api/products/:id
 // @access  Public/Private
 const getProductById = asyncHandler(async (req, res) => {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, userId: req.user.id });
 
     if (product) {
         let status = 'IN_STOCK';
@@ -156,6 +157,7 @@ const getProductById = asyncHandler(async (req, res) => {
 const getProductByBarcode = asyncHandler(async (req, res) => {
     // Find by either barcode field or productId field for safety
     const product = await Product.findOne({
+        userId: req.user.id,
         $or: [
             { barcode: req.params.barcode },
             { productId: req.params.barcode }
@@ -198,7 +200,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         revenue
     } = req.body;
 
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, userId: req.user.id });
 
     if (product) {
         product.name = name || product.name;
@@ -229,7 +231,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const adjustStock = asyncHandler(async (req, res) => {
     const { adjustment } = req.body; // +ve for add, -ve for deduct
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, userId: req.user.id });
 
     if (product) {
         const newQuantity = product.quantity + Number(adjustment);
@@ -257,7 +259,7 @@ const adjustStock = asyncHandler(async (req, res) => {
 // @route   DELETE /api/products/:id
 // @access  Private/Admin
 const deleteProduct = asyncHandler(async (req, res) => {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, userId: req.user.id });
 
     if (product) {
         await product.deleteOne();

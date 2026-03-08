@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const asyncHandler = require('express-async-handler');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
@@ -22,7 +23,8 @@ const getSalesReport = asyncHandler(async (req, res) => {
         saleDate: {
             $gte: start,
             $lte: end
-        }
+        },
+        userId: new mongoose.Types.ObjectId(req.user.id)
     };
 
     // 1. Overall Metrics: totalRevenue, totalOrders
@@ -101,7 +103,7 @@ const getSalesReport = asyncHandler(async (req, res) => {
 const getInventoryReport = asyncHandler(async (req, res) => {
     const { category } = req.query;
 
-    const query = {};
+    const query = { userId: req.user.id };
     if (category && category !== 'All') {
         query.category = category;
     }
@@ -168,7 +170,8 @@ const getFinancialReport = asyncHandler(async (req, res) => {
         saleDate: {
             $gte: start,
             $lte: end
-        }
+        },
+        userId: new mongoose.Types.ObjectId(req.user.id)
     };
 
     const financialData = await Sale.aggregate([
@@ -257,7 +260,8 @@ const getVendorReport = asyncHandler(async (req, res) => {
         orderDate: {
             $gte: start,
             $lte: end
-        }
+        },
+        userId: new mongoose.Types.ObjectId(req.user.id)
     };
 
     const vendorData = await VendorOrder.aggregate([
@@ -368,7 +372,8 @@ const getForecastReport = asyncHandler(async (req, res) => {
         generatedAt: {
             $gte: start,
             $lte: end
-        }
+        },
+        userId: new mongoose.Types.ObjectId(req.user.id)
     };
 
     // We want to get the latest forecast per product within the date range

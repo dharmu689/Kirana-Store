@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 
@@ -23,7 +24,7 @@ const createSale = async (req, res) => {
         for (const item of items) {
             const { product, quantitySold } = item;
 
-            const productItem = await Product.findById(product);
+            const productItem = await Product.findOne({ _id: product, userId: req.user.id });
             if (!productItem) {
                 res.status(404);
                 throw new Error(`Product not found`);
@@ -51,6 +52,7 @@ const createSale = async (req, res) => {
                 subtotal: totalPrice,
                 totalPrice,
                 profit: totalProfit,
+                userId: req.user.id,
                 soldBy: req.user.id,
                 paymentMethod
             });
@@ -88,7 +90,7 @@ const createSale = async (req, res) => {
 // @access  Private (Admin/Staff)
 const getAllSales = async (req, res) => {
     try {
-        const sales = await Sale.find()
+        const sales = await Sale.find({ userId: req.user.id })
             .populate('soldBy', 'name email')
             .sort({ createdAt: -1 });
 
@@ -104,6 +106,7 @@ const getAllSales = async (req, res) => {
 const getSalesSummary = async (req, res) => {
     try {
         const totalRevenue = await Sale.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
             {
                 $group: {
                     _id: null,
@@ -112,9 +115,10 @@ const getSalesSummary = async (req, res) => {
             }
         ]);
 
-        const totalSalesCount = await Sale.countDocuments();
+        const totalSalesCount = await Sale.countDocuments({ userId: req.user.id });
 
         const monthlyBreakdown = await Sale.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
             {
                 $group: {
                     _id: { $month: '$createdAt' },
@@ -142,10 +146,12 @@ const getSalesSummary = async (req, res) => {
 const getProfitSummary = async (req, res) => {
     try {
         const totalRevenue = await Sale.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
             { $group: { _id: null, total: { $sum: "$totalPrice" } } }
         ]);
 
         const totalProfit = await Sale.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
             { $group: { _id: null, total: { $sum: "$profit" } } }
         ]);
 
@@ -153,7 +159,7 @@ const getProfitSummary = async (req, res) => {
         today.setHours(0, 0, 0, 0);
 
         const todayProfit = await Sale.aggregate([
-            { $match: { createdAt: { $gte: today } } },
+            { $match: { createdAt: { $gte: today }, userId: new mongoose.Types.ObjectId(req.user.id) } },
             { $group: { _id: null, total: { $sum: "$profit" } } }
         ]);
 
@@ -173,7 +179,7 @@ const getProfitSummary = async (req, res) => {
 const getSaleByReceipt = async (req, res) => {
     try {
         const { receiptNumber } = req.params;
-        const sales = await Sale.find({ receiptNumber })
+        const sales = await Sale.find({ receiptNumber, userId: req.user.id })
             .populate('soldBy', 'name email')
             .populate('product', 'name price productId barcode')
             .sort({ createdAt: -1 });

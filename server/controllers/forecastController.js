@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
 const Forecast = require('../models/Forecast');
@@ -10,7 +11,7 @@ const Vendor = require('../models/Vendor');
 const getSavedForecasts = async (req, res) => {
     try {
         const { type } = req.query;
-        let dbQuery = {};
+        let dbQuery = { createdBy: req.user.id };
         if (type === 'regression') {
             dbQuery.algorithmType = 'Linear Regression';
         } else if (type === 'moving_average' || !type) {
@@ -48,7 +49,8 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
 
     // Aggregate tracking historical 60 day sales flat payload
     const salesDataRaw = await Sale.find({
-        saleDate: { $gte: sixtyDaysAgo }
+        saleDate: { $gte: sixtyDaysAgo },
+        userId: userId
     });
 
     // Grouping mechanisms per product
@@ -91,7 +93,7 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
 
     await Promise.all(
         Object.keys(productStats).map(async (prodId) => {
-            const product = await Product.findById(prodId);
+            const product = await Product.findOne({ _id: prodId, userId: userId });
             if (!product) return;
 
             const stats = productStats[prodId];
@@ -206,7 +208,7 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
 
             // Hybrid Calculation
             // Get last accuracy
-            const lastForecast = await Forecast.findOne({ product: prodId }).sort({ generatedAt: -1 });
+            const lastForecast = await Forecast.findOne({ product: prodId, createdBy: userId }).sort({ generatedAt: -1 });
             const lastAccuracy = lastForecast ? lastForecast.accuracyPercentage : null;
 
             let w_lr = 0.5;
@@ -290,7 +292,7 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
         await Forecast.insertMany(forecastsToSave);
     }
 
-    return await Forecast.find({ generatedAt })
+    return await Forecast.find({ generatedAt, createdBy: userId })
         .populate('product', 'name _id quantity')
         .sort({ predictedMonthlyDemand: -1 });
 };
@@ -315,7 +317,7 @@ const generateForecast = async (req, res) => {
 const regenerateForecast = async (req, res) => {
     try {
         // Delete old history
-        await Forecast.deleteMany({});
+        await Forecast.deleteMany({ createdBy: req.user._id });
 
         const type = req.query.type === 'hybrid' ? 'Hybrid AI' : req.query.type === 'regression' ? 'Linear Regression' : 'Moving Average';
         const newForecasts = await computeAndSaveForecast(req.user._id, type);
@@ -334,12 +336,12 @@ const getProductTrend = async (req, res) => {
         const { productId } = req.params;
 
         // Verify product and grab forecasted metric if it exists
-        const product = await Product.findById(productId);
+        const product = await Product.findOne({ _id: productId, userId: req.user.id });
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        const latestForecast = await Forecast.findOne({ product: productId }).sort({ generatedAt: -1 });
+        const latestForecast = await Forecast.findOne({ product: productId, createdBy: req.user.id }).sort({ generatedAt: -1 });
         const predictedDemand = latestForecast ? latestForecast.avgDailyDemand : 0;
 
         // Generate baseline 30-day date array
@@ -367,7 +369,8 @@ const getProductTrend = async (req, res) => {
             {
                 $match: {
                     product: product._id,
-                    saleDate: { $gte: thirtyDaysAgo }
+                    saleDate: { $gte: thirtyDaysAgo },
+                    userId: new mongoose.Types.ObjectId(req.user.id)
                 }
             },
             {
@@ -413,7 +416,8 @@ const getProductTrend = async (req, res) => {
             {
                 $match: {
                     product: product._id,
-                    saleDate: { $gte: thirtyDaysAgo }
+                    saleDate: { $gte: thirtyDaysAgo },
+                    userId: new mongoose.Types.ObjectId(req.user.id)
                 }
             },
             {
@@ -465,7 +469,8 @@ const evaluateSingleForecast = async (forecast) => {
                 saleDate: {
                     $gte: forecast.generatedAt,
                     $lte: finalDate
-                }
+                },
+                userId: forecast.createdBy
             }
         },
         {
@@ -507,7 +512,7 @@ const evaluateSingleForecast = async (forecast) => {
 // @access  Private/Admin
 const evaluateForecast = async (req, res) => {
     try {
-        const forecast = await Forecast.findById(req.params.id);
+        const forecast = await Forecast.findOne({ _id: req.params.id, createdBy: req.user.id });
         if (!forecast) {
             return res.status(404).json({ message: 'Forecast not found' });
         }
@@ -515,7 +520,7 @@ const evaluateForecast = async (req, res) => {
         const updatedForecast = await evaluateSingleForecast(forecast);
 
         // Repopulate for return consistency
-        const populatedForecast = await Forecast.findById(updatedForecast._id).populate('product', 'name _id quantity');
+        const populatedForecast = await Forecast.findOne({ _id: updatedForecast._id, createdBy: req.user.id }).populate('product', 'name _id quantity');
 
         res.status(200).json(populatedForecast);
     } catch (error) {
@@ -529,7 +534,7 @@ const evaluateForecast = async (req, res) => {
 // @access  Private/Admin
 const evaluateAllForecasts = async (req, res) => {
     try {
-        const forecasts = await Forecast.find();
+        const forecasts = await Forecast.find({ createdBy: req.user.id });
 
         await Promise.all(
             forecasts.map(async (forecast) => {
