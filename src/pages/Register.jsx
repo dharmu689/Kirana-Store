@@ -63,7 +63,7 @@ const Register = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex flex-col items-center mb-6">
                     <img
-                        src="/KiranaSmart.svg"
+                        src="/KSfavicon.svg"
                         alt="KiranaSmart Logo"
                         className="w-20 h-auto mb-4"
                     />
