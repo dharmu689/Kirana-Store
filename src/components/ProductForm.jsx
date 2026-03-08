@@ -133,6 +133,18 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                             />
                         </div>
                         <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Selling Price</label>
+                            <input
+                                type="number"
+                                name="sellingPrice"
+                                value={formData.sellingPrice}
+                                onChange={handleChange}
+                                required
+                                min="0"
+                                className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                            />
+                        </div>
+                        <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Unit</label>
                             <select
                                 name="unit"
