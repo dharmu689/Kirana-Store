@@ -80,7 +80,7 @@ const Receipt = forwardRef(({ cartItems, totalAmount, paymentMethod, receiptNumb
                                         {item.product.name}
                                         {item.product.productId && <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '4px' }}>SKU: {item.product.productId}</div>}
                                     </td>
-                                    <td style={{ padding: '15px', textAlign: 'center', color: '#4b5563' }}>{item.quantitySold}</td>
+                                    <td style={{ padding: '15px', textAlign: 'center', color: '#4b5563' }}>{item.quantitySold} {item.product.unit || 'piece'}</td>
                                     <td style={{ padding: '15px', textAlign: 'right', color: '#4b5563' }}>₹{price.toFixed(2)}</td>
                                     <td style={{ padding: '15px', textAlign: 'right', fontWeight: '600', color: '#111827' }}>₹{total.toFixed(2)}</td>
                                 </tr>

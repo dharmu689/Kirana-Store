@@ -386,27 +386,30 @@ const SaleForm = ({ onSaleAdded }) => {
                 ) : (
                     <ul className="divide-y divide-gray-100 dark:divide-gray-800">
                         <li className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gray-100 dark:bg-gray-800 text-sm font-semibold text-gray-700 dark:text-gray-300 rounded-t-lg border-b border-gray-200 dark:border-gray-700">
-                            <div className="flex-1">Product</div>
-                            <div className="flex items-center gap-4 w-full sm:w-auto justify-end sm:justify-start">
-                                <div className="w-32 text-center">Quantity</div>
-                                <div className="w-20 text-right">Price</div>
-                                <div className="w-20 text-right">Subtotal</div>
-                                <div className="w-8"></div>
+                            <div className="flex-1 w-full sm:w-auto">Product Name</div>
+                            <div className="flex items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
+                                <div className="w-32 text-center shrink-0">Quantity</div>
+                                <div className="w-16 text-center hidden sm:block shrink-0">Unit</div>
+                                <div className="w-24 text-right shrink-0">Price/Unit</div>
+                                <div className="w-20 text-right shrink-0">Subtotal</div>
+                                <div className="w-8 shrink-0"></div>
                             </div>
                         </li>
                         {currentCartItems.map((item) => {
                             const price = item.product.sellingPrice || item.product.price;
                             const itemTotal = price * item.quantitySold;
+                            const unit = item.product.unit || 'piece';
+
                             return (
                                 <li key={item.product._id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                                    <div className="flex-1">
-                                        <h4 className="font-bold text-gray-900 dark:text-gray-100">{item.product.name}</h4>
-                                        <p className="text-sm text-gray-500">₹{price} per unit</p>
+                                    <div className="flex-1 min-w-0">
+                                        <h4 className="font-bold text-gray-900 dark:text-gray-100 truncate" title={item.product.name}>{item.product.name}</h4>
+                                        <p className="text-sm text-gray-500 sm:hidden">₹{price} per {unit}</p>
                                     </div>
 
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end mt-2 sm:mt-0">
                                         {/* Quantity Controls */}
-                                        <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden w-32 justify-center">
+                                        <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 overflow-hidden w-32 justify-center shrink-0">
                                             <button
                                                 onClick={() => updateCartQuantity(item.product._id, item.quantitySold - 1)}
                                                 className="px-2 py-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
@@ -424,18 +427,22 @@ const SaleForm = ({ onSaleAdded }) => {
                                             </button>
                                         </div>
 
-                                        <div className="w-20 text-right text-sm text-gray-600 dark:text-gray-400">
+                                        <div className="w-16 text-center text-sm font-medium text-gray-500 dark:text-gray-400 hidden sm:block shrink-0 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                                            {unit}
+                                        </div>
+
+                                        <div className="w-24 text-right text-sm text-gray-600 dark:text-gray-400 shrink-0">
                                             ₹{(price).toFixed(2)}
                                         </div>
 
-                                        <div className="w-20 text-right font-bold text-[var(--color-brand-blue)]">
+                                        <div className="w-20 text-right font-bold text-[var(--color-brand-blue)] shrink-0">
                                             ₹{itemTotal.toFixed(2)}
                                         </div>
 
-                                        <div className="w-8 flex justify-end">
+                                        <div className="w-8 flex justify-end shrink-0">
                                             <button
                                                 onClick={() => removeFromCart(item.product._id)}
-                                                className="text-red-400 hover:text-red-600 p-1"
+                                                className="text-red-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                                                 title="Remove item"
                                             >
                                                 <XMarkIcon className="h-5 w-5" />

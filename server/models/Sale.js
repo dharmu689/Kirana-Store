@@ -33,9 +33,16 @@ const saleSchema = mongoose.Schema(
             required: [true, 'Please add quantity sold'],
             min: [1, 'Quantity must be at least 1']
         },
+        unit: {
+            type: String,
+            default: 'piece'
+        },
         unitPrice: {
             type: Number,
             required: [true, 'Please add unit price']
+        },
+        subtotal: {
+            type: Number
         },
         totalPrice: {
             type: Number,
