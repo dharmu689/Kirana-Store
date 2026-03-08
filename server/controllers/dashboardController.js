@@ -192,44 +192,98 @@ const getLowSellingProducts = asyncHandler(async (req, res) => {
     }
 });
 
-// @desc    Get monthly profit for the last 12 months
-// @route   GET /api/dashboard/profit-year
+// @desc    Get profit chart data based on period
+// @route   GET /api/dashboard/profit-chart
 // @access  Private
-const getYearlyProfit = asyncHandler(async (req, res) => {
+const getProfitChartData = asyncHandler(async (req, res) => {
     try {
-        const twelveMonthsAgo = new Date();
-        twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
-        twelveMonthsAgo.setDate(1); // Start from the 1st of that month
-        twelveMonthsAgo.setHours(0, 0, 0, 0);
+        const { period } = req.query;
+        let matchStage = {};
+        let groupStage = {};
+        let sortStage = {};
+        let formatFunction = (item) => item;
 
-        const monthlyData = await Sale.aggregate([
-            {
-                $match: { saleDate: { $gte: twelveMonthsAgo } }
-            },
-            {
-                $group: {
-                    _id: {
-                        year: { $year: "$saleDate" },
-                        month: { $month: "$saleDate" }
-                    },
-                    profit: { $sum: "$profit" }
-                }
-            },
-            {
-                $sort: { "_id.year": 1, "_id.month": 1 }
-            }
+        const now = new Date();
+
+        if (period === '1day') {
+            const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            matchStage = { saleDate: { $gte: startOfDay } };
+            groupStage = {
+                _id: { hour: { $hour: "$saleDate" } },
+                profit: { $sum: "$profit" }
+            };
+            sortStage = { "_id.hour": 1 };
+            formatFunction = (item) => ({
+                label: `${item._id.hour}:00`,
+                profit: item.profit
+            });
+        } else if (period === '1week') {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+            sevenDaysAgo.setHours(0, 0, 0, 0);
+
+            matchStage = { saleDate: { $gte: sevenDaysAgo } };
+            groupStage = {
+                _id: {
+                    year: { $year: "$saleDate" },
+                    month: { $month: "$saleDate" },
+                    day: { $dayOfMonth: "$saleDate" }
+                },
+                profit: { $sum: "$profit" }
+            };
+            sortStage = { "_id.year": 1, "_id.month": 1, "_id.day": 1 };
+            formatFunction = (item) => {
+                const date = new Date(item._id.year, item._id.month - 1, item._id.day);
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                return {
+                    label: days[date.getDay()],
+                    profit: item.profit
+                };
+            };
+        } else if (period === 'total') {
+            matchStage = {};
+            groupStage = {
+                _id: { year: { $year: "$saleDate" } },
+                profit: { $sum: "$profit" }
+            };
+            sortStage = { "_id.year": 1 };
+            formatFunction = (item) => ({
+                label: `${item._id.year}`,
+                profit: item.profit
+            });
+        } else {
+            // default 1year
+            const twelveMonthsAgo = new Date();
+            twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 11);
+            twelveMonthsAgo.setDate(1);
+            twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+            matchStage = { saleDate: { $gte: twelveMonthsAgo } };
+            groupStage = {
+                _id: {
+                    year: { $year: "$saleDate" },
+                    month: { $month: "$saleDate" }
+                },
+                profit: { $sum: "$profit" }
+            };
+            sortStage = { "_id.year": 1, "_id.month": 1 };
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            formatFunction = (item) => ({
+                label: monthNames[item._id.month - 1],
+                profit: item.profit
+            });
+        }
+
+        const chartData = await Sale.aggregate([
+            { $match: matchStage },
+            { $group: groupStage },
+            { $sort: sortStage }
         ]);
 
-        // Format to month abbreviations (Jan, Feb, etc.)
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const formattedData = monthlyData.map(item => ({
-            month: monthNames[item._id.month - 1],
-            profit: item.profit
-        }));
-
+        const formattedData = chartData.map(formatFunction);
         res.json(formattedData);
     } catch (error) {
-        res.status(500).json({ message: "Failed to fetch yearly profit" });
+        res.status(500).json({ message: "Failed to fetch profit chart data" });
     }
 });
 
@@ -238,5 +292,5 @@ module.exports = {
     getDashboardProfit,
     getTopProducts,
     getLowSellingProducts,
-    getYearlyProfit
+    getProfitChartData
 };

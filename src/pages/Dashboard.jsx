@@ -18,8 +18,8 @@ const Dashboard = () => {
   });
   const [topProducts, setTopProducts] = useState([]);
   const [lowSellingProducts, setLowSellingProducts] = useState([]);
-  const [yearlyProfit, setYearlyProfit] = useState([]);
-  const [selectedPeriod, setSelectedPeriod] = useState("total");
+  const [profitChartData, setProfitChartData] = useState([]);
+  const [selectedPeriod, setSelectedPeriod] = useState("1day");
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { language } = useLanguage();
@@ -40,8 +40,8 @@ const Dashboard = () => {
       const lowProd = await dashboardService.getLowSellingProducts();
       setLowSellingProducts(lowProd);
 
-      const yearProf = await dashboardService.getYearlyProfit();
-      setYearlyProfit(yearProf);
+      const chartData = await dashboardService.getProfitChartData(selectedPeriod);
+      setProfitChartData(chartData);
     } catch (error) {
       console.error("Failed to fetch dashboard summary", error);
     } finally {
@@ -59,6 +59,19 @@ const Dashboard = () => {
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
   }, [fetchAllData]);
+
+  useEffect(() => {
+    const fetchChartForPeriod = async () => {
+      try {
+        const data = await dashboardService.getProfitChartData(selectedPeriod);
+        setProfitChartData(data);
+      } catch (error) {
+        console.error("Failed to fetch profit chart data", error);
+      }
+    };
+    // Don't fetch on initial mount if fetchAllData already covers it, but it's simpler to just fetch it
+    fetchChartForPeriod();
+  }, [selectedPeriod]);
 
   if (loading) {
     return (
@@ -119,24 +132,14 @@ const Dashboard = () => {
 
           <div className="flex gap-3 mb-6 flex-wrap">
             <button
-              onClick={() => setSelectedPeriod("total")}
+              onClick={() => setSelectedPeriod("1day")}
               className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
-                    ${selectedPeriod === "total"
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700"
+                    ${selectedPeriod === "1day"
+                  ? "bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/30"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-pink-100 dark:hover:bg-gray-700"
                 }`}
             >
-              Total Profit
-            </button>
-            <button
-              onClick={() => setSelectedPeriod("1year")}
-              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
-                    ${selectedPeriod === "1year"
-                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-gray-700"
-                }`}
-            >
-              1 Year Profit
+              1 Day
             </button>
             <button
               onClick={() => setSelectedPeriod("1week")}
@@ -149,14 +152,24 @@ const Dashboard = () => {
               1 Week
             </button>
             <button
-              onClick={() => setSelectedPeriod("1day")}
+              onClick={() => setSelectedPeriod("1year")}
               className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
-                    ${selectedPeriod === "1day"
-                  ? "bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-lg shadow-pink-500/30"
-                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-pink-100 dark:hover:bg-gray-700"
+                    ${selectedPeriod === "1year"
+                  ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-500/30"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-indigo-100 dark:hover:bg-gray-700"
                 }`}
             >
-              1 Day
+              1 Year
+            </button>
+            <button
+              onClick={() => setSelectedPeriod("total")}
+              className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300
+                    ${selectedPeriod === "total"
+                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/30"
+                  : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-gray-700"
+                }`}
+            >
+              Total Profit
             </button>
           </div>
 
@@ -171,7 +184,7 @@ const Dashboard = () => {
               (selectedPeriod === "total"
                 ? profitData?.totalProfit
                 : selectedPeriod === "1year"
-                  ? yearlyProfit.reduce((sum, item) => sum + item.profit, 0)
+                  ? profitChartData.reduce((sum, item) => sum + (item.profit || 0), 0)
                   : selectedPeriod === "1week"
                     ? profitData?.sevenDaysProfit
                     : profitData?.oneDayProfit
@@ -200,13 +213,13 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* 1 Year Profit Chart */}
+        {/* Dynamic Profit Chart */}
         <div className="w-full h-80 bg-white/70 dark:bg-gray-900/60 backdrop-blur-xl p-4 rounded-xl shadow-lg border border-gray-100/50 dark:border-gray-700/50 hover-mac-folder transition-all duration-300">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Profit Overview (1 Year)</h3>
+          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-4">Profit Overview Chart ({selectedPeriod === '1day' ? '1 Day' : selectedPeriod === '1week' ? '1 Week' : selectedPeriod === '1year' ? '1 Year' : 'All Time'})</h3>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={yearlyProfit || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
+            <LineChart data={profitChartData || []} margin={{ top: 5, right: 20, left: -20, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-              <XAxis dataKey="month" tick={{ fontSize: 12, fill: '#6B7280' }} />
+              <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#6B7280' }} />
               <YAxis tick={{ fontSize: 12, fill: '#6B7280' }} />
               <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
               <Line type="monotone" dataKey="profit" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 6 }} />

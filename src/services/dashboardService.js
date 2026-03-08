@@ -20,8 +20,8 @@ const getLowSellingProducts = async () => {
     return response.data;
 };
 
-const getYearlyProfit = async () => {
-    const response = await API.get("/dashboard/profit-year");
+const getProfitChartData = async (period = '1year') => {
+    const response = await API.get(`/dashboard/profit-chart?period=${period}`);
     return response.data;
 };
 
@@ -30,7 +30,7 @@ const dashboardService = {
     getDashboardProfit,
     getTopProducts,
     getLowSellingProducts,
-    getYearlyProfit
+    getProfitChartData
 };
 
 export default dashboardService;
