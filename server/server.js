@@ -23,29 +23,10 @@ const app = express();
 app.use(express.json());
 
 
-// CORS Configuration for Vercel/Production + Local Development
-const allowedOrigins = [
-    "https://kirana-store-oq3u.vercel.app", // Production Vercel URL
-    "http://localhost:5173",                // Local Vite URL
-    "http://127.0.0.1:5173"                 // Local Vite URL (alternative)
-];
-
-app.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin) return callback(null, true);
-            if (allowedOrigins.indexOf(origin) === -1) {
-                var msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-                return callback(new Error(msg), false);
-            }
-            return callback(null, true);
-        },
-        credentials: true,
-    })
-);
-
-
-
+// CORS Configuration
+app.use(cors({
+    origin: "*"
+}));
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
