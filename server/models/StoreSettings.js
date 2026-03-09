@@ -6,26 +6,10 @@ const storeSettingsSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        ownerName: {
-            type: String,
-        },
-        email: {
-            type: String,
-        },
         phone: {
             type: String,
         },
-        address: {
-            type: String,
-        },
         gstNumber: {
-            type: String,
-        },
-        currency: {
-            type: String,
-            default: '₹',
-        },
-        logo: {
             type: String,
         },
     },

@@ -4,15 +4,11 @@ import { toast } from 'react-hot-toast';
 import { FiSave, FiLoader } from 'react-icons/fi';
 
 const StoreSettings = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
     const [settings, setSettings] = useState({
         storeName: '',
-        ownerName: '',
-        email: '',
         phone: '',
-        address: '',
         gstNumber: '',
-        currency: '₹',
-        logo: '',
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -27,13 +23,8 @@ const StoreSettings = () => {
             if (data && Object.keys(data).length > 0) {
                 setSettings({
                     storeName: data.storeName || '',
-                    ownerName: data.ownerName || '',
-                    email: data.email || '',
                     phone: data.phone || '',
-                    address: data.address || '',
                     gstNumber: data.gstNumber || '',
-                    currency: data.currency || '₹',
-                    logo: data.logo || '',
                 });
             }
         } catch (error) {
@@ -59,13 +50,8 @@ const StoreSettings = () => {
             toast.success('Store settings updated successfully');
             setSettings({
                 storeName: data.storeName || '',
-                ownerName: data.ownerName || '',
-                email: data.email || '',
                 phone: data.phone || '',
-                address: data.address || '',
                 gstNumber: data.gstNumber || '',
-                currency: data.currency || '₹',
-                logo: data.logo || '',
             });
         } catch (error) {
             toast.error(error.response?.data?.message || 'Failed to update store settings');
@@ -84,9 +70,9 @@ const StoreSettings = () => {
 
     return (
         <div className="bg-white dark:bg-gray-900 shadow-lg rounded-xl p-6 border border-gray-100">
-            <h2 className="text-xl font-semibold mb-6 flex items-center text-gray-800 dark:text-gray-200">
-                Store Configuration
-            </h2>
+            <h3 className="text-lg font-medium mb-4 mt-2 text-gray-800 dark:text-gray-200">
+                Store Settings
+            </h3>
 
             <form onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -106,33 +92,52 @@ const StoreSettings = () => {
                         />
                     </div>
 
-                    {/* Owner Name */}
+                    {/* GST Number */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            GST Number <span className="text-gray-400 font-normal">(optional)</span>
+                        </label>
+                        <input
+                            type="text"
+                            name="gstNumber"
+                            value={settings.gstNumber}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            placeholder="Enter GST Number (optional)"
+                        />
+                    </div>
+                </div>
+
+                <hr className="my-8 border-gray-200 dark:border-gray-700" />
+
+                <h3 className="text-lg font-medium mb-4 text-gray-800 dark:text-gray-200">
+                    Owner Information
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Owner Name (Auto Filled) */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Owner Name
                         </label>
                         <input
                             type="text"
-                            name="ownerName"
-                            value={settings.ownerName}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="Enter owner name"
+                            value={user?.name || ''}
+                            readOnly
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed transition-colors"
                         />
                     </div>
 
-                    {/* Email */}
+                    {/* Email (Auto Filled) */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Email Address
                         </label>
                         <input
                             type="email"
-                            name="email"
-                            value={settings.email}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="store@example.com"
+                            value={user?.email || ''}
+                            readOnly
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed transition-colors"
                         />
                     </div>
 
@@ -151,80 +156,6 @@ const StoreSettings = () => {
                         />
                     </div>
 
-                    {/* GST Number */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            GST Number
-                        </label>
-                        <input
-                            type="text"
-                            name="gstNumber"
-                            value={settings.gstNumber}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="Enter GST Number"
-                        />
-                    </div>
-
-                    {/* Currency */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Currency Symbol
-                        </label>
-                        <input
-                            type="text"
-                            name="currency"
-                            value={settings.currency}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="e.g., ₹, $, €"
-                        />
-                    </div>
-
-                    {/* Logo URL */}
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Logo URL
-                        </label>
-                        <input
-                            type="text"
-                            name="logo"
-                            value={settings.logo}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                            placeholder="https://example.com/logo.png"
-                        />
-                        {settings.logo && (
-                            <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800 flex justify-center">
-                                <img
-                                    src={settings.logo}
-                                    alt="Store Logo Preview"
-                                    className="max-h-24 object-contain"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                    }}
-                                    onLoad={(e) => {
-                                        e.target.style.display = 'block';
-                                    }}
-                                />
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Address */}
-                    <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Store Address
-                        </label>
-                        <textarea
-                            name="address"
-                            value={settings.address}
-                            onChange={handleChange}
-                            rows="3"
-                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
-                            placeholder="Enter full store address"
-                        ></textarea>
-                    </div>
                 </div>
 
                 <div className="mt-6 flex justify-end gap-3">

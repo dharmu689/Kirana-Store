@@ -25,13 +25,8 @@ const updateStoreSettings = async (req, res) => {
     try {
         const {
             storeName,
-            ownerName,
-            email,
             phone,
-            address,
             gstNumber,
-            currency,
-            logo,
         } = req.body;
 
         let settings = await StoreSettings.findOne();
@@ -39,13 +34,8 @@ const updateStoreSettings = async (req, res) => {
         if (settings) {
             // Update existing
             settings.storeName = storeName || settings.storeName;
-            settings.ownerName = ownerName || settings.ownerName;
-            settings.email = email || settings.email;
             settings.phone = phone || settings.phone;
-            settings.address = address || settings.address;
-            settings.gstNumber = gstNumber || settings.gstNumber;
-            settings.currency = currency || settings.currency;
-            settings.logo = logo || settings.logo;
+            settings.gstNumber = gstNumber !== undefined ? gstNumber : settings.gstNumber;
 
             const updatedSettings = await settings.save();
             res.json(updatedSettings);
@@ -53,13 +43,8 @@ const updateStoreSettings = async (req, res) => {
             // Create new
             settings = new StoreSettings({
                 storeName,
-                ownerName,
-                email,
                 phone,
-                address,
                 gstNumber,
-                currency,
-                logo,
             });
 
             const createdSettings = await settings.save();

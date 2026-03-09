@@ -1,16 +1,10 @@
-import React, { useState } from 'react';
 import StoreSettings from '../components/settings/StoreSettings';
-import AccountSettings from '../components/settings/AccountSettings';
-import NotificationSettings from '../components/settings/NotificationSettings';
-import SystemPreferences from '../components/settings/SystemPreferences';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
 
 const Settings = () => {
     const { language } = useLanguage();
     const t = translations[language];
-
-    const [activeTab, setActiveTab] = useState('account');
 
     return (
         <div className="space-y-6">
@@ -23,52 +17,18 @@ const Settings = () => {
                 </div>
             </div>
 
-            {/* Tabs */}
+            {/* Tabs (Removed extra tabs, keeping Store Settings as default) */}
             <div className="flex border-b border-gray-200 dark:border-gray-700 overflow-x-auto whitespace-nowrap gap-4 px-2">
                 <button
-                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'account'
-                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                        }`}
-                    onClick={() => setActiveTab('account')}
-                >
-                    Account Profile
-                </button>
-                <button
-                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'notifications'
-                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                        }`}
-                    onClick={() => setActiveTab('notifications')}
-                >
-                    Notification Preferences
-                </button>
-                <button
-                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'store'
-                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                        }`}
-                    onClick={() => setActiveTab('store')}
+                    className="py-3 px-4 font-semibold text-sm transition-all rounded-t-xl bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]"
                 >
                     Store Settings
-                </button>
-                <button
-                    className={`py-3 px-4 font-semibold text-sm transition-all rounded-t-xl ${activeTab === 'system'
-                        ? 'bg-[var(--color-brand-blue)]/10 text-[var(--color-brand-blue)] border-b-2 border-[var(--color-brand-blue)]'
-                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800'
-                        }`}
-                    onClick={() => setActiveTab('system')}
-                >
-                    System Preferences
                 </button>
             </div>
 
             {/* Content */}
             <div className="mt-6">
-                {activeTab === 'account' && <AccountSettings />}
-                {activeTab === 'notifications' && <NotificationSettings />}
-                {activeTab === 'store' && <StoreSettings />}
-                {activeTab === 'system' && <SystemPreferences />}
+                <StoreSettings />
             </div>
         </div>
     );
