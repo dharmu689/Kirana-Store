@@ -5,45 +5,50 @@ const Product = require('../models/Product');
 // @route   GET /api/reorder
 // @access  Private/Admin
 const getReorderItems = asyncHandler(async (req, res) => {
+    const Forecast = require('../models/Forecast');
+
     // Fetch all products
-    // Filter products where quantity <= reorderLevel
-    // Note: We can filter in DB for efficiency
-    const products = await Product.find({
-        $expr: { $lte: ["$quantity", "$reorderLevel"] }
-    }).sort({ quantity: 1 });
+    const products = await Product.find().sort({ quantity: 1 });
 
-    const reorderList = products.map(product => {
+    const reorderList = await Promise.all(products.map(async (product) => {
         const reorderLevel = product.reorderLevel || 0;
-        const quantity = product.quantity || 0;
+        const currentStock = product.quantity || 0;
 
-        // Use AI predicted demand instead of raw reorder safety stocks
-        const predictedDemand = product.latestPredictedDemand || 0;
+        // Fetch predictedDemand from the Forecast collection
+        const latestForecast = await Forecast.findOne({ product: product._id }).sort({ generatedAt: -1 });
+        const predictedDemand = latestForecast ? latestForecast.predictedMonthlyDemand || 0 : 0;
 
-        // Suggested Order Qty logic (Formula 4 API)
-        let suggestedOrderQty = predictedDemand - quantity;
-        if (suggestedOrderQty < 0) suggestedOrderQty = 0;
+        // Suggested Order Qty logic
+        let suggestedOrderQty = Math.ceil(predictedDemand - currentStock);
+        if (suggestedOrderQty < 0) {
+            suggestedOrderQty = 0;
+        }
 
         // Status logic
         let status = 'LOW_STOCK';
-        if (quantity === 0) {
+        if (currentStock === 0) {
             status = 'OUT_OF_STOCK';
+        } else if (currentStock > reorderLevel && suggestedOrderQty === 0) {
+            status = 'SAFE';
         }
 
         return {
             _id: product._id,
             name: product.name,
-            quantity: quantity,
+            quantity: currentStock,
             reorderLevel: reorderLevel,
-            predictedDemand: predictedDemand,
+            predictedDemand,
             suggestedOrderQty,
             status,
-            // Keeping these as they might be useful
             supplierLeadTime: product.supplierLeadTime,
             lastSoldDate: product.lastSoldDate
         };
-    });
+    }));
 
-    res.json(reorderList);
+    // Filter products that actually need action
+    const filteredList = reorderList.filter(item => item.suggestedOrderQty > 0 || item.quantity <= item.reorderLevel);
+
+    res.json(filteredList);
 });
 
 // @desc    Restock product

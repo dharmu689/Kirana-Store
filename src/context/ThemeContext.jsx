@@ -6,36 +6,18 @@ export const ThemeProvider = ({ children }) => {
 
     const [theme, setTheme] = useState("light");
 
-    useLayoutEffect(() => {
-
+    useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
-
-        const root = document.documentElement;
-
         if (savedTheme === "dark") {
-            root.classList.add("dark");
-            setTheme("dark");
+            document.documentElement.classList.add("dark");
         } else {
-            root.classList.remove("dark");
-            setTheme("light");
+            document.documentElement.classList.remove("dark");
         }
-
     }, []);
 
     const toggleTheme = () => {
-
-        const root = document.documentElement;
-
-        if (theme === "dark") {
-            root.classList.remove("dark");
-            localStorage.setItem("theme", "light");
-            setTheme("light");
-        } else {
-            root.classList.add("dark");
-            localStorage.setItem("theme", "dark");
-            setTheme("dark");
-        }
-
+        const isDark = document.documentElement.classList.toggle("dark");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
     };
 
     return (

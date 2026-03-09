@@ -16,15 +16,6 @@ const Layout = () => {
                 if (data.success) {
                     setUser(data.user);
                 }
-
-                // Fetch System Preferences for global Dark Mode
-                const API = (await import('../../utils/api')).default;
-                const prefsRes = await API.get('/settings/preferences');
-                if (prefsRes.data?.darkMode) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
             } catch (error) {
                 console.error('Failed to fetch profile or preferences', error);
             }

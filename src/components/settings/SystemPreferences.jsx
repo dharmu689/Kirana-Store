@@ -40,6 +40,7 @@ const SystemPreferences = () => {
         } else {
             document.documentElement.classList.remove('dark');
         }
+        localStorage.setItem("theme", isDark ? "dark" : "light");
     };
 
     const handleChange = (e) => {
