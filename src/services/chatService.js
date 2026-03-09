@@ -1,10 +1,8 @@
-import axios from "axios";
-
-const API_URL = "https://kirana-store-2ykl.onrender.com/api/chat";
+import API from "../utils/api";
 
 const sendMessage = async (message) => {
     try {
-        const response = await axios.post(API_URL, {
+        const response = await API.post("/chat", {
             message: message
         });
         // The previous AIChatAssistant depends on `{ reply: "string" }` or returning the object
