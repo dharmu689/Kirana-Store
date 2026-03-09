@@ -58,9 +58,15 @@ const forecastSchema = mongoose.Schema(
         },
         algorithmType: {
             type: String,
-            enum: ['Moving Average', 'Linear Regression', 'Hybrid AI'],
+            enum: ['Moving Average', 'Linear Regression', 'Hybrid AI', 'Prophet ML'],
             default: 'Moving Average'
         },
+        prophetDailyPredictions: [
+            {
+                date: String,
+                predictedDemand: Number
+            }
+        ],
         movingAverageForecast: {
             type: Number,
             default: null

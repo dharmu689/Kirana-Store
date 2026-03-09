@@ -4,6 +4,8 @@ const Product = require('../models/Product');
 const Forecast = require('../models/Forecast');
 const VendorOrder = require('../models/VendorOrder');
 const Vendor = require('../models/Vendor');
+const { spawn } = require('child_process');
+const path = require('path');
 
 // @desc    Get all saved forecasts
 // @route   GET /api/forecast
@@ -25,6 +27,8 @@ const getSavedForecasts = async (req, res) => {
             dbQuery.algorithmType = 'Moving Average';
         } else if (type === 'hybrid') {
             dbQuery.algorithmType = 'Hybrid AI';
+        } else if (type === 'prophet') {
+            dbQuery.algorithmType = 'Prophet ML';
         }
 
         const forecasts = await Forecast.find(dbQuery)
@@ -36,6 +40,52 @@ const getSavedForecasts = async (req, res) => {
         console.error('Error fetching forecasts:', error);
         res.status(500).json({ message: 'Server error fetching forecasts' });
     }
+};
+
+// Internal helper to run Prophet ML
+const runProphetModel = (historyData) => {
+    return new Promise((resolve, reject) => {
+        const pythonProcess = spawn('python', [
+            path.join(__dirname, '../scripts/prophet_forecast.py')
+        ]);
+
+        let dataStr = '';
+        let errorStr = '';
+
+        pythonProcess.stdout.on('data', (data) => {
+            dataStr += data.toString();
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            errorStr += data.toString();
+        });
+
+        pythonProcess.on('close', (code) => {
+            if (code !== 0) {
+                console.error(`Python script exited with code ${code}: ${errorStr}`);
+                return reject(new Error('Prophet ML prediction failed'));
+            }
+            try {
+                // Safely extract the JSON array or object from the accumulated output string
+                const match = dataStr.match(/\[.*\]/s) || dataStr.match(/\{.*\}/s);
+                if (!match) {
+                    throw new Error("No valid JSON found in python output");
+                }
+                const result = JSON.parse(match[0]);
+                if (result.error) {
+                    return reject(new Error(result.error));
+                }
+                resolve(result);
+            } catch (err) {
+                console.error('Failed to parse Prophet output:', dataStr);
+                reject(new Error('Failed to parse model output'));
+            }
+        });
+
+        // Send data to python stdin
+        pythonProcess.stdin.write(JSON.stringify(historyData));
+        pythonProcess.stdin.end();
+    });
 };
 
 // Internal function to compute and save forecast
@@ -206,6 +256,37 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
             let regressionForecast = Number(totalPredictedLR.toFixed(2));
             let regressionForecastValue = regressionForecast;
 
+            // Prophet Calculation
+            let prophetForecastValues = [];
+            let prophetPrediction = null;
+
+            if (algorithmType === 'Prophet ML') {
+                const historyForProphet = [];
+                for (let i = 0; i < 30; i++) {
+                    const tempDate = new Date(thirtyDaysAgo);
+                    tempDate.setDate(tempDate.getDate() + i);
+                    historyForProphet.push({
+                        ds: tempDate.toISOString().split('T')[0],
+                        y: stats.dailySales[i]
+                    });
+                }
+
+                try {
+                    const prophetResult = await runProphetModel({
+                        history: historyForProphet,
+                        periods: 7
+                    });
+
+                    prophetForecastValues = prophetResult;
+
+                    const sum7Days = prophetResult.reduce((acc, curr) => acc + curr.predictedDemand, 0);
+                    prophetPrediction = Number(((sum7Days / 7) * 30).toFixed(2));
+                } catch (err) {
+                    console.error('Prophet error:', err);
+                    prophetPrediction = movingAverageForecast; // fallback
+                }
+            }
+
             // Hybrid Calculation
             // Get last accuracy
             const lastForecast = await Forecast.findOne({ product: prodId, createdBy: userId }).sort({ generatedAt: -1 });
@@ -241,6 +322,9 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
                 if (rSquared > 0.7) confidenceLevel = 90;
                 else if (rSquared > 0.4) confidenceLevel = 75;
                 else confidenceLevel = 60;
+            } else if (algorithmType === 'Prophet ML') {
+                predictedMonthlyDemand = prophetPrediction !== null ? prophetPrediction : movingAverageForecast;
+                confidenceLevel = 90; // High confidence default for ML model
             } else {
                 // Moving Average
                 predictedMonthlyDemand = movingAverageForecast;
@@ -278,6 +362,7 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
                 regressionForecastValue,
                 movingAverageForecast,
                 regressionForecast,
+                prophetDailyPredictions: prophetForecastValues,
                 seasonalAdjustment,
                 hybridForecast,
                 generatedAt,
@@ -302,7 +387,7 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
 // @access  Private/Admin
 const generateForecast = async (req, res) => {
     try {
-        const type = req.query.type === 'hybrid' ? 'Hybrid AI' : req.query.type === 'regression' ? 'Linear Regression' : 'Moving Average';
+        const type = req.query.type === 'hybrid' ? 'Hybrid AI' : req.query.type === 'regression' ? 'Linear Regression' : req.query.type === 'prophet' ? 'Prophet ML' : 'Moving Average';
         const newForecasts = await computeAndSaveForecast(req.user._id, type);
         res.status(201).json(newForecasts);
     } catch (error) {
@@ -319,7 +404,7 @@ const regenerateForecast = async (req, res) => {
         // Delete old history
         await Forecast.deleteMany({ createdBy: req.user._id });
 
-        const type = req.query.type === 'hybrid' ? 'Hybrid AI' : req.query.type === 'regression' ? 'Linear Regression' : 'Moving Average';
+        const type = req.query.type === 'hybrid' ? 'Hybrid AI' : req.query.type === 'regression' ? 'Linear Regression' : req.query.type === 'prophet' ? 'Prophet ML' : 'Moving Average';
         const newForecasts = await computeAndSaveForecast(req.user._id, type);
         res.status(200).json(newForecasts);
     } catch (error) {
@@ -392,6 +477,7 @@ const getProductTrend = async (req, res) => {
         // Apply regression line values onto UI graph mapping if product was mathematically analyzed via Regression
         const isRegression = latestForecast && latestForecast.algorithmType === 'Linear Regression';
         const isHybrid = latestForecast && latestForecast.algorithmType === 'Hybrid AI';
+        const isProphet = latestForecast && latestForecast.algorithmType === 'Prophet ML';
 
         if ((isRegression || isHybrid) && latestForecast.regressionSlope !== null && latestForecast.regressionIntercept !== null) {
             const m = latestForecast.regressionSlope;
@@ -404,10 +490,19 @@ const getProductTrend = async (req, res) => {
                 point.predictedDemand = Number(yPred.toFixed(2));
 
                 if (isHybrid) {
-                    // For UI, we simply distribute the monthly hybrid forecast back down linearly or statically. 
-                    // Let's accurately map it statically flat as hybrid Daily, since linear scales uniquely.
                     point.hybridForecastDemand = Number((latestForecast.hybridForecast / 30).toFixed(2));
                 }
+            });
+        }
+
+        if (isProphet && latestForecast.prophetDailyPredictions && latestForecast.prophetDailyPredictions.length > 0) {
+            latestForecast.prophetDailyPredictions.forEach(pred => {
+                trendData.push({
+                    date: pred.date,
+                    actualSales: null,
+                    predictedDemand: pred.predictedDemand,
+                    prophetForecastDemand: pred.predictedDemand
+                });
             });
         }
 

@@ -113,6 +113,16 @@ const ForecastChart = ({ data, loading }) => {
                         dot={false}
                         activeDot={false}
                     />
+                    <Line
+                        type="monotone"
+                        name="Prophet ML Forecast"
+                        dataKey="prophetForecastDemand"
+                        stroke="#3b82f6"
+                        strokeWidth={2}
+                        strokeDasharray="4 4"
+                        dot={{ r: 2, fill: '#3b82f6', strokeWidth: 0 }}
+                        activeDot={{ r: 4, strokeWidth: 0 }}
+                    />
                 </LineChart>
             </ResponsiveContainer>
         </div>

@@ -172,6 +172,7 @@ const Forecasting = () => {
                         <option value="moving_average">Moving Average (Baseline)</option>
                         <option value="regression">Linear Regression (AI)</option>
                         <option value="hybrid">Hybrid AI (Blended)</option>
+                        <option value="prophet">Prophet ML (Python)</option>
                     </select>
                     <button
                         onClick={handleEvaluateAll}
@@ -269,6 +270,21 @@ const Forecasting = () => {
                                     <span className="text-orange-600 font-bold">Hybrid Forecast</span> = Moving Average (40%) + Linear Regression (50%) + Seasonal Factor (10%)
                                 </p>
                                 <p className="text-xs text-gray-500 mt-1">Algorithmic weights autonomously self-correct increasing Regression priority identically balancing if trailing historic accuracy slips beneath 70% thresholds.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {algorithm === 'prophet' && (
+                        <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 rounded-xl p-6 shadow-sm flex items-center gap-4 animate-fade-in">
+                            <div className="p-3 bg-white dark:bg-gray-900 rounded-full shadow-sm text-blue-500">
+                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">Prophet ML Active (Python)</h3>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mt-1">
+                                    <span className="text-blue-600 font-bold">Facebook Prophet</span> modeling 30-day historical time-series data to predict exact 7-day future demand curves.
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">The Python AI service automatically discovers underlying weekly seasonality and dynamically extrapolates the precise trajectory for the next week.</p>
                             </div>
                         </div>
                     )}

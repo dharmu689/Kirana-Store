@@ -149,7 +149,7 @@ const Vendors = () => {
                         placeholder={t.searchVendors || "Search vendors by name or email..."}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[var(--color-brand-blue)] focus:ring-[var(--color-brand-blue)] text-sm font-medium bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
+                        className="pl-18 w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-[var(--color-brand-blue)] focus:ring-[var(--color-brand-blue)] text-sm font-medium bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200"
                     />
                 </div>
             </div>
