@@ -139,6 +139,16 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
     const generatedAt = new Date();
     const forecastsToSave = [];
 
+    const currentMonth = generatedAt.getMonth(); // 0-indexed
+    let globalDetectedSeason = 'Standard';
+    if ([10, 11, 0].includes(currentMonth)) {
+        globalDetectedSeason = 'Winter';
+    } else if ([2, 3, 4, 5].includes(currentMonth)) {
+        globalDetectedSeason = 'Summer';
+    } else if ([8, 9].includes(currentMonth)) {
+        globalDetectedSeason = 'Festival';
+    }
+
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
     await Promise.all(
@@ -340,6 +350,28 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
                 }
             }
 
+            // --- FEATURE 2: Apply Seasonal Multiplier ---
+            let detectedSeason = globalDetectedSeason;
+            let seasonalMultiplier = 1.0;
+            const searchString = `${product.name} ${product.category}`.toLowerCase();
+
+            if (detectedSeason === 'Winter' && /maggi|coffee|tea|soup/i.test(searchString)) {
+                seasonalMultiplier = 1.20;
+            } else if (detectedSeason === 'Summer' && /cold drink|ice cream|juice|beverage/i.test(searchString)) {
+                seasonalMultiplier = 1.30;
+            } else if (detectedSeason === 'Festival' && /sweet|gift|chocolate/i.test(searchString)) {
+                seasonalMultiplier = 1.50;
+            } else {
+                detectedSeason = 'Standard'; // Revert to standard if no impact applies
+            }
+
+            predictedMonthlyDemand = Number((predictedMonthlyDemand * seasonalMultiplier).toFixed(2));
+
+            // --- FEATURE 1 & 5: Bridge AI prediction to Reorder module natively
+            product.latestPredictedDemand = predictedMonthlyDemand;
+            await product.save();
+
+            // --- FEATURE 4: Auto Calculate Auto-Reorder
             let suggestedReorder = 0;
             if (predictedMonthlyDemand > currentStock) {
                 suggestedReorder = Math.ceil(predictedMonthlyDemand - currentStock);
@@ -365,6 +397,7 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
                 prophetDailyPredictions: prophetForecastValues,
                 seasonalAdjustment,
                 hybridForecast,
+                detectedSeason,
                 generatedAt,
                 createdBy: userId
             });

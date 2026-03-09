@@ -15,10 +15,12 @@ const getReorderItems = asyncHandler(async (req, res) => {
     const reorderList = products.map(product => {
         const reorderLevel = product.reorderLevel || 0;
         const quantity = product.quantity || 0;
-        const safetyStock = product.safetyStock || 0;
 
-        // Suggested Order Qty logic
-        let suggestedOrderQty = reorderLevel - quantity + safetyStock;
+        // Use AI predicted demand instead of raw reorder safety stocks
+        const predictedDemand = product.latestPredictedDemand || 0;
+
+        // Suggested Order Qty logic (Formula 4 API)
+        let suggestedOrderQty = predictedDemand - quantity;
         if (suggestedOrderQty < 0) suggestedOrderQty = 0;
 
         // Status logic
@@ -32,6 +34,7 @@ const getReorderItems = asyncHandler(async (req, res) => {
             name: product.name,
             quantity: quantity,
             reorderLevel: reorderLevel,
+            predictedDemand: predictedDemand,
             suggestedOrderQty,
             status,
             // Keeping these as they might be useful

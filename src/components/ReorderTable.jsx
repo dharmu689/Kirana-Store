@@ -18,10 +18,10 @@ const ReorderTable = ({ products, onRestock }) => {
                             Current Qty
                         </th>
                         <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                            Reorder Level
+                            Predicted Demand
                         </th>
-                        <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
-                            Suggested Order Qty
+                        <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-indigo-600 uppercase tracking-wider bg-indigo-50/50">
+                            Suggested Order
                         </th>
                         <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">
                             Status
@@ -36,19 +36,21 @@ const ReorderTable = ({ products, onRestock }) => {
                 <tbody>
                     {products.length > 0 ? (
                         products.map((product) => (
-                            <tr key={product._id}>
+                            <tr key={product._id} className="hover:bg-indigo-50 transition-colors group">
                                 <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
                                     <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap font-medium">{product.name}</p>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
-                                    <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap">{product.quantity}</p>
+                                    <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap font-bold">{product.quantity}</p>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
-                                    <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap">{product.reorderLevel}</p>
+                                    <span className="px-2 py-1 text-xs font-semibold rounded-md bg-purple-50 text-purple-700 border border-purple-100">
+                                        {product.predictedDemand} units
+                                    </span>
                                 </td>
-                                <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
-                                    <p className="text-gray-900 dark:text-gray-100 whitespace-no-wrap font-bold text-blue-600">
-                                        {product.suggestedOrderQty}
+                                <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-indigo-50/10 group-hover:bg-indigo-100/30 transition-colors text-sm">
+                                    <p className={`whitespace-no-wrap font-bold text-lg ${product.suggestedOrderQty > 0 ? 'text-indigo-600' : 'text-gray-400'}`}>
+                                        {product.suggestedOrderQty > 0 ? `+${product.suggestedOrderQty}` : '0'}
                                     </p>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">

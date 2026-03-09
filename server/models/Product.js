@@ -82,6 +82,10 @@ const productSchema = mongoose.Schema(
             type: Number,
             default: 0
         },
+        latestPredictedDemand: {
+            type: Number,
+            default: 0
+        },
         lastSoldDate: {
             type: Date
         },

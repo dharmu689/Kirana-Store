@@ -61,6 +61,10 @@ const forecastSchema = mongoose.Schema(
             enum: ['Moving Average', 'Linear Regression', 'Hybrid AI', 'Prophet ML'],
             default: 'Moving Average'
         },
+        detectedSeason: {
+            type: String,
+            default: 'Standard'
+        },
         prophetDailyPredictions: [
             {
                 date: String,

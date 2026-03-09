@@ -341,6 +341,7 @@ const Forecasting = () => {
                                     <tr>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider">{t.product || "Product"}</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden lg:table-cell">{t.trend || "Trend"}</th>
+                                        <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden xl:table-cell">Season</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden xl:table-cell">Peak Day</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider hidden sm:table-cell">Predicted/Mo</th>
                                         <th scope="col" className="px-6 py-4 text-left text-xs font-semibold text-indigo-600 uppercase tracking-wider bg-indigo-50/50">Suggested Reorder</th>
@@ -378,6 +379,15 @@ const Forecasting = () => {
                                                         {item.trendType} {item.trendStrength > 0 ? `(${item.trendStrength}%)` : ''}
                                                     </span>
                                                 </div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap hidden xl:table-cell">
+                                                <span className={`px-2 py-1 text-xs font-semibold rounded-md flex items-center w-fit ${item.detectedSeason === 'Winter' ? 'bg-blue-50 text-blue-700 border border-blue-100' :
+                                                    item.detectedSeason === 'Summer' ? 'bg-orange-50 text-orange-700 border border-orange-100' :
+                                                        item.detectedSeason === 'Festival' ? 'bg-purple-50 text-purple-700 border border-purple-100' :
+                                                            'bg-gray-50 text-gray-500 border border-gray-200'
+                                                    }`}>
+                                                    {item.detectedSeason || 'Standard'}
+                                                </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap hidden xl:table-cell">
                                                 {item.seasonalPeakDay !== 'None' ? (
