@@ -8,8 +8,8 @@ const productSchema = mongoose.Schema(
             required: true
         },
         productId: {
-            type: String,
-            unique: true
+            type: String
+            // unique: true // Removed global unique constraint. IDs will now be scoped to the UserId.
         },
         name: {
             type: String,
@@ -100,5 +100,8 @@ const productSchema = mongoose.Schema(
         timestamps: true
     }
 );
+
+// Compound Index: Ensures a productId is unique ONLY within the context of a specific Admin/User's store.
+productSchema.index({ userId: 1, productId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Product', productSchema);
