@@ -5,50 +5,84 @@ const Product = require('../models/Product');
 // @route   GET /api/reorder
 // @access  Private/Admin
 const getReorderItems = asyncHandler(async (req, res) => {
-    const Forecast = require('../models/Forecast');
+    const mongoose = require('mongoose');
 
-    // Fetch products scoped to the current user
-    const products = await Product.find({ userId: req.user.id }).sort({ quantity: 1 });
+    // Efficiently aggregate products and map Forecast data in a single MongoDB operation
+    const products = await Product.aggregate([
+        { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
+        {
+            $lookup: {
+                from: 'forecasts',
+                let: { productId: '$_id' },
+                pipeline: [
+                    { $match: { $expr: { $eq: ['$product', '$$productId'] } } },
+                    { $sort: { generatedAt: -1 } },
+                    { $limit: 1 }
+                ],
+                as: 'latestForecast'
+            }
+        },
+        { $unwind: { path: '$latestForecast', preserveNullAndEmptyArrays: true } },
+        {
+            $addFields: {
+                predictedDemand: { $ifNull: ['$latestForecast.predictedMonthlyDemand', 0] },
+                suggestedOrderQty: {
+                    $max: [
+                        0,
+                        { $ceil: { $subtract: [{ $ifNull: ['$latestForecast.predictedMonthlyDemand', 0] }, { $ifNull: ['$quantity', 0] }] } }
+                    ]
+                }
+            }
+        },
+        {
+            $match: {
+                $expr: {
+                    $or: [
+                        { $gt: ['$suggestedOrderQty', 0] },
+                        { $lte: [{ $ifNull: ['$quantity', 0] }, { $ifNull: ['$reorderLevel', 0] }] }
+                    ]
+                }
+            }
+        },
+        {
+            $addFields: {
+                status: {
+                    $cond: {
+                        if: { $lte: [{ $ifNull: ['$quantity', 0] }, 0] },
+                        then: 'OUT_OF_STOCK',
+                        else: {
+                            $cond: {
+                                if: {
+                                    $and: [
+                                        { $gt: [{ $ifNull: ['$quantity', 0] }, { $ifNull: ['$reorderLevel', 0] }] },
+                                        { $eq: ['$suggestedOrderQty', 0] }
+                                    ]
+                                },
+                                then: 'SAFE',
+                                else: 'LOW_STOCK'
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 1,
+                name: 1,
+                quantity: { $ifNull: ['$quantity', 0] },
+                reorderLevel: { $ifNull: ['$reorderLevel', 0] },
+                predictedDemand: 1,
+                suggestedOrderQty: 1,
+                status: 1,
+                supplierLeadTime: 1,
+                lastSoldDate: 1
+            }
+        },
+        { $sort: { quantity: 1 } }
+    ]);
 
-    const reorderList = await Promise.all(products.map(async (product) => {
-        const reorderLevel = product.reorderLevel || 0;
-        const currentStock = product.quantity || 0;
-
-        // Fetch predictedDemand from the user's Forecast collection related to this product
-        const latestForecast = await Forecast.findOne({ product: product._id, createdBy: req.user.id }).sort({ generatedAt: -1 });
-        const predictedDemand = latestForecast ? latestForecast.predictedMonthlyDemand || 0 : 0;
-
-        // Suggested Order Qty logic
-        let suggestedOrderQty = Math.ceil(predictedDemand - currentStock);
-        if (suggestedOrderQty < 0) {
-            suggestedOrderQty = 0;
-        }
-
-        // Status logic
-        let status = 'LOW_STOCK';
-        if (currentStock === 0) {
-            status = 'OUT_OF_STOCK';
-        } else if (currentStock > reorderLevel && suggestedOrderQty === 0) {
-            status = 'SAFE';
-        }
-
-        return {
-            _id: product._id,
-            name: product.name,
-            quantity: currentStock,
-            reorderLevel: reorderLevel,
-            predictedDemand,
-            suggestedOrderQty,
-            status,
-            supplierLeadTime: product.supplierLeadTime,
-            lastSoldDate: product.lastSoldDate
-        };
-    }));
-
-    // Filter products that actually need action
-    const filteredList = reorderList.filter(item => item.suggestedOrderQty > 0 || item.quantity <= item.reorderLevel);
-
-    res.json(filteredList);
+    res.json(products);
 });
 
 // @desc    Restock product

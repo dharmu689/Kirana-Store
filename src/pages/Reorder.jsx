@@ -14,7 +14,6 @@ const Reorder = () => {
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -22,12 +21,10 @@ const Reorder = () => {
     const fetchReorderItems = async () => {
         setLoading(true);
         try {
-            // token is taken care of by axios interceptor
             const data = await reorderService.getReorderItems();
             setProducts(data);
-            setError('');
         } catch (err) {
-            setError('Failed to fetch reorder items.');
+            toast.error('Failed to fetch reorder items.');
             console.error(err);
         } finally {
             setLoading(false);
@@ -80,13 +77,6 @@ const Reorder = () => {
                         Refresh
                     </button>
                 </div>
-
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
-                        <strong className="font-bold">Error!</strong>
-                        <span className="block sm:inline"> {error}</span>
-                    </div>
-                )}
 
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
