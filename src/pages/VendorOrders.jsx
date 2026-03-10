@@ -161,20 +161,32 @@ const VendorOrders = () => {
                                                 {getStatusIcon(order.status)}
                                             </td>
                                             <td className="px-5 py-5 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-sm">
-                                                {order.status !== 'Delivered' && (
-                                                    <select
-                                                        className="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 px-2 rounded leading-tight focus:outline-none focus:bg-white dark:bg-gray-900 focus:border-gray-500 text-sm"
-                                                        value=""
-                                                        onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
-                                                    >
-                                                        <option value="" disabled>Update Status</option>
-                                                        {order.status === 'Pending' && <option value="Approved">Mark Approved</option>}
-                                                        <option value="Delivered">Mark Delivered</option>
-                                                    </select>
-                                                )}
-                                                {order.status === 'Delivered' && (
-                                                    <span className="text-gray-500 text-xs italic">Completed</span>
-                                                )}
+                                                <div className="flex flex-col space-y-2">
+                                                    {order.status !== 'Delivered' && (
+                                                        <select
+                                                            className="block w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-1 px-2 rounded leading-tight focus:outline-none focus:bg-white dark:bg-gray-900 focus:border-gray-500 text-sm"
+                                                            value=""
+                                                            onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
+                                                        >
+                                                            <option value="" disabled>Update Status</option>
+                                                            {order.status === 'Pending' && <option value="Approved">Mark Approved</option>}
+                                                            <option value="Delivered">Mark Delivered</option>
+                                                        </select>
+                                                    )}
+                                                    {order.status === 'Delivered' && (
+                                                        <span className="text-gray-500 text-xs italic">Completed</span>
+                                                    )}
+                                                    {order.invoiceFileUrl && (
+                                                        <button
+                                                            onClick={() => window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${order.invoiceFileUrl}`, '_blank')}
+                                                            className="text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 py-1 px-2 rounded w-full flex items-center justify-center transition-colors"
+                                                            title="Download Invoice PDF"
+                                                        >
+                                                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                                            Invoice
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))

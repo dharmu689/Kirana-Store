@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const path = require('path');
 
 // Load env vars
 dotenv.config();
@@ -21,6 +22,9 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+
+// Serve PDF INVOICES statically
+app.use('/invoices', express.static(path.join(__dirname, 'temp')));
 
 
 // CORS Configuration

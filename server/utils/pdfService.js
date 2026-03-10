@@ -19,7 +19,7 @@ const generateInvoicePDF = (orderData) => {
     return new Promise((resolve, reject) => {
         try {
             const doc = new PDFDocument({ margin: 50 });
-            const fileName = `Invoice_${Date.now()}.pdf`;
+            const fileName = `vendorOrder_${orderData.orderId || Date.now()}.pdf`;
 
             // Ensure a temp directory exists
             const tempDir = path.join(__dirname, '..', 'temp');
@@ -79,7 +79,8 @@ const generateInvoicePDF = (orderData) => {
             doc.end();
 
             stream.on('finish', () => {
-                resolve(filePath);
+                const invoiceUrl = `/invoices/${fileName}`;
+                resolve(invoiceUrl);
             });
 
             stream.on('error', (err) => {

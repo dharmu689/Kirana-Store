@@ -47,6 +47,7 @@ const placeOrder = async (req, res) => {
 
         // Generate PDF Invoice and Send Notifications in the background so the UI doesn't hang
         const orderData = {
+            orderId: vendorOrder._id,
             storeName: storeName,
             vendorName: foundVendor.name,
             productName: foundProduct.name,
@@ -59,17 +60,17 @@ const placeOrder = async (req, res) => {
 
         // Fire and forget
         Promise.resolve().then(async () => {
-            let pdfPath = null;
+            let pdfUrl = null;
             try {
-                pdfPath = await generateInvoicePDF(orderData);
-                vendorOrder.invoiceFileUrl = pdfPath;
+                pdfUrl = await generateInvoicePDF(orderData);
+                vendorOrder.invoiceFileUrl = pdfUrl;
                 await vendorOrder.save();
             } catch (pdfErr) {
                 console.error('Failed to generate PDF:', pdfErr);
             }
 
             // Send Email
-            const emailText = `Hello ${foundVendor.name},\n\nA new order has been placed.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nPlease find the attached invoice.\n\nThank you,\n${storeName}`;
+            const emailText = `Hello ${foundVendor.name},\n\nA new order has been placed.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nPlease find the attached invoice.`;
 
             if (foundVendor.email) {
                 try {
@@ -77,7 +78,8 @@ const placeOrder = async (req, res) => {
                         to: foundVendor.email,
                         subject: `New Vendor Order from ${storeName}`,
                         text: emailText,
-                        attachmentPath: pdfPath
+                        // Note: Because pdfService now returns relative URL, we map it back to local FS path relative for nodemailer attachment temporarily
+                        attachmentPath: pdfUrl ? require('path').join(__dirname, '..', 'temp', `vendorOrder_${vendorOrder._id}.pdf`) : null
                     });
                 } catch (emailErr) {
                     console.error('Failed to send email:', emailErr);
