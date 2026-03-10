@@ -8,6 +8,15 @@ import { Menu } from 'lucide-react';
 const Layout = () => {
     const [user, setUser] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+    const handleMenuClick = () => {
+        if (window.innerWidth < 1024) {
+            setIsSidebarOpen(true);
+        } else {
+            setIsSidebarCollapsed(!isSidebarCollapsed);
+        }
+    };
 
     useEffect(() => {
         const fetchProfileAndPrefs = async () => {
@@ -34,10 +43,10 @@ const Layout = () => {
                 />
             )}
 
-            <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+            <Sidebar isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} isCollapsed={isSidebarCollapsed} />
             <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-                <Navbar user={user} onMenuClick={() => setIsSidebarOpen(true)} />
-                <main className="flex-1 overflow-y-auto p-6 md:p-8 lg:ml-64 scroll-smooth">
+                <Navbar user={user} onMenuClick={handleMenuClick} isCollapsed={isSidebarCollapsed} />
+                <main className={`flex-1 overflow-y-auto p-6 md:p-8 transition-all duration-300 ease-in-out scroll-smooth ${isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-64'}`}>
                     <Outlet />
                 </main>
             </div>

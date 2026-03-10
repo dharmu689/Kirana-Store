@@ -7,55 +7,64 @@ const Sale = require('../models/Sale');
 // @route   GET /api/dashboard/summary
 // @access  Private
 const getDashboardSummary = asyncHandler(async (req, res) => {
-    // 1. Today Revenue
+    // Shared Date Boundaries
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
-    const todaySales = await Sale.aggregate([
-        { $match: { saleDate: { $gte: startOfToday }, userId: new mongoose.Types.ObjectId(req.user.id) } },
-        {
-            $group: {
-                _id: null,
-                todayRevenue: { $sum: '$totalPrice' }
-            }
-        }
-    ]);
-    const todayRevenue = todaySales[0]?.todayRevenue || 0;
-
-    // 2. Monthly Revenue
     const startOfMonth = new Date();
     startOfMonth.setDate(1);
     startOfMonth.setHours(0, 0, 0, 0);
 
-    const monthlySales = await Sale.aggregate([
-        { $match: { saleDate: { $gte: startOfMonth }, userId: new mongoose.Types.ObjectId(req.user.id) } },
-        {
-            $group: {
-                _id: null,
-                monthlyRevenue: { $sum: '$totalPrice' }
-            }
-        }
-    ]);
-    const monthlyRevenue = monthlySales[0]?.monthlyRevenue || 0;
-
-    // 3. Total Orders
-    const totalOrders = await Sale.countDocuments({ userId: req.user.id });
-
-    // 4. Low Stock Count
-    const lowStockCount = await Product.countDocuments({
-        $expr: { $lte: ['$quantity', '$reorderLevel'] },
-        quantity: { $gt: 0 },
-        userId: req.user.id
-    });
-
-    // 4b. Total Products Count
-    const totalProducts = await Product.countDocuments({ userId: req.user.id });
-
-    // 5. Sales Trend
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 29);
     thirtyDaysAgo.setHours(0, 0, 0, 0);
 
+    // Fire all MongoDB Aggregations Concurrently
+    const [
+        todaySales,
+        monthlySales,
+        totalOrders,
+        lowStockCount,
+        totalProducts,
+        salesData
+    ] = await Promise.all([
+        // 1. Today Revenue
+        Sale.aggregate([
+            { $match: { saleDate: { $gte: startOfToday }, userId: new mongoose.Types.ObjectId(req.user.id) } },
+            { $group: { _id: null, todayRevenue: { $sum: '$totalPrice' } } }
+        ]),
+        // 2. Monthly Revenue
+        Sale.aggregate([
+            { $match: { saleDate: { $gte: startOfMonth }, userId: new mongoose.Types.ObjectId(req.user.id) } },
+            { $group: { _id: null, monthlyRevenue: { $sum: '$totalPrice' } } }
+        ]),
+        // 3. Total Orders
+        Sale.countDocuments({ userId: req.user.id }),
+        // 4. Low Stock Count
+        Product.countDocuments({
+            $expr: { $lte: ['$quantity', '$reorderLevel'] },
+            quantity: { $gt: 0 },
+            userId: req.user.id
+        }),
+        // 5. Total Products Count
+        Product.countDocuments({ userId: req.user.id }),
+        // 6. Sales Trend Data
+        Sale.aggregate([
+            { $match: { saleDate: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m-%d", date: "$saleDate" } },
+                    dailySales: { $sum: "$totalPrice" }
+                }
+            }
+        ])
+    ]);
+
+    // Format Concurrent Results Safely
+    const todayRevenue = todaySales[0]?.todayRevenue || 0;
+    const monthlyRevenue = monthlySales[0]?.monthlyRevenue || 0;
+
+    // Build the 30-day Trend Skeleton Array
     const trendData = [];
     for (let i = 0; i < 30; i++) {
         const d = new Date(thirtyDaysAgo);
@@ -66,16 +75,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
         });
     }
 
-    const salesData = await Sale.aggregate([
-        { $match: { saleDate: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
-        {
-            $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$saleDate" } },
-                dailySales: { $sum: "$totalPrice" }
-            }
-        }
-    ]);
-
+    // Map aggregated points back into the skeleton array
     salesData.forEach(sale => {
         const point = trendData.find(t => t.date === sale._id);
         if (point) point.sales = sale.dailySales;
@@ -96,59 +96,41 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
 // @access  Private
 const getDashboardProfit = asyncHandler(async (req, res) => {
     try {
-        const totalProfit = await Sale.aggregate([
-            { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$profit" }
-                }
-            }
-        ]);
-
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        const oneDayProfit = await Sale.aggregate([
-            {
-                $match: { createdAt: { $gte: today }, userId: new mongoose.Types.ObjectId(req.user.id) }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$profit" }
-                }
-            }
-        ]);
 
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-        const sevenDaysProfit = await Sale.aggregate([
-            {
-                $match: { createdAt: { $gte: sevenDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$profit" }
-                }
-            }
-        ]);
-
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-        const thirtyDaysProfit = await Sale.aggregate([
-            {
-                $match: { createdAt: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total: { $sum: "$profit" }
-                }
-            }
+        const [
+            totalProfit,
+            oneDayProfit,
+            sevenDaysProfit,
+            thirtyDaysProfit
+        ] = await Promise.all([
+            // Total Profit
+            Sale.aggregate([
+                { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
+                { $group: { _id: null, total: { $sum: "$profit" } } }
+            ]),
+            // 1 Day Profit
+            Sale.aggregate([
+                { $match: { createdAt: { $gte: today }, userId: new mongoose.Types.ObjectId(req.user.id) } },
+                { $group: { _id: null, total: { $sum: "$profit" } } }
+            ]),
+            // 7 Days Profit
+            Sale.aggregate([
+                { $match: { createdAt: { $gte: sevenDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
+                { $group: { _id: null, total: { $sum: "$profit" } } }
+            ]),
+            // 30 Days Profit
+            Sale.aggregate([
+                { $match: { createdAt: { $gte: thirtyDaysAgo }, userId: new mongoose.Types.ObjectId(req.user.id) } },
+                { $group: { _id: null, total: { $sum: "$profit" } } }
+            ])
         ]);
 
         res.json({

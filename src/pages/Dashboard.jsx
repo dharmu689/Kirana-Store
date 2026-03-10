@@ -39,23 +39,30 @@ const Dashboard = () => {
   const fetchAllData = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await dashboardService.getSummary();
-      setSummaryData(data);
 
-      const pData = await dashboardService.getDashboardProfit();
-      setProfitData(pData);
+      const [
+        summaryRes,
+        profitRes,
+        topProdRes,
+        lowSellRes,
+        chartRes,
+        lowStockRes
+      ] = await Promise.allSettled([
+        dashboardService.getSummary(),
+        dashboardService.getDashboardProfit(),
+        dashboardService.getTopProducts(),
+        dashboardService.getLowSellingProducts(),
+        dashboardService.getProfitChartData(selectedPeriod),
+        productService.getLowStockProducts()
+      ]);
 
-      const topProd = await dashboardService.getTopProducts();
-      setTopProducts(topProd);
+      if (summaryRes.status === 'fulfilled') setSummaryData(summaryRes.value);
+      if (profitRes.status === 'fulfilled') setProfitData(profitRes.value);
+      if (topProdRes.status === 'fulfilled') setTopProducts(topProdRes.value);
+      if (lowSellRes.status === 'fulfilled') setLowSellingProducts(lowSellRes.value);
+      if (chartRes.status === 'fulfilled') setProfitChartData(chartRes.value);
+      if (lowStockRes.status === 'fulfilled') setLowStockProducts(lowStockRes.value);
 
-      const lowProd = await dashboardService.getLowSellingProducts();
-      setLowSellingProducts(lowProd);
-
-      const chartData = await dashboardService.getProfitChartData(selectedPeriod);
-      setProfitChartData(chartData);
-
-      const lstProducts = await productService.getLowStockProducts();
-      setLowStockProducts(lstProducts);
     } catch (error) {
       console.error("Failed to fetch dashboard summary", error);
     } finally {

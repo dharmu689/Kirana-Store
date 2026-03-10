@@ -6,7 +6,7 @@ import authService from '../../services/authService';
 import { useLanguage } from '../../context/LanguageContext';
 import { translations } from '../../utils/translations';
 
-const Sidebar = ({ isOpen, setIsOpen }) => {
+const Sidebar = ({ isOpen, setIsOpen, isCollapsed }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { language } = useLanguage();
@@ -18,16 +18,17 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
     return (
         <div className={clsx(
-            "w-64 h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 shadow-xl lg:shadow-sm z-50 transition-transform duration-300 ease-in-out",
+            "h-screen bg-white dark:bg-gray-900 border-r border-gray-100 dark:border-gray-800 flex flex-col fixed left-0 top-0 shadow-xl lg:shadow-sm z-50 transition-all duration-300 ease-in-out",
+            isCollapsed ? "w-20" : "w-64",
             isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}>
             {/* Brand Logo */}
-            <div className="h-16 flex items-center px-6 border-b border-gray-50">
-                {/* <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-md shadow-blue-200">
-                    <span className="text-white font-bold text-lg">K</span>
-                </div>
-                <span className="text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight">Kirana<span className="text-blue-600">Pro</span></span> */}
-                <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-20" />
+            <div className={clsx("h-16 flex items-center border-b border-gray-50 overflow-hidden", isCollapsed ? "justify-center px-0" : "px-6")}>
+                {isCollapsed ? (
+                    <span className="text-2xl font-black text-[var(--color-brand-blue)] tracking-tight">K</span>
+                ) : (
+                    <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-20 shrink-0" />
+                )}
             </div>
 
             {/* Navigation Menu */}
@@ -56,20 +57,23 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                             to={item.path}
                             onClick={() => setIsOpen(false)}
                             className={clsx(
-                                "flex items-center px-4 py-3 rounded-xl transition-all duration-300 group text-sm font-medium hover-mac-folder",
+                                "flex items-center rounded-xl transition-all duration-300 group font-medium hover-mac-folder",
+                                isCollapsed ? "justify-center p-3" : "px-4 py-3 text-sm",
                                 isActive
                                     ? "bg-[var(--color-brand-blue)] text-white shadow-md shadow-blue-200 dark:shadow-blue-900/20"
                                     : "text-gray-500 hover:bg-blue-50/50 dark:bg-gray-800 hover:text-[var(--color-brand-blue)] dark:text-gray-300 dark:hover:bg-gray-700/50"
                             )}
+                            title={isCollapsed ? translatedName : undefined}
                         >
                             <Icon
                                 size={20}
                                 className={clsx(
-                                    "mr-3 transition-colors duration-300",
+                                    "transition-colors duration-300 shrink-0",
+                                    !isCollapsed && "mr-3",
                                     isActive ? "text-white" : "text-gray-400 group-hover:text-[var(--color-brand-blue)] dark:text-gray-400"
                                 )}
                             />
-                            {translatedName}
+                            {!isCollapsed && <span className="truncate">{translatedName}</span>}
                         </Link>
                     );
                 })}
@@ -77,23 +81,30 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
             {/* User Profile Summary */}
             <div className="p-4 border-t border-gray-50">
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 dark:bg-gray-800 transition-colors group">
-                    <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
+                <div className={clsx(
+                    "bg-gray-50 dark:bg-gray-800 rounded-xl flex items-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group overflow-hidden",
+                    isCollapsed ? "justify-center p-2" : "justify-between p-3"
+                )}>
+                    <div className="flex items-center overflow-hidden">
+                        <div className="w-10 h-10 shrink-0 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600">
                             <User size={20} />
                         </div>
-                        <div className="ml-3 overflow-hidden">
-                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">Store Manager</p>
-                            <p className="text-xs text-gray-500 truncate">View Profile</p>
-                        </div>
+                        {!isCollapsed && (
+                            <div className="ml-3 overflow-hidden">
+                                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">Store Manager</p>
+                                <p className="text-xs text-gray-500 truncate">View Profile</p>
+                            </div>
+                        )}
                     </div>
-                    <button
-                        onClick={handleLogout}
-                        className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50"
-                        title="Logout"
-                    >
-                        <LogOut size={18} />
-                    </button>
+                    {!isCollapsed && (
+                        <button
+                            onClick={handleLogout}
+                            className="text-gray-400 hover:text-red-500 transition-colors p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/50 shrink-0"
+                            title="Logout"
+                        >
+                            <LogOut size={18} />
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
