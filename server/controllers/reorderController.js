@@ -7,15 +7,15 @@ const Product = require('../models/Product');
 const getReorderItems = asyncHandler(async (req, res) => {
     const Forecast = require('../models/Forecast');
 
-    // Fetch all products
-    const products = await Product.find().sort({ quantity: 1 });
+    // Fetch products scoped to the current user
+    const products = await Product.find({ userId: req.user.id }).sort({ quantity: 1 });
 
     const reorderList = await Promise.all(products.map(async (product) => {
         const reorderLevel = product.reorderLevel || 0;
         const currentStock = product.quantity || 0;
 
-        // Fetch predictedDemand from the Forecast collection
-        const latestForecast = await Forecast.findOne({ product: product._id }).sort({ generatedAt: -1 });
+        // Fetch predictedDemand from the user's Forecast collection related to this product
+        const latestForecast = await Forecast.findOne({ product: product._id, createdBy: req.user.id }).sort({ generatedAt: -1 });
         const predictedDemand = latestForecast ? latestForecast.predictedMonthlyDemand || 0 : 0;
 
         // Suggested Order Qty logic
@@ -63,7 +63,7 @@ const restockProduct = asyncHandler(async (req, res) => {
         throw new Error('Please provide a valid quantity to restock');
     }
 
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findOne({ _id: req.params.id, userId: req.user.id });
 
     if (product) {
         product.quantity += qtyToAdd;
