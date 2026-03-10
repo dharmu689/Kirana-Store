@@ -8,14 +8,8 @@ const QRCode = require('qrcode');
 const createProduct = asyncHandler(async (req, res) => {
     const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime, purchasePrice, sellingPrice, margin, unit } = req.body;
 
-    // Generate unique productId like PROD-0001 per Admin/Store
-    // We only look up the last product created by THIS specific user.
-    const lastProduct = await Product.findOne(
-        { userId: req.user.id },
-        {},
-        { sort: { 'createdAt': -1 } }
-    );
-
+    // Generate unique productId like PROD-0001
+    const lastProduct = await Product.findOne({}, {}, { sort: { 'createdAt': -1 } });
     let newProductId = 'PROD-0001';
 
     if (lastProduct && lastProduct.productId && lastProduct.productId.startsWith('PROD-')) {
