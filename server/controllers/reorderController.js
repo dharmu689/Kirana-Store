@@ -9,38 +9,11 @@ const getReorderItems = asyncHandler(async (req, res) => {
 
     // Efficiently aggregate products and map Forecast data in a single MongoDB operation
     const products = await Product.aggregate([
-        { $match: { userId: new mongoose.Types.ObjectId(req.user.id) } },
-        {
-            $lookup: {
-                from: 'forecasts',
-                let: { productId: '$_id' },
-                pipeline: [
-                    { $match: { $expr: { $eq: ['$product', '$$productId'] } } },
-                    { $sort: { generatedAt: -1 } },
-                    { $limit: 1 }
-                ],
-                as: 'latestForecast'
-            }
-        },
-        { $unwind: { path: '$latestForecast', preserveNullAndEmptyArrays: true } },
-        {
-            $addFields: {
-                predictedDemand: { $ifNull: ['$latestForecast.predictedMonthlyDemand', 0] },
-                suggestedOrderQty: {
-                    $max: [
-                        0,
-                        { $ceil: { $subtract: [{ $ifNull: ['$latestForecast.predictedMonthlyDemand', 0] }, { $ifNull: ['$quantity', 0] }] } }
-                    ]
-                }
-            }
-        },
         {
             $match: {
+                userId: new mongoose.Types.ObjectId(req.user.id),
                 $expr: {
-                    $or: [
-                        { $gt: ['$suggestedOrderQty', 0] },
-                        { $lte: [{ $ifNull: ['$quantity', 0] }, { $ifNull: ['$reorderLevel', 0] }] }
-                    ]
+                    $lte: [{ $ifNull: ['$quantity', 0] }, { $ifNull: ['$reorderLevel', 0] }]
                 }
             }
         },
@@ -50,18 +23,7 @@ const getReorderItems = asyncHandler(async (req, res) => {
                     $cond: {
                         if: { $lte: [{ $ifNull: ['$quantity', 0] }, 0] },
                         then: 'OUT_OF_STOCK',
-                        else: {
-                            $cond: {
-                                if: {
-                                    $and: [
-                                        { $gt: [{ $ifNull: ['$quantity', 0] }, { $ifNull: ['$reorderLevel', 0] }] },
-                                        { $eq: ['$suggestedOrderQty', 0] }
-                                    ]
-                                },
-                                then: 'SAFE',
-                                else: 'LOW_STOCK'
-                            }
-                        }
+                        else: 'LOW_STOCK'
                     }
                 }
             }
@@ -72,8 +34,8 @@ const getReorderItems = asyncHandler(async (req, res) => {
                 name: 1,
                 quantity: { $ifNull: ['$quantity', 0] },
                 reorderLevel: { $ifNull: ['$reorderLevel', 0] },
-                predictedDemand: 1,
-                suggestedOrderQty: 1,
+                predictedDemand: '$latestPredictedDemand',
+                suggestedOrderQty: { $ifNull: ['$aiSuggestedReorder', 0] },
                 status: 1,
                 supplierLeadTime: 1,
                 lastSoldDate: 1

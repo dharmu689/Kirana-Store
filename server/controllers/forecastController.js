@@ -369,13 +369,16 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
 
             // --- FEATURE 1 & 5: Bridge AI prediction to Reorder module natively
             product.latestPredictedDemand = predictedMonthlyDemand;
-            await product.save();
 
             // --- FEATURE 4: Auto Calculate Auto-Reorder
             let suggestedReorder = 0;
             if (predictedMonthlyDemand > currentStock) {
                 suggestedReorder = Math.ceil(predictedMonthlyDemand - currentStock);
             }
+
+            // Bind the calculation permanently to the core Product schema to eliminate N+1 Database overheads later
+            product.aiSuggestedReorder = suggestedReorder;
+            await product.save();
 
             const newForecast = new Forecast({
                 product: product._id,

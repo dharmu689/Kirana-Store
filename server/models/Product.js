@@ -86,6 +86,10 @@ const productSchema = mongoose.Schema(
             type: Number,
             default: 0
         },
+        aiSuggestedReorder: {
+            type: Number,
+            default: 0
+        },
         lastSoldDate: {
             type: Date
         },
