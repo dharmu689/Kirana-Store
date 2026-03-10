@@ -45,7 +45,7 @@ const placeOrder = async (req, res) => {
             deliveryAddress
         });
 
-        // Generate PDF Invoice
+        // Generate PDF Invoice and Send Notifications in the background so the UI doesn't hang
         const orderData = {
             storeName: storeName,
             vendorName: foundVendor.name,
@@ -57,43 +57,46 @@ const placeOrder = async (req, res) => {
             orderDate: vendorOrder.orderDate
         };
 
-        let pdfPath = null;
-        try {
-            pdfPath = await generateInvoicePDF(orderData);
-            vendorOrder.invoiceFileUrl = pdfPath;
-            await vendorOrder.save();
-        } catch (pdfErr) {
-            console.error('Failed to generate PDF:', pdfErr);
-        }
-
-        // Send Email
-        const emailText = `Hello ${foundVendor.name},\n\nA new order has been placed.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nPlease find the attached invoice.\n\nThank you,\n${storeName}`;
-
-        if (foundVendor.email) {
+        // Fire and forget
+        Promise.resolve().then(async () => {
+            let pdfPath = null;
             try {
-                await sendEmail({
-                    to: foundVendor.email,
-                    subject: `New Vendor Order from ${storeName}`,
-                    text: emailText,
-                    attachmentPath: pdfPath
-                });
-            } catch (emailErr) {
-                console.error('Failed to send email:', emailErr);
+                pdfPath = await generateInvoicePDF(orderData);
+                vendorOrder.invoiceFileUrl = pdfPath;
+                await vendorOrder.save();
+            } catch (pdfErr) {
+                console.error('Failed to generate PDF:', pdfErr);
             }
-        }
 
-        // Send WhatsApp
-        if (foundVendor.phone) {
-            const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
-            try {
-                await sendWhatsAppMessage({
-                    to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`, // Basic Indian format fallback if raw
-                    body: waMsg
-                });
-            } catch (waErr) {
-                console.error('Failed to send WhatsApp:', waErr);
+            // Send Email
+            const emailText = `Hello ${foundVendor.name},\n\nA new order has been placed.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nPlease find the attached invoice.\n\nThank you,\n${storeName}`;
+
+            if (foundVendor.email) {
+                try {
+                    await sendEmail({
+                        to: foundVendor.email,
+                        subject: `New Vendor Order from ${storeName}`,
+                        text: emailText,
+                        attachmentPath: pdfPath
+                    });
+                } catch (emailErr) {
+                    console.error('Failed to send email:', emailErr);
+                }
             }
-        }
+
+            // Send WhatsApp
+            if (foundVendor.phone) {
+                const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
+                try {
+                    await sendWhatsAppMessage({
+                        to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`, // Basic Indian format fallback if raw
+                        body: waMsg
+                    });
+                } catch (waErr) {
+                    console.error('Failed to send WhatsApp:', waErr);
+                }
+            }
+        }).catch(err => console.error('Background Notification Process Error:', err));
 
         res.status(201).json(vendorOrder);
     } catch (error) {
