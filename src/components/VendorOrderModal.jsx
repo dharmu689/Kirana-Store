@@ -80,6 +80,11 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
             return;
         }
 
+        if (!deliveryAddress || !deliveryAddress.trim()) {
+            setError('Delivery address is required to place vendor order');
+            return;
+        }
+
         setSubmitting(true);
         try {
             // Wait for parent to complete the order so we can show errors if any
@@ -220,7 +225,8 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                             className="mt-1 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 dark:border-gray-600 rounded-md py-2 px-3 border"
                             value={deliveryAddress}
                             onChange={(e) => setDeliveryAddress(e.target.value)}
-                            placeholder="Optional: Store location to deliver to"
+                            placeholder="Store location to deliver to"
+                            required
                         ></textarea>
                     </div>
 
@@ -235,9 +241,9 @@ const VendorOrderModal = ({ isOpen, onClose, product, onPlaceOrder }) => {
                         <button
                             type="submit"
                             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 disabled:opacity-50"
-                            disabled={!selectedVendor || submitting}
+                            disabled={!selectedVendor || !deliveryAddress.trim() || submitting}
                         >
-                            {submitting ? 'Placing...' : 'Place Order'}
+                            {submitting ? 'Placing order...' : 'Place Order'}
                         </button>
                     </div>
                 </form>

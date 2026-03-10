@@ -2,6 +2,8 @@
 const VendorOrder = require('../models/VendorOrder');
 const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
+const StoreSettings = require('../models/StoreSettings');
+const User = require('../models/User');
 const { generateInvoicePDF } = require('../utils/pdfService');
 const { sendEmail } = require('../utils/emailService');
 const { sendWhatsAppMessage } = require('../utils/whatsappService');
@@ -12,6 +14,10 @@ const { sendWhatsAppMessage } = require('../utils/whatsappService');
 const placeOrder = async (req, res) => {
     try {
         const { product, vendor, quantity, deliveryAddress } = req.body;
+
+        if (!deliveryAddress) {
+            return res.status(400).json({ message: 'Delivery address is required' });
+        }
 
         // Validations
         const foundProduct = await Product.findOne({ _id: product, userId: req.user.id });
@@ -24,52 +30,69 @@ const placeOrder = async (req, res) => {
             return res.status(404).json({ message: 'Vendor not found' });
         }
 
+        const storeSettings = await StoreSettings.findOne();
+        const storeName = storeSettings ? storeSettings.storeName : 'KiranaSmart';
+
         const vendorOrder = await VendorOrder.create({
             userId: req.user.id,
             product,
+            productName: foundProduct.name,
             vendor,
+            vendorName: foundVendor.name,
+            vendorEmail: foundVendor.email || '',
+            vendorPhone: foundVendor.phone || '',
             quantity,
             deliveryAddress
         });
 
         // Generate PDF Invoice
         const orderData = {
-            storeName: 'KiranaPro',
+            storeName: storeName,
             vendorName: foundVendor.name,
             productName: foundProduct.name,
             quantity,
-            unitPrice: foundProduct.price, // Assuming cost price is same as selling or simple price for now
-            total: quantity * foundProduct.price,
-            deliveryAddress: deliveryAddress || 'Store Location',
+            unitPrice: foundProduct.price || 0,
+            total: quantity * (foundProduct.price || 0),
+            deliveryAddress: deliveryAddress,
             orderDate: vendorOrder.orderDate
         };
 
-        const pdfPath = await generateInvoicePDF(orderData);
+        let pdfPath = null;
+        try {
+            pdfPath = await generateInvoicePDF(orderData);
+            vendorOrder.invoiceFileUrl = pdfPath;
+            await vendorOrder.save();
+        } catch (pdfErr) {
+            console.error('Failed to generate PDF:', pdfErr);
+        }
 
         // Send Email
-        const emailText = `Hello ${foundVendor.name},\n\nPlease find attached the purchase order from KiranaPro.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${orderData.deliveryAddress}\n\nThank you.`;
+        const emailText = `Hello ${foundVendor.name},\n\nA new order has been placed.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nPlease find the attached invoice.\n\nThank you,\n${storeName}`;
 
-        // We catch errors independently so the order still succeeds even if notifications fail
-        try {
-            await sendEmail({
-                to: 'rajaravana4@gmail.com', // Sending specifically to the requested email
-                subject: 'New Purchase Order - KiranaPro',
-                text: emailText,
-                attachmentPath: pdfPath
-            });
-        } catch (emailErr) {
-            console.error('Failed to send email:', emailErr);
+        if (foundVendor.email) {
+            try {
+                await sendEmail({
+                    to: foundVendor.email,
+                    subject: `New Vendor Order from ${storeName}`,
+                    text: emailText,
+                    attachmentPath: pdfPath
+                });
+            } catch (emailErr) {
+                console.error('Failed to send email:', emailErr);
+            }
         }
 
         // Send WhatsApp
-        const waMsg = `New Order from KiranaPro\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery: ${orderData.deliveryAddress}`;
-        try {
-            await sendWhatsAppMessage({
-                to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:${foundVendor.phone}`,
-                body: waMsg
-            });
-        } catch (waErr) {
-            console.error('Failed to send WhatsApp:', waErr);
+        if (foundVendor.phone) {
+            const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
+            try {
+                await sendWhatsAppMessage({
+                    to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`, // Basic Indian format fallback if raw
+                    body: waMsg
+                });
+            } catch (waErr) {
+                console.error('Failed to send WhatsApp:', waErr);
+            }
         }
 
         res.status(201).json(vendorOrder);

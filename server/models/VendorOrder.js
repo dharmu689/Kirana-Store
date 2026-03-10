@@ -17,6 +17,20 @@ const vendorOrderSchema = new mongoose.Schema(
             required: true,
             ref: 'Vendor'
         },
+        productName: {
+            type: String,
+            required: true
+        },
+        vendorName: {
+            type: String,
+            required: true
+        },
+        vendorEmail: {
+            type: String
+        },
+        vendorPhone: {
+            type: String
+        },
         quantity: {
             type: Number,
             required: [true, 'Please add quantity'],
@@ -28,7 +42,11 @@ const vendorOrderSchema = new mongoose.Schema(
         },
         deliveryAddress: {
             type: String,
-            trim: true
+            trim: true,
+            required: [true, 'Please add delivery address']
+        },
+        invoiceFileUrl: {
+            type: String
         },
         status: {
             type: String,

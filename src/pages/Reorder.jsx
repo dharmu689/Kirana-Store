@@ -6,6 +6,7 @@ import VendorOrderModal from '../components/VendorOrderModal';
 import vendorOrderService from '../services/vendorOrderService';
 import { useLanguage } from '../context/LanguageContext';
 import { translations } from '../utils/translations';
+import toast from 'react-hot-toast';
 
 const Reorder = () => {
     const { language } = useLanguage();
@@ -16,9 +17,6 @@ const Reorder = () => {
     const [error, setError] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [successMsg, setSuccessMsg] = useState('');
-    // additional state to hold order-specific errors (so they don’t clash with fetch errors)
-    const [orderError, setOrderError] = useState('');
 
     // fetch list of products that require reordering
     const fetchReorderItems = async () => {
@@ -43,14 +41,11 @@ const Reorder = () => {
 
     const handleRestockClick = (product) => {
         setSelectedProduct(product);
-        setOrderError(''); // clear previous order errors
         setIsModalOpen(true);
     };
 
     const handlePlaceOrder = async (orderData) => {
         try {
-            // reset any existing errors
-            setOrderError('');
             await vendorOrderService.placeOrder({
                 product: orderData.productId,
                 vendor: orderData.vendorId,
@@ -59,17 +54,13 @@ const Reorder = () => {
             });
 
             setIsModalOpen(false);
-            setSuccessMsg(`Successfully placed order for ${selectedProduct?.name || 'product'}!`);
-            setTimeout(() => setSuccessMsg(''), 5000);
+            toast.success('Vendor Order Placed Successfully');
             setSelectedProduct(null);
             fetchReorderItems(); // Refresh list
         } catch (err) {
             console.error('Order failed', err);
-            // show specific message if available
             const msg = err.response?.data?.message || err.message || 'Failed to place vendor order';
-            setOrderError(msg);
-            alert(msg);
-            // rethrow so calling component (modal) can handle/display the error
+            toast.error(msg);
             throw err;
         }
     };
@@ -94,20 +85,6 @@ const Reorder = () => {
                     <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
                         <strong className="font-bold">Error!</strong>
                         <span className="block sm:inline"> {error}</span>
-                    </div>
-                )}
-                {/* display order-specific errors if modal was open */}
-                {orderError && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 relative" role="alert">
-                        <strong className="font-bold">Order Error!</strong>
-                        <span className="block sm:inline"> {orderError}</span>
-                    </div>
-                )}
-
-                {successMsg && (
-                    <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 relative" role="alert">
-                        <strong className="font-bold">Success!</strong>
-                        <span className="block sm:inline"> {successMsg}</span>
                     </div>
                 )}
 

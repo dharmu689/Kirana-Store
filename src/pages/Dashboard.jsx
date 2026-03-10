@@ -11,6 +11,7 @@ import AIChatAssistant from '../components/AIChatAssistant';
 import productService from '../services/productService';
 import VendorOrderModal from '../components/VendorOrderModal';
 import vendorOrderService from '../services/vendorOrderService';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
   const [summaryData, setSummaryData] = useState(null);
@@ -343,13 +344,18 @@ const Dashboard = () => {
         product={selectedReorderProduct}
         onPlaceOrder={async (orderData) => {
           try {
-            await vendorOrderService.createOrder(orderData);
-            alert('Order placed successfully!');
+            // Dashboard typically might use placeOrder or createOrder - map to placeOrder for consistency to hit backend securely
+            await vendorOrderService.placeOrder(orderData);
+            toast.success('Vendor Order Placed Successfully');
             setIsOrderModalOpen(false);
             setSelectedReorderProduct(null);
+            // Refresh dashboard data so low-stock lists get theoretically refreshed immediately
+            fetchAllData();
           } catch (err) {
             console.error('Order Error:', err);
-            alert('Failed to place order. ' + (err.response?.data?.message || ''));
+            const msg = err.response?.data?.message || err.message || 'Failed to place order';
+            toast.error(msg);
+            throw err;
           }
         }}
       />
