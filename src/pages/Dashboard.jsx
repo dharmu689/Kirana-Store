@@ -74,17 +74,14 @@ const Dashboard = () => {
     return () => window.removeEventListener('focus', onFocus);
   }, [fetchAllData]);
 
+  // Remove duplicate initial chart fetch; `fetchAllData` inherently syncs `selectedPeriod` properly.
   useEffect(() => {
-    const fetchChartForPeriod = async () => {
-      try {
-        const data = await dashboardService.getProfitChartData(selectedPeriod);
-        setProfitChartData(data);
-      } catch (error) {
-        console.error("Failed to fetch profit chart data", error);
-      }
-    };
-    // Don't fetch on initial mount if fetchAllData already covers it, but it's simpler to just fetch it
-    fetchChartForPeriod();
+    // Only fetch specifically if selectedPeriod changes *after* the initial global fetch
+    if (!loading) {
+      dashboardService.getProfitChartData(selectedPeriod)
+        .then(data => setProfitChartData(data))
+        .catch(err => console.error("Failed to fetch profit chart data", err));
+    }
   }, [selectedPeriod]);
 
   if (loading) {
@@ -332,36 +329,34 @@ const Dashboard = () => {
               <p className="text-gray-500 text-sm">All products are adequately stocked.</p>
             )}
           </div>
+
+          <VendorOrderModal
+            isOpen={isOrderModalOpen}
+            onClose={() => {
+              setIsOrderModalOpen(false);
+              setSelectedReorderProduct(null);
+            }}
+            product={selectedReorderProduct}
+            onPlaceOrder={async (orderData) => {
+              try {
+                await vendorOrderService.placeOrder(orderData);
+                toast.success('Vendor Order Placed Successfully');
+                setIsOrderModalOpen(false);
+                setSelectedReorderProduct(null);
+                fetchAllData();
+              } catch (err) {
+                console.error('Order Error:', err);
+                const msg = err.response?.data?.message || err.message || 'Failed to place order';
+                toast.error(msg);
+                throw err;
+              }
+            }}
+          />
+
+          {/* Floating AI Chat Assistant */}
+          <AIChatAssistant />
         </div>
       </div>
-
-      <VendorOrderModal
-        isOpen={isOrderModalOpen}
-        onClose={() => {
-          setIsOrderModalOpen(false);
-          setSelectedReorderProduct(null);
-        }}
-        product={selectedReorderProduct}
-        onPlaceOrder={async (orderData) => {
-          try {
-            // Dashboard typically might use placeOrder or createOrder - map to placeOrder for consistency to hit backend securely
-            await vendorOrderService.placeOrder(orderData);
-            toast.success('Vendor Order Placed Successfully');
-            setIsOrderModalOpen(false);
-            setSelectedReorderProduct(null);
-            // Refresh dashboard data so low-stock lists get theoretically refreshed immediately
-            fetchAllData();
-          } catch (err) {
-            console.error('Order Error:', err);
-            const msg = err.response?.data?.message || err.message || 'Failed to place order';
-            toast.error(msg);
-            throw err;
-          }
-        }}
-      />
-
-      {/* Floating AI Chat Assistant */}
-      <AIChatAssistant />
     </div>
   );
 };
