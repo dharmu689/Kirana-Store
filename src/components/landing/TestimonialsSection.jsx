@@ -6,12 +6,12 @@ const TestimonialsSection = () => {
     const testimonials = [
         {
             quote: "KiranaSmart completely changed how I run my shop. The low stock alerts saved me from losing customers to the store next door.",
-            author: "Rajesh Kumar",
+            author: "Dheeraj Kumar",
             role: "Owner, Rajesh Provisions"
         },
         {
             quote: "I used to spend 3 hours a day tracking ledger books and vendor orders. Now, my invoices are generated automatically. This is a game-changer.",
-            author: "Anita Sharma",
+            author: "Sujeet Kumar",
             role: "Manager, Sharma Supermarket"
         },
         {
