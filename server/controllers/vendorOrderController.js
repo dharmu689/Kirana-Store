@@ -4,8 +4,8 @@ const Product = require('../models/Product');
 const Vendor = require('../models/Vendor');
 const StoreSettings = require('../models/StoreSettings');
 const User = require('../models/User');
-const { generateInvoicePDF } = require('../utils/pdfService');
-const { sendEmail } = require('../utils/emailService');
+const { generateReorderInvoice } = require('../services/pdfService');
+const { sendVendorReorderEmail } = require('../services/emailService');
 const { sendWhatsAppMessage } = require('../utils/whatsappService');
 const { createNotification } = require('../utils/notificationService');
 
@@ -50,9 +50,14 @@ const placeOrder = async (req, res) => {
         const orderData = {
             orderId: vendorOrder._id,
             storeName: storeName,
+            storeEmail: storeSettings ? storeSettings.email : '',
+            storeContact: storeSettings ? storeSettings.phone : '',
             vendorName: foundVendor.name,
+            vendorEmail: foundVendor.email || '',
             productName: foundProduct.name,
+            category: foundProduct.category,
             quantity,
+            currentStock: foundProduct.quantity,
             unitPrice: foundProduct.price || 0,
             total: quantity * (foundProduct.price || 0),
             deliveryAddress: deliveryAddress,
@@ -61,27 +66,22 @@ const placeOrder = async (req, res) => {
 
         // Fire and forget
         Promise.resolve().then(async () => {
-            let pdfUrl = null;
+            let pdfPath = null;
             try {
-                pdfUrl = await generateInvoicePDF(orderData);
-                vendorOrder.invoiceFileUrl = pdfUrl;
-                await vendorOrder.save();
+                pdfPath = await generateReorderInvoice(orderData);
+                if (pdfPath) {
+                    const fileName = require('path').basename(pdfPath);
+                    vendorOrder.invoiceFileUrl = `/invoices/${fileName}`;
+                    await vendorOrder.save();
+                }
             } catch (pdfErr) {
                 console.error('Failed to generate PDF:', pdfErr);
             }
 
             // Send Email
-            const emailText = `Hello ${foundVendor.name},\n\nA new order has been placed.\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nPlease find the attached invoice.`;
-
             if (foundVendor.email) {
                 try {
-                    await sendEmail({
-                        to: foundVendor.email,
-                        subject: `New Vendor Order from ${storeName}`,
-                        text: emailText,
-                        // Note: Because pdfService now returns relative URL, we map it back to local FS path relative for nodemailer attachment temporarily
-                        attachmentPath: pdfUrl ? require('path').join(__dirname, '..', 'temp', `vendorOrder_${vendorOrder._id}.pdf`) : null
-                    });
+                    await sendVendorReorderEmail(foundVendor.email, orderData, pdfPath);
                 } catch (emailErr) {
                     console.error('Failed to send email:', emailErr);
                 }
