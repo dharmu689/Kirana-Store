@@ -1,4 +1,7 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
+const fs = require('fs');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
  * Send vendor reorder email with PDF attachment.
@@ -8,18 +11,6 @@ const nodemailer = require('nodemailer');
  */
 const sendVendorReorderEmail = async (vendorEmail, reorderData, pdfPath) => {
     try {
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            // Force IPv4
-            family: 4, 
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            }
-        });
-
         const storeName = reorderData.storeName || 'KiranaSmart';
         const subject = `New Reorder Request – ${storeName}`;
 
@@ -35,27 +26,28 @@ ${pdfPath ? 'Please find the attached reorder invoice for detailed information.'
 Thank you,
 ${storeName} Store`;
 
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: vendorEmail,
-            subject: subject,
-            text: text
-        };
-
-        if (pdfPath) {
-            mailOptions.attachments = [
-                {
-                    path: pdfPath
-                }
-            ];
+        const attachmentList = [];
+        if (pdfPath && fs.existsSync(pdfPath)) {
+            const fileContent = fs.readFileSync(pdfPath);
+            attachmentList.push({
+                filename: `Invoice_${reorderData.orderId || 'Reorder'}.pdf`,
+                content: fileContent
+            });
         }
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Vendor reorder email sent: %s', info.messageId);
-        return info;
+        const data = await resend.emails.send({
+            from: `KiranaSmart <onboarding@resend.dev>`, // Resend testing domain
+            to: [vendorEmail],
+            subject: subject,
+            text: text,
+            attachments: attachmentList.length > 0 ? attachmentList : undefined
+        });
+
+        console.log('Vendor reorder email sent via Resend:', data);
+        return data;
     } catch (error) {
-        console.error('Error sending vendor reorder email:', error);
-        throw error; // Or handle as per requirement, controller logs it
+        console.error('Error sending vendor reorder email via Resend:', error);
+        throw error;
     }
 };
 
