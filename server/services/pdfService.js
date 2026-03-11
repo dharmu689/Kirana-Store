@@ -10,7 +10,8 @@ const path = require('path');
 const generateReorderInvoice = (orderData) => {
     return new Promise((resolve, reject) => {
         try {
-            const doc = new PDFDocument({ margin: 50 });
+            // Use A4 size for a modern look
+            const doc = new PDFDocument({ size: 'A4', margin: 50 });
             const fileName = `reorderInvoice_${orderData.orderId || Date.now()}.pdf`;
 
             // Ensure a temp directory exists
@@ -34,40 +35,46 @@ const generateReorderInvoice = (orderData) => {
             doc.moveDown();
 
             // Order Details
-            doc.fontSize(12).font('Helvetica-Bold').text('Order Details');
-            doc.font('Helvetica');
+            doc.fontSize(12).font('Helvetica-Bold').fillColor('#333333').text('Order Details');
+            doc.font('Helvetica').fillColor('#555555');
             doc.text(`Reorder Order ID: ${orderData.orderId}`);
             doc.text(`Date: ${new Date(orderData.orderDate).toLocaleDateString()}`);
             doc.moveDown();
 
             // Vendor Details
-            doc.font('Helvetica-Bold').text('Vendor Details');
-            doc.font('Helvetica');
+            doc.font('Helvetica-Bold').fillColor('#333333').text('Vendor Details');
+            doc.font('Helvetica').fillColor('#555555');
             doc.text(`Vendor Name: ${orderData.vendorName}`);
             doc.text(`Vendor Email: ${orderData.vendorEmail}`);
-            doc.moveDown();
+            doc.moveDown(2);
 
-            // Product Table Header
-            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-            doc.moveDown(0.5);
+            // Table styling constraints
+            const tableTop = doc.y;
+            const col1 = 50;  // Product Name
+            const col2 = 300; // Category
+            const col3 = 450; // Requested
+
+            // Product Table Header backgrounds (Optional visual upgrade)
+            doc.rect(50, tableTop - 5, 500, 20).fill('#f2f2f2');
             
-            doc.font('Helvetica-Bold');
-            doc.text('Product Name', 50, doc.y, { width: 250, continued: true });
-            doc.text('Category', 300, doc.y, { width: 150, continued: true });
-            doc.text('Requested', 450, doc.y, { width: 100, align: 'right' });
+            doc.fillColor('#333333').font('Helvetica-Bold');
+            doc.text('Product Name', col1, tableTop, { width: 240, continued: false });
+            doc.text('Category', col2, tableTop, { width: 140, continued: false });
+            doc.text('Requested', col3, tableTop, { width: 100, align: 'right' });
             doc.moveDown(0.5);
 
-            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-            doc.moveDown(0.5);
+            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke('#dddddd');
+            doc.moveDown(1);
 
             // Product Table Row
-            doc.font('Helvetica');
-            doc.text(orderData.productName, 50, doc.y, { width: 250, continued: true });
-            doc.text(orderData.category || 'N/A', 300, doc.y, { width: 150, continued: true });
-            doc.text(String(orderData.quantity), 450, doc.y, { width: 100, align: 'right' });
-            doc.moveDown();
+            doc.font('Helvetica').fillColor('#555555');
+            const rowY = doc.y;
+            doc.text(orderData.productName, col1, rowY, { width: 240, continued: false });
+            doc.text(orderData.category || 'N/A', col2, rowY, { width: 140, continued: false });
+            doc.text(String(orderData.quantity), col3, rowY, { width: 100, align: 'right' });
+            doc.moveDown(1);
 
-            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+            doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke('#dddddd');
             doc.moveDown(2);
 
             // Footer
