@@ -9,27 +9,18 @@ import authService from '../services/authService';
 
 const Login = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-
-    });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { email, password } = formData;
-
-    const handleChange = (e) => {
-        setFormData((prevState) => ({
-            ...prevState,
-            [e.target.name]: e.target.value,
-        }));
-        // Clear error when user types
-        if (error) setError('');
-    };
+    const clearError = () => error && setError('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        const form = new FormData(e.target);
+        const email = form.get('email');
+        const password = form.get('password');
+
         if (!email || !password) {
             setError('Please fill in all fields');
             return;
@@ -37,14 +28,10 @@ const Login = () => {
 
         setLoading(true);
         try {
-            await authService.login(formData);
+            await authService.login({ email, password });
             navigate('/dashboard');
         } catch (err) {
-            const message =
-                (err.response && err.response.data && err.response.data.message) ||
-                err.message ||
-                err.toString();
-            setError(message);
+            setError(err.response?.data?.message || err.message || err.toString());
         } finally {
             setLoading(false);
         }
@@ -98,8 +85,7 @@ const Login = () => {
                             label="Email address"
                             type="email"
                             name="email"
-                            value={email}
-                            onChange={handleChange}
+                            onChange={clearError}
                             placeholder="Enter your email"
                             icon={Mail}
                         />
@@ -108,8 +94,7 @@ const Login = () => {
                             label="Password"
                             type="password"
                             name="password"
-                            value={password}
-                            onChange={handleChange}
+                            onChange={clearError}
                             placeholder="Enter your password"
                             icon={Lock}
                         />
