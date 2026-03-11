@@ -9,7 +9,9 @@ const nodemailer = require('nodemailer');
 const sendVendorReorderEmail = async (vendorEmail, reorderData, pdfPath) => {
     try {
         const transporter = nodemailer.createTransport({
-            service: 'gmail', // or preferred service
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false, // true for 465, false for other ports
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
@@ -26,7 +28,7 @@ A reorder request has been generated from our store for the following product.
 Product Name: ${reorderData.productName}
 Requested Quantity: ${reorderData.quantity}
 
-Please find the attached reorder invoice for detailed information.
+${pdfPath ? 'Please find the attached reorder invoice for detailed information.' : 'Kindly note: the automated invoice attachment was not generated, but the order request remains valid.'}
 
 Thank you,
 ${storeName} Store`;
