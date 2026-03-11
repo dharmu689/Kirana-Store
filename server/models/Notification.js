@@ -11,7 +11,6 @@ const notificationSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['lowStock', 'forecast', 'vendor', 'system'],
         required: true
     },
     isRead: {

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Sale = require('../models/Sale');
 const Product = require('../models/Product');
+const { createNotification } = require('../utils/notificationService');
 
 // @desc    Create new sale(s) from a cart
 // @route   POST /api/sales
@@ -73,6 +74,32 @@ const createSale = async (req, res) => {
             );
 
             createdSales.push(sale);
+        }
+
+        // Trigger Notification for Sales Completion
+        const totalSalePrice = createdSales.reduce((sum, s) => sum + s.totalPrice, 0);
+        await createNotification(
+            'POS Sale Completed',
+            `A sale of ₹${totalSalePrice} completed for ${createdSales.length} item(s). Receipt: ${receiptNumber}`,
+            'sale'
+        );
+
+        // Check if any product dropped below reorder level after the sale
+        for (const item of items) {
+             const prod = await Product.findById(item.product);
+             if (prod && prod.quantity > 0 && prod.quantity <= prod.reorderLevel) {
+                  await createNotification(
+                      'Low Stock Alert',
+                      `${prod.name} has dropped to ${prod.quantity} ${prod.unit}s (Reorder Level: ${prod.reorderLevel}).`,
+                      'lowStock'
+                  );
+             } else if (prod && prod.quantity === 0) {
+                  await createNotification(
+                      'Out of Stock Alert',
+                      `${prod.name} is now out of stock!`,
+                      'lowStock'
+                  );
+             }
         }
 
         res.status(201).json({

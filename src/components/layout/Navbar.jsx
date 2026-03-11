@@ -12,24 +12,30 @@ const Navbar = ({ user, onMenuClick, isCollapsed }) => {
     const [notifications, setNotifications] = useState([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [showNotifications, setShowNotifications] = useState(false);
-
     const notifRef = useRef(null);
 
-    useEffect(() => {
-        const fetchNotifications = async () => {
-            try {
-                const res = await API.get('/notifications');
-                if (res.data.success) {
-                    setNotifications(res.data.notifications);
-                    setUnreadCount(res.data.unreadCount);
-                }
-            } catch (error) {
-                console.error("Failed to fetch notifications:", error);
+    const fetchNotifications = async () => {
+        try {
+            const res = await API.get('/notifications');
+            if (res.data.success) {
+                setNotifications(res.data.notifications);
+                setUnreadCount(res.data.unreadCount);
             }
-        };
+        } catch (error) {
+            console.error("Failed to fetch notifications:", error);
+        }
+    };
 
+    useEffect(() => {
         // Fetch initially
         fetchNotifications();
+
+        // Start polling every 60 seconds
+        const intervalId = setInterval(() => {
+            fetchNotifications();
+        }, 60000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {

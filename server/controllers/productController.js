@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/Product');
 const QRCode = require('qrcode');
+const { createNotification } = require('../utils/notificationService');
 
 // @desc    Create a product
 // @route   POST /api/products
@@ -48,6 +49,33 @@ const createProduct = asyncHandler(async (req, res) => {
     // Save QR Code to the product
     product.qrCode = qrCodeImage;
     await product.save();
+
+    // Trigger Notification for new product
+    await createNotification(
+        'New Product Added',
+        `${product.name} has been added to the inventory (${product.quantity} ${product.unit}s).`,
+        'product'
+    );
+    
+    // Check expiry logic right away in case it's added near expiry
+    if (product.expiryDate) {
+        const today = new Date();
+        const expiry = new Date(product.expiryDate);
+        const daysToExpiry = (expiry - today) / (1000 * 60 * 60 * 24);
+        if (daysToExpiry <= 30 && daysToExpiry >= 0) {
+            await createNotification(
+                'Product Expiry Warning',
+                `${product.name} is expiring soon on ${expiry.toLocaleDateString()}.`,
+                'expiry'
+            );
+        } else if (daysToExpiry < 0) {
+            await createNotification(
+                'Product Expired',
+                `${product.name} has already expired on ${expiry.toLocaleDateString()}!`,
+                'expiry'
+            );
+        }
+    }
 
     res.status(201).json({
         success: true,

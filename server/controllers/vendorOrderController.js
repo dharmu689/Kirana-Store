@@ -7,6 +7,7 @@ const User = require('../models/User');
 const { generateInvoicePDF } = require('../utils/pdfService');
 const { sendEmail } = require('../utils/emailService');
 const { sendWhatsAppMessage } = require('../utils/whatsappService');
+const { createNotification } = require('../utils/notificationService');
 
 // @desc    Place Order
 // @route   POST /api/vendor-orders
@@ -99,6 +100,13 @@ const placeOrder = async (req, res) => {
                 }
             }
         }).catch(err => console.error('Background Notification Process Error:', err));
+
+        // Create in-app notification
+        await createNotification(
+            'Vendor Order Placed',
+            `Order for ${quantity}x ${foundProduct.name} placed with ${foundVendor.name}.`,
+            'vendor'
+        );
 
         res.status(201).json(vendorOrder);
     } catch (error) {

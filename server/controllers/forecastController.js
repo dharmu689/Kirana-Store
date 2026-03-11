@@ -6,6 +6,7 @@ const VendorOrder = require('../models/VendorOrder');
 const Vendor = require('../models/Vendor');
 const { spawn } = require('child_process');
 const path = require('path');
+const { createNotification } = require('../utils/notificationService');
 
 // @desc    Get all saved forecasts
 // @route   GET /api/forecast
@@ -406,6 +407,14 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
             });
 
             forecastsToSave.push(newForecast);
+
+            if (suggestedReorder > 0) {
+                 await createNotification(
+                     'AI Reorder Suggestion',
+                     `AI suggests ordering ${suggestedReorder} units of ${product.name} based on ${algorithmType} algorithm.`,
+                     'forecast'
+                 );
+            }
         })
     );
 
