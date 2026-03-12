@@ -7,11 +7,6 @@ const fs = require('fs');
  * @param {Object} reorderData - Details about the reorder
  * @param {string} pdfPath - Absolute path to the generated PDF
  */
-// Force IPv4 locally for Node 18+ to avoid ENETUNREACH on broken IPv6 routes
-if (typeof require('dns').setDefaultResultOrder === 'function') {
-    require('dns').setDefaultResultOrder('ipv4first');
-}
-
 const sendVendorReorderEmail = async (vendorEmail, reorderData, pdfPath) => {
     try {
         const transporter = nodemailer.createTransport({
@@ -26,6 +21,14 @@ const sendVendorReorderEmail = async (vendorEmail, reorderData, pdfPath) => {
                 rejectUnauthorized: false
             }
         });
+
+        // 🚨 CRITICAL FIX specifically for Render.com and Windows IPv6 issues 🚨
+        // Force the socket to always use IPv4. This bypasses the ENETUNREACH IPv6 crash.
+        // Node 18+ defaults to IPv6, which is broken on many hosts for smtp.gmail.com
+        transporter.getSocket = function(options, callback) {
+            options.family = 4; // Force IPv4
+            return require('net').connect(options, callback);
+        };
 
         const storeName = reorderData.storeName || 'Kirana Store';
         const subject = `New Reorder Request – ${storeName}`;
