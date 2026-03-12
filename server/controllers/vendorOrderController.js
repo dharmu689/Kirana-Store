@@ -66,46 +66,50 @@ const placeOrder = async (req, res) => {
 
         // Run email, PDF, WhatsApp in background — order API responds instantly
         setImmediate(async () => {
-
-            // Email first — runs independently before PDF
-            if (foundVendor.email) {
-                console.log('[Order] Sending email to vendor:', foundVendor.email);
-                try {
-                    await sendVendorReorderEmail(foundVendor.email, orderData, null);
-                    console.log('[Order] Email sent to:', foundVendor.email);
-                } catch (emailErr) {
-                    console.error('[Order] Email failed:', emailErr.message);
-                }
-            } else {
-                console.warn('[Order] No vendor email — skipping email.');
-            }
-
-            // Generate PDF
             try {
-                const pdfFilePath = await generateReorderInvoice(orderData);
-                console.log('[Order] PDF generated at:', pdfFilePath);
-                if (pdfFilePath) {
-                    const fileName = require('path').basename(pdfFilePath);
-                    vendorOrder.invoiceFileUrl = `/invoices/${fileName}`;
-                    await vendorOrder.save();
-                }
-            } catch (pdfErr) {
-                console.error('[Order] PDF generation failed:', pdfErr.message);
-            }
+                // Email first — fully independent of PDF
+                console.log('[Order] Background task started for order:', vendorOrder._id);
+                console.log('[Order] Vendor email from DB:', foundVendor.email);
+                console.log('[Order] EMAIL_USER env:', process.env.EMAIL_USER);
+                console.log('[Order] EMAIL_PASS set:', !!process.env.EMAIL_PASS);
 
-            // WhatsApp
-            if (foundVendor.phone) {
-                const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
-                try {
-                    await sendWhatsAppMessage({
-                        to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`,
-                        body: waMsg
-                    });
-                } catch (waErr) {
-                    console.error('[Order] WhatsApp failed:', waErr.message);
+                if (foundVendor.email) {
+                    await sendVendorReorderEmail(foundVendor.email, orderData, null);
+                    console.log('[Order] ✅ Email sent to:', foundVendor.email);
+                } else {
+                    console.warn('[Order] ⚠️ No vendor email in DB — skipping email.');
                 }
+
+                // Generate PDF
+                try {
+                    const pdfFilePath = await generateReorderInvoice(orderData);
+                    if (pdfFilePath) {
+                        const fileName = require('path').basename(pdfFilePath);
+                        vendorOrder.invoiceFileUrl = `/invoices/${fileName}`;
+                        await vendorOrder.save();
+                        console.log('[Order] PDF saved:', fileName);
+                    }
+                } catch (pdfErr) {
+                    console.error('[Order] PDF failed:', pdfErr.message);
+                }
+
+                // WhatsApp
+                if (foundVendor.phone) {
+                    const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
+                    try {
+                        await sendWhatsAppMessage({
+                            to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`,
+                            body: waMsg
+                        });
+                    } catch (waErr) {
+                        console.error('[Order] WhatsApp failed:', waErr.message);
+                    }
+                }
+            } catch (bgErr) {
+                console.error('[Order] ❌ Background task crashed:', bgErr.message, bgErr.stack);
             }
         });
+
 
         // Create in-app notification
         await createNotification(
