@@ -9,6 +9,10 @@ const storeSettingsSchema = new mongoose.Schema(
         phone: {
             type: String,
         },
+        email: {
+            type: String,
+            trim: true,
+        },
         gstNumber: {
             type: String,
         },

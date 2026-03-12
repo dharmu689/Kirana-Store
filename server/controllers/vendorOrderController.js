@@ -64,13 +64,25 @@ const placeOrder = async (req, res) => {
             orderDate: vendorOrder.orderDate
         };
 
-        // Fire and forget — run notifications in background
-        setImmediate(async () => {
-            let pdfFilePath = null;
-
-            // Step 1: Generate PDF
+        // Step 1: Send email immediately (awaited — guaranteed delivery)
+        if (foundVendor.email) {
+            console.log('[Order] Sending email to vendor:', foundVendor.email);
             try {
-                pdfFilePath = await generateReorderInvoice(orderData);
+                await sendVendorReorderEmail(foundVendor.email, orderData, null);
+                console.log('[Order] Email sent successfully to:', foundVendor.email);
+            } catch (emailErr) {
+                console.error('[Order] Email failed:', emailErr.message);
+                // Don't block order — log and continue
+            }
+        } else {
+            console.warn('[Order] No vendor email on record — skipping email.');
+        }
+
+        // Step 2: Generate PDF and WhatsApp in background (non-blocking)
+        setImmediate(async () => {
+            // Generate PDF
+            try {
+                const pdfFilePath = await generateReorderInvoice(orderData);
                 console.log('[Order] PDF generated at:', pdfFilePath);
                 if (pdfFilePath) {
                     const fileName = require('path').basename(pdfFilePath);
@@ -79,23 +91,9 @@ const placeOrder = async (req, res) => {
                 }
             } catch (pdfErr) {
                 console.error('[Order] PDF generation failed:', pdfErr.message);
-                // Continue — email should still be sent without PDF
             }
 
-            // Step 2: Send Email (always attempt, even if PDF failed)
-            if (foundVendor.email) {
-                console.log('[Order] Sending email to vendor:', foundVendor.email);
-                try {
-                    await sendVendorReorderEmail(foundVendor.email, orderData, pdfFilePath);
-                    console.log('[Order] Email sent successfully to:', foundVendor.email);
-                } catch (emailErr) {
-                    console.error('[Order] Email failed:', emailErr.message);
-                }
-            } else {
-                console.warn('[Order] No vendor email found — skipping email notification.');
-            }
-
-            // Step 3: Send WhatsApp
+            // Send WhatsApp
             if (foundVendor.phone) {
                 const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
                 try {
@@ -117,6 +115,7 @@ const placeOrder = async (req, res) => {
         );
 
         res.status(201).json(vendorOrder);
+
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

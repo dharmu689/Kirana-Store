@@ -26,6 +26,7 @@ const updateStoreSettings = async (req, res) => {
         const {
             storeName,
             phone,
+            email,
             gstNumber,
         } = req.body;
 
@@ -34,7 +35,8 @@ const updateStoreSettings = async (req, res) => {
         if (settings) {
             // Update existing
             settings.storeName = storeName || settings.storeName;
-            settings.phone = phone || settings.phone;
+            settings.phone = phone !== undefined ? phone : settings.phone;
+            settings.email = email !== undefined ? email : settings.email;
             settings.gstNumber = gstNumber !== undefined ? gstNumber : settings.gstNumber;
 
             const updatedSettings = await settings.save();
@@ -44,6 +46,7 @@ const updateStoreSettings = async (req, res) => {
             settings = new StoreSettings({
                 storeName,
                 phone,
+                email,
                 gstNumber,
             });
 

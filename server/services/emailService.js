@@ -35,8 +35,9 @@ ${pdfPath ? 'Please find the attached reorder invoice for detailed information.'
 Thank you,
 ${storeName}`;
 
+        const fromEmail = reorderData.storeEmail || process.env.EMAIL_USER;
         const mailOptions = {
-            from: `Kirana Store <${process.env.EMAIL_USER}>`,
+            from: `${storeName} <${fromEmail}>`,
             to: vendorEmail,
             subject: subject,
             text: text

@@ -8,6 +8,7 @@ const StoreSettings = () => {
     const [settings, setSettings] = useState({
         storeName: '',
         phone: '',
+        email: '',
         gstNumber: '',
     });
     const [loading, setLoading] = useState(true);
@@ -24,6 +25,7 @@ const StoreSettings = () => {
                 setSettings({
                     storeName: data.storeName || '',
                     phone: data.phone || '',
+                    email: data.email || '',
                     gstNumber: data.gstNumber || '',
                 });
             }
@@ -51,6 +53,7 @@ const StoreSettings = () => {
             setSettings({
                 storeName: data.storeName || '',
                 phone: data.phone || '',
+                email: data.email || '',
                 gstNumber: data.gstNumber || '',
             });
         } catch (error) {
@@ -138,6 +141,21 @@ const StoreSettings = () => {
                             value={user?.email || ''}
                             readOnly
                             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed transition-colors"
+                        />
+                    </div>
+
+                    {/* Store Email */}
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                            Store Email <span className="text-sm text-indigo-500 font-normal">(used for vendor emails)</span>
+                        </label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={settings.email}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            placeholder="Enter store contact email"
                         />
                     </div>
 
