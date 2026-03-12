@@ -11,10 +11,6 @@ dotenv.config();
 
 
 
-
-// Load env vars
-dotenv.config();
-
 // Connect to database
 connectDB();
 

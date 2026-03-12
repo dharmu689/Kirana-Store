@@ -1,16 +1,6 @@
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: parseInt(process.env.SMTP_PORT) || 587,
-    secure: false, // STARTTLS
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
-
 /**
  * Send vendor reorder email with PDF attachment.
  * @param {string} vendorEmail - Vendor's email address
@@ -19,7 +9,18 @@ const transporter = nodemailer.createTransport({
  */
 const sendVendorReorderEmail = async (vendorEmail, reorderData, pdfPath) => {
     try {
-        const storeName = reorderData.storeName || 'KiranaSmart';
+        // Create transporter here so env vars are always resolved at call time
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: parseInt(process.env.SMTP_PORT) || 587,
+            secure: false, // STARTTLS
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        const storeName = reorderData.storeName || 'Kirana Store';
         const subject = `New Reorder Request – ${storeName}`;
 
         const text = `Hello ${reorderData.vendorName},
@@ -32,7 +33,7 @@ Requested Quantity: ${reorderData.quantity}
 ${pdfPath ? 'Please find the attached reorder invoice for detailed information.' : 'Kindly note: the automated invoice attachment was not generated, but the order request remains valid.'}
 
 Thank you,
-${storeName} Store`;
+${storeName}`;
 
         const mailOptions = {
             from: `Kirana Store <${process.env.EMAIL_USER}>`,
@@ -51,10 +52,10 @@ ${storeName} Store`;
         }
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('Vendor reorder email sent via SMTP:', info.messageId);
+        console.log(`Vendor reorder email sent to ${vendorEmail} — Message ID: ${info.messageId}`);
         return info;
     } catch (error) {
-        console.error('Error sending vendor reorder email via SMTP:', error);
+        console.error('Error sending vendor reorder email via SMTP:', error.message);
         throw error;
     }
 };
@@ -62,3 +63,4 @@ ${storeName} Store`;
 module.exports = {
     sendVendorReorderEmail
 };
+
