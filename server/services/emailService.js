@@ -1,7 +1,15 @@
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 const fs = require('fs');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT) || 587,
+    secure: false, // STARTTLS
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
 
 /**
  * Send vendor reorder email with PDF attachment.
@@ -26,27 +34,27 @@ ${pdfPath ? 'Please find the attached reorder invoice for detailed information.'
 Thank you,
 ${storeName} Store`;
 
-        const attachmentList = [];
+        const mailOptions = {
+            from: `KiranaSmart <${process.env.EMAIL_USER}>`,
+            to: vendorEmail,
+            subject: subject,
+            text: text
+        };
+
         if (pdfPath && fs.existsSync(pdfPath)) {
-            const fileContent = fs.readFileSync(pdfPath);
-            attachmentList.push({
-                filename: `Invoice_${reorderData.orderId || 'Reorder'}.pdf`,
-                content: fileContent
-            });
+            mailOptions.attachments = [
+                {
+                    filename: `Invoice_${reorderData.orderId || 'Reorder'}.pdf`,
+                    path: pdfPath
+                }
+            ];
         }
 
-        const data = await resend.emails.send({
-            from: `KiranaSmart <onboarding@resend.dev>`, // Resend testing domain
-            to: [vendorEmail],
-            subject: subject,
-            text: text,
-            attachments: attachmentList.length > 0 ? attachmentList : undefined
-        });
-
-        console.log('Vendor reorder email sent via Resend:', data);
-        return data;
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Vendor reorder email sent via SMTP:', info.messageId);
+        return info;
     } catch (error) {
-        console.error('Error sending vendor reorder email via Resend:', error);
+        console.error('Error sending vendor reorder email via SMTP:', error);
         throw error;
     }
 };
