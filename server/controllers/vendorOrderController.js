@@ -64,22 +64,22 @@ const placeOrder = async (req, res) => {
             orderDate: vendorOrder.orderDate
         };
 
-        // Step 1: Send email immediately (awaited — guaranteed delivery)
-        if (foundVendor.email) {
-            console.log('[Order] Sending email to vendor:', foundVendor.email);
-            try {
-                await sendVendorReorderEmail(foundVendor.email, orderData, null);
-                console.log('[Order] Email sent successfully to:', foundVendor.email);
-            } catch (emailErr) {
-                console.error('[Order] Email failed:', emailErr.message);
-                // Don't block order — log and continue
-            }
-        } else {
-            console.warn('[Order] No vendor email on record — skipping email.');
-        }
-
-        // Step 2: Generate PDF and WhatsApp in background (non-blocking)
+        // Run email, PDF, WhatsApp in background — order API responds instantly
         setImmediate(async () => {
+
+            // Email first — runs independently before PDF
+            if (foundVendor.email) {
+                console.log('[Order] Sending email to vendor:', foundVendor.email);
+                try {
+                    await sendVendorReorderEmail(foundVendor.email, orderData, null);
+                    console.log('[Order] Email sent to:', foundVendor.email);
+                } catch (emailErr) {
+                    console.error('[Order] Email failed:', emailErr.message);
+                }
+            } else {
+                console.warn('[Order] No vendor email — skipping email.');
+            }
+
             // Generate PDF
             try {
                 const pdfFilePath = await generateReorderInvoice(orderData);
@@ -93,7 +93,7 @@ const placeOrder = async (req, res) => {
                 console.error('[Order] PDF generation failed:', pdfErr.message);
             }
 
-            // Send WhatsApp
+            // WhatsApp
             if (foundVendor.phone) {
                 const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
                 try {
