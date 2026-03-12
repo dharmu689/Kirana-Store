@@ -64,42 +64,50 @@ const placeOrder = async (req, res) => {
             orderDate: vendorOrder.orderDate
         };
 
-        // Fire and forget
-        Promise.resolve().then(async () => {
-            let pdfPath = null;
+        // Fire and forget — run notifications in background
+        setImmediate(async () => {
+            let pdfFilePath = null;
+
+            // Step 1: Generate PDF
             try {
-                pdfPath = await generateReorderInvoice(orderData);
-                if (pdfPath) {
-                    const fileName = require('path').basename(pdfPath);
+                pdfFilePath = await generateReorderInvoice(orderData);
+                console.log('[Order] PDF generated at:', pdfFilePath);
+                if (pdfFilePath) {
+                    const fileName = require('path').basename(pdfFilePath);
                     vendorOrder.invoiceFileUrl = `/invoices/${fileName}`;
                     await vendorOrder.save();
                 }
             } catch (pdfErr) {
-                console.error('Failed to generate PDF:', pdfErr);
+                console.error('[Order] PDF generation failed:', pdfErr.message);
+                // Continue — email should still be sent without PDF
             }
 
-            // Send Email
+            // Step 2: Send Email (always attempt, even if PDF failed)
             if (foundVendor.email) {
+                console.log('[Order] Sending email to vendor:', foundVendor.email);
                 try {
-                    await sendVendorReorderEmail(foundVendor.email, orderData, pdfPath);
+                    await sendVendorReorderEmail(foundVendor.email, orderData, pdfFilePath);
+                    console.log('[Order] Email sent successfully to:', foundVendor.email);
                 } catch (emailErr) {
-                    console.error('Failed to send email:', emailErr);
+                    console.error('[Order] Email failed:', emailErr.message);
                 }
+            } else {
+                console.warn('[Order] No vendor email found — skipping email notification.');
             }
 
-            // Send WhatsApp
+            // Step 3: Send WhatsApp
             if (foundVendor.phone) {
                 const waMsg = `New Order from ${storeName}\n\nProduct: ${foundProduct.name}\nQuantity: ${quantity}\nDelivery Address: ${deliveryAddress}\n\nInvoice has been sent to your email.`;
                 try {
                     await sendWhatsAppMessage({
-                        to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`, // Basic Indian format fallback if raw
+                        to: foundVendor.phone.startsWith('whatsapp:') ? foundVendor.phone : `whatsapp:+91${foundVendor.phone.replace(/\D/g, '').slice(-10)}`,
                         body: waMsg
                     });
                 } catch (waErr) {
-                    console.error('Failed to send WhatsApp:', waErr);
+                    console.error('[Order] WhatsApp failed:', waErr.message);
                 }
             }
-        }).catch(err => console.error('Background Notification Process Error:', err));
+        });
 
         // Create in-app notification
         await createNotification(
