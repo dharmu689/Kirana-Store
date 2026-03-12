@@ -8,12 +8,17 @@ const nodemailer = require('nodemailer');
  * @param {string} options.text - Email body text
  * @param {string} [options.attachmentPath] - Path to file attachment
  */
+// Force IPv4 locally for Node 18+ to avoid ENETUNREACH on broken IPv6 routes
+if (typeof require('dns').setDefaultResultOrder === 'function') {
+    require('dns').setDefaultResultOrder('ipv4first');
+}
+
 const sendEmail = async ({ to, subject, text, attachmentPath }) => {
     try {
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT) || 465,
-            secure: true, // true for 465, false for other ports
+            port: parseInt(process.env.SMTP_PORT) || 587,
+            secure: false, // use STARTTLS (not SSL)
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
