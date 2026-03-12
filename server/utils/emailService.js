@@ -21,7 +21,7 @@ const sendEmail = async ({ to, subject, text, attachmentPath }) => {
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: `Kirana Store <${process.env.EMAIL_USER}>`,
             to: to,
             subject: subject,
             text: text,

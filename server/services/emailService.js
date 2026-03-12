@@ -35,7 +35,7 @@ Thank you,
 ${storeName} Store`;
 
         const mailOptions = {
-            from: `KiranaSmart <${process.env.EMAIL_USER}>`,
+            from: `Kirana Store <${process.env.EMAIL_USER}>`,
             to: vendorEmail,
             subject: subject,
             text: text

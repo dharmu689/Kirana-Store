@@ -32,7 +32,7 @@ const placeOrder = async (req, res) => {
         }
 
         const storeSettings = await StoreSettings.findOne();
-        const storeName = storeSettings ? storeSettings.storeName : 'KiranaSmart';
+        const storeName = storeSettings ? storeSettings.storeName : 'Kirana Store';
 
         const vendorOrder = await VendorOrder.create({
             userId: req.user.id,
