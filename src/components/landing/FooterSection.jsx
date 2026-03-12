@@ -112,11 +112,11 @@ const FooterSection = () => {
                         <div className="space-y-4">
                             <div className="flex items-start">
                                 <MapPin className="text-blue-500 mt-1 mr-3 flex-shrink-0" size={20} />
-                                <span className="text-gray-400">123 Market Street, Kirana Plaza,<br/>Mumbai, India 400001</span>
+                                <span className="text-gray-400">Jhanjeri, Mohali,<br/>Punjab, India, 140307</span>
                             </div>
                             <div className="flex items-center">
                                 <Phone className="text-blue-500 mr-3 flex-shrink-0" size={20} />
-                                <span className="text-gray-400">+91 98765 43210</span>
+                                <span className="text-gray-400">+91 6204064843</span>
                             </div>
                             <div className="flex items-center">
                                 <Mail className="text-blue-500 mr-3 flex-shrink-0" size={20} />
