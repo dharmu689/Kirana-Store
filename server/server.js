@@ -1,15 +1,12 @@
-const express = require('express');
+const path = require('path');
 const dotenv = require('dotenv');
+
+// Load env vars FIRST — before any other requires
+dotenv.config({ path: path.join(__dirname, '.env') });
+
+const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
-const path = require('path');
-
-// Load env vars
-dotenv.config();
-
-
-
-
 
 // Connect to database
 connectDB();
