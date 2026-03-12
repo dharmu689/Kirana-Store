@@ -7,16 +7,23 @@ const fs = require('fs');
  * @param {Object} reorderData - Details about the reorder
  * @param {string} pdfPath - Absolute path to the generated PDF
  */
+// Force IPv4 locally for Node 18+ to avoid ENETUNREACH on broken IPv6 routes
+if (typeof require('dns').setDefaultResultOrder === 'function') {
+    require('dns').setDefaultResultOrder('ipv4first');
+}
+
 const sendVendorReorderEmail = async (vendorEmail, reorderData, pdfPath) => {
     try {
-        // Create transporter here so env vars are always resolved at call time
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT) || 587,
-            secure: false, // STARTTLS
+            port: parseInt(process.env.SMTP_PORT) || 465,
+            secure: true, // true for 465, false for other ports
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
 
