@@ -87,49 +87,54 @@ const BarcodePreview = ({ isOpen, onClose, product }) => {
     };
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:p-0">
-                <div className="fixed inset-0 transition-opacity" aria-hidden="true" onClick={onClose}>
-                    <div className="absolute inset-0 bg-gray-500 opacity-75 dark:bg-gray-900 dark:opacity-90"></div>
+        <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 overflow-y-auto transition-opacity backdrop-blur-sm"
+            onClick={onClose}
+        >
+            <style>{`
+                @keyframes modalFadeIn {
+                    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+                    to { opacity: 1; transform: scale(1) translateY(0); }
+                }
+            `}</style>
+            <div 
+                className="bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:max-w-md w-full m-4"
+                onClick={(e) => e.stopPropagation()}
+                style={{ animation: 'modalFadeIn 0.3s ease-out forwards' }}
+            >
+                <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b dark:border-gray-700 flex justify-between items-center relative">
+                    <div>
+                        <h3 className="text-xl leading-6 font-bold text-gray-900 dark:text-white">Product Added Successfully</h3>
+                    </div>
+                    <button onClick={onClose} className="text-gray-400 hover:text-gray-500 focus:outline-none absolute right-4 top-5 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                        <XMarkIcon className="h-6 w-6" />
+                    </button>
                 </div>
 
-                <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
-                    <div className="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 border-b dark:border-gray-700 flex justify-between items-center relative">
-                        <div>
-                            <h3 className="text-xl leading-6 font-bold text-gray-900 dark:text-white">Product Added Successfully</h3>
-                        </div>
-                        <button onClick={onClose} className="text-gray-400 hover:text-gray-500 focus:outline-none absolute right-4 top-5 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                            <XMarkIcon className="h-6 w-6" />
-                        </button>
+                <div className="px-4 py-8 flex flex-col items-center justify-center space-y-4">
+                    <div className="text-center">
+                        <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{product.name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">{product.productId}</p>
                     </div>
 
-                    <div className="px-4 py-8 flex flex-col items-center justify-center space-y-4">
-                        <div className="text-center">
-                            <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">{product.name}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">{product.productId}</p>
-                        </div>
-
-                        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-center w-full min-h-[120px]">
-                            <svg ref={barcodeRef}></svg>
-                        </div>
+                    <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-center justify-center w-full min-h-[120px]">
+                        <svg ref={barcodeRef}></svg>
                     </div>
+                </div>
 
-                    <div className="bg-gray-50 dark:bg-gray-900/50 px-4 py-4 sm:px-6 flex flex-col sm:flex-row gap-3 justify-end items-center border-t dark:border-gray-700">
-                        <button
-                            onClick={handleDownload}
-                            className="w-full sm:w-auto flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200"
-                        >
-                            <ArrowDownTrayIcon className="h-5 w-5 mr-2" /> Download Barcode
-                        </button>
-                        <button
-                            onClick={handlePrint}
-                            className="w-full sm:w-auto flex items-center justify-center px-6 py-2 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[var(--color-brand-blue)] hover:bg-blue-700 focus:outline-none transition-all duration-200 hover:-translate-y-0.5"
-                        >
-                            <PrinterIcon className="h-5 w-5 mr-2" /> Print Barcode
-                        </button>
-                    </div>
+                <div className="bg-gray-50 dark:bg-gray-900/50 px-4 py-4 sm:px-6 flex flex-col sm:flex-row gap-3 justify-end items-center border-t dark:border-gray-700">
+                    <button
+                        onClick={handleDownload}
+                        className="w-full sm:w-auto flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none transition-all duration-200"
+                    >
+                        <ArrowDownTrayIcon className="h-5 w-5 mr-2" /> Download Barcode
+                    </button>
+                    <button
+                        onClick={handlePrint}
+                        className="w-full sm:w-auto flex items-center justify-center px-6 py-2 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[var(--color-brand-blue)] hover:bg-blue-700 focus:outline-none transition-all duration-200 hover:-translate-y-0.5"
+                    >
+                        <PrinterIcon className="h-5 w-5 mr-2" /> Print Barcode
+                    </button>
                 </div>
             </div>
         </div>
