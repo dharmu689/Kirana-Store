@@ -159,7 +159,7 @@ const Register = () => {
                                     onChange={handleChange}
                                     className="block w-full h-12 pl-10 pr-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 placeholder-gray-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white appearance-none"
                                 >
-                                    <option value="staff">Staff Member</option>
+                                    {/* <option value="staff">Staff Member</option> */}
                                     <option value="admin">Store Admin</option>
                                 </select>
                             </div>
