@@ -75,18 +75,12 @@ const FooterSection = () => {
                             <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-blue-500 rounded-full"></span>
                         </h3>
                         <ul className="space-y-4">
-                            {[
-                                { name: 'Features', path: '/features' },
-                                { name: 'Pricing', path: '/pricing' },
-                                { name: 'Testimonials', path: '/testimonials' },
-                                { name: 'About Us', path: '/about' },
-                                { name: 'Contact', path: '/contact' }
-                            ].map((item) => (
-                                <li key={item.name}>
-                                    <Link to={item.path} className="group flex items-center text-gray-400 hover:text-white transition-colors duration-200">
+                            {['Features', 'Pricing', 'Testimonials', 'About Us', 'Contact'].map((item) => (
+                                <li key={item}>
+                                    <a href="#" className="group flex items-center text-gray-400 hover:text-white transition-colors duration-200">
                                         <ArrowRight size={16} className="text-blue-500 mr-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                                        {item.name}
-                                    </Link>
+                                        {item}
+                                    </a>
                                 </li>
                             ))}
                         </ul>
@@ -99,16 +93,11 @@ const FooterSection = () => {
                             <span className="absolute -bottom-2 left-0 w-1/2 h-1 bg-orange-500 rounded-full"></span>
                         </h3>
                         <ul className="space-y-4">
-                            {[
-                                { name: 'Privacy Policy', path: '/privacy-policy' },
-                                { name: 'Terms of Service', path: '/terms-of-service' },
-                                { name: 'Cookie Policy', path: '/cookie-policy' },
-                                { name: 'Data Security', path: '/data-security' }
-                            ].map((item) => (
-                                <li key={item.name}>
-                                    <Link to={item.path} className="text-gray-400 hover:text-white hover:underline decoration-blue-500 underline-offset-4 transition-all duration-200">
-                                        {item.name}
-                                    </Link>
+                            {['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'Data Security'].map((item) => (
+                                <li key={item}>
+                                    <a href="#" className="text-gray-400 hover:text-white hover:underline decoration-blue-500 underline-offset-4 transition-all duration-200">
+                                        {item}
+                                    </a>
                                 </li>
                             ))}
                         </ul>
