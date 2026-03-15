@@ -412,7 +412,8 @@ const computeAndSaveForecast = async (userId, algorithmType = 'Moving Average') 
                  await createNotification(
                      'AI Reorder Suggestion',
                      `AI suggests ordering ${suggestedReorder} units of ${product.name} based on ${algorithmType} algorithm.`,
-                     'forecast'
+                     'forecast',
+                     userId
                  );
             }
         })

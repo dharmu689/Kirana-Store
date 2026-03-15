@@ -54,7 +54,8 @@ const createProduct = asyncHandler(async (req, res) => {
     await createNotification(
         'New Product Added',
         `${product.name} has been added to the inventory (${product.quantity} ${product.unit}s).`,
-        'product'
+        'product',
+        req.user.id
     );
     
     // Check expiry logic right away in case it's added near expiry
@@ -66,13 +67,15 @@ const createProduct = asyncHandler(async (req, res) => {
             await createNotification(
                 'Product Expiry Warning',
                 `${product.name} is expiring soon on ${expiry.toLocaleDateString()}.`,
-                'expiry'
+                'expiry',
+                req.user.id
             );
         } else if (daysToExpiry < 0) {
             await createNotification(
                 'Product Expired',
                 `${product.name} has already expired on ${expiry.toLocaleDateString()}!`,
-                'expiry'
+                'expiry',
+                req.user.id
             );
         }
     }

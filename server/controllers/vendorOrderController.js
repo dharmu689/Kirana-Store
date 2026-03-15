@@ -115,7 +115,8 @@ const placeOrder = async (req, res) => {
         await createNotification(
             'Vendor Order Placed',
             `Order for ${quantity}x ${foundProduct.name} placed with ${foundVendor.name}.`,
-            'vendor'
+            'vendor',
+            req.user.id
         );
 
         res.status(201).json(vendorOrder);

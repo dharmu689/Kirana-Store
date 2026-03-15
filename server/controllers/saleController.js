@@ -81,7 +81,8 @@ const createSale = async (req, res) => {
         await createNotification(
             'POS Sale Completed',
             `A sale of ₹${totalSalePrice} completed for ${createdSales.length} item(s). Receipt: ${receiptNumber}`,
-            'sale'
+            'sale',
+            req.user.id
         );
 
         // Check if any product dropped below reorder level after the sale
@@ -91,13 +92,15 @@ const createSale = async (req, res) => {
                   await createNotification(
                       'Low Stock Alert',
                       `${prod.name} has dropped to ${prod.quantity} ${prod.unit}s (Reorder Level: ${prod.reorderLevel}).`,
-                      'lowStock'
+                      'lowStock',
+                      req.user.id
                   );
              } else if (prod && prod.quantity === 0) {
                   await createNotification(
                       'Out of Stock Alert',
                       `${prod.name} is now out of stock!`,
-                      'lowStock'
+                      'lowStock',
+                      req.user.id
                   );
              }
         }
