@@ -63,7 +63,7 @@ const AIChatAssistant = () => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        <div className="mt-8 flex flex-col items-end w-full max-w-sm ml-auto z-10 relative">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -71,13 +71,16 @@ const AIChatAssistant = () => {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 20, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className="mb-4 w-80 sm:w-96 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col h-[500px] max-h-[80vh]"
+                        className="mb-4 w-full bg-white dark:bg-gray-900 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col h-[450px]"
                     >
                         {/* Header */}
                         <div className="bg-gradient-to-r from-[var(--color-brand-blue)] to-blue-600 p-4 flex justify-between items-center text-white">
                             <div className="flex items-center space-x-2">
-                                <MessageSquare size={20} />
-                                <h3 className="font-bold text-sm tracking-wide">AI Assistant</h3>
+                                <div className="font-bold text-lg tracking-tight bg-white/20 px-2 py-0.5 rounded-lg flex items-center">
+                                    <span className="text-white">Kirana</span>
+                                    <span className="text-orange-400">Smart</span>
+                                    <span className="text-sm font-normal ml-2 opacity-90">AI</span>
+                                </div>
                             </div>
                             <div className="flex space-x-2">
                                 <button onClick={clearChat} className="p-1 hover:bg-white/20 rounded transition-colors" title="Clear Chat">
@@ -145,12 +148,18 @@ const AIChatAssistant = () => {
             {/* Floating Action Button */}
             {!isOpen && (
                 <motion.button
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.05, boxShadow: "0 20px 25px -5px rgb(59 130 246 / 0.4), 0 8px 10px -6px rgb(59 130 246 / 0.4)" }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setIsOpen(true)}
-                    className="bg-[var(--color-brand-blue)] text-white p-4 rounded-full shadow-xl shadow-blue-500/30 hover:bg-blue-600 transition-colors flex items-center justify-center border-4 border-white dark:border-gray-900"
+                    className="group bg-gradient-to-r from-[var(--color-brand-blue)] to-blue-600 text-white px-6 py-4 rounded-full shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 transition-all flex items-center justify-center border-2 border-white/20 dark:border-white/10 overflow-hidden relative"
                 >
-                    <MessageSquare size={24} />
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 rounded-full"></div>
+                    <div className="relative flex items-center gap-3">
+                        <MessageSquare size={22} className="animate-pulse" />
+                        <span className="font-semibold tracking-wide flex items-center">
+                            Ask <span className="font-bold ml-1">Kirana</span><span className="text-orange-300 font-bold">Smart</span> AI
+                        </span>
+                    </div>
                 </motion.button>
             )}
         </div>
