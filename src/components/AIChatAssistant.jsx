@@ -63,7 +63,7 @@ const AIChatAssistant = () => {
     };
 
     return (
-        <div className="mt-8 flex flex-col items-end w-full max-w-sm ml-auto z-10 relative">
+        <div className="flex flex-col items-end w-full max-w-sm ml-auto z-10 relative">
             <AnimatePresence>
                 {isOpen && (
                     <motion.div

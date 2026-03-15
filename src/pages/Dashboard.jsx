@@ -213,6 +213,11 @@ const Dashboard = () => {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-blue-400/10 rounded-full blur-2xl"></div>
         </motion.div>
 
+        {/* AI Chat Assistant in the 2nd Column */}
+        <div className="flex justify-end sm:justify-center lg:justify-end items-start h-full pb-4">
+          <AIChatAssistant />
+        </div>
+
       </div>
 
       {/* Row 2 - Sales & Analytics Charts */}
@@ -359,9 +364,6 @@ const Dashboard = () => {
               }
             }}
           />
-
-          {/* Floating AI Chat Assistant */}
-          <AIChatAssistant />
         </div>
       </div>
     </div>
