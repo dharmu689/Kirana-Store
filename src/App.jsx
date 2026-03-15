@@ -21,6 +21,17 @@ const VendorCompare = lazy(() => import('./pages/VendorCompare'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
 
+// Lazily Load Public Pages
+const Features = lazy(() => import('./pages/public/Features'));
+const Pricing = lazy(() => import('./pages/public/Pricing'));
+const Testimonials = lazy(() => import('./pages/public/Testimonials'));
+const About = lazy(() => import('./pages/public/About'));
+const Contact = lazy(() => import('./pages/public/Contact'));
+const PrivacyPolicy = lazy(() => import('./pages/public/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/public/TermsOfService'));
+const CookiePolicy = lazy(() => import('./pages/public/CookiePolicy'));
+const DataSecurity = lazy(() => import('./pages/public/DataSecurity'));
+
 // Simple Loading Spinner for Suspense Fallback
 const LoadingSpinner = () => (
   <div className="flex justify-center items-center min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -39,6 +50,15 @@ function AppContent() {
           <Route path="/register" element={<Register />} />
 
           <Route path="/" element={<Landing />} />
+          <Route path="/features" element={<Features />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/testimonials" element={<Testimonials />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/data-security" element={<DataSecurity />} />
 
           {/* Protected Routes */}
           <Route element={<ProtectedRoute />}>
