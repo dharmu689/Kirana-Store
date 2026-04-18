@@ -532,6 +532,21 @@ flowchart TD
 
 ---
 
+## Deployed Application
+
+### Live Deployment URLs
+- **Frontend**: https://kirana-store-tau.vercel.app/
+- **Backend**: [Render Backend URL] *(Deployed)*
+
+### Deployment Status
+| Component | Platform | Status | URL |
+|-----------|----------|--------|-----|
+| Frontend | Vercel | **Live** | https://kirana-store-tau.vercel.app/ |
+| Backend | Render | **Live** | Deployed on Render |
+| Database | MongoDB Atlas | **Live** | Cloud Cluster |
+
+---
+
 ## 🌐 Deployment
 
 ### Frontend Deployment (Vercel)
