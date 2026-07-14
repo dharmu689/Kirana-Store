@@ -64,7 +64,7 @@ const FooterSection = () => {
                             </span>
                         </div> */}
                     
-                        <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="mb-6" />
+                        <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-14 -ml-4" />
 
                         <p className="text-gray-400 leading-relaxed">
                             Empowering local retailers with AI-driven inventory management, smart POS, and automated vendor reordering.
