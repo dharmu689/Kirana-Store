@@ -32,6 +32,13 @@ const FooterSection = () => {
         }
     };
 
+    const socials = [
+        { Icon: Facebook, href: 'https://www.facebook.com/dharmu689' },
+        { Icon: Twitter, href: 'https://www.twitter.com/dharmu689' },
+        { Icon: Instagram, href: 'https://www.instagram.com/dharmu689' },
+        { Icon: Linkedin, href: 'https://www.linkedin.com/in/dharmu689' }
+    ];
+
     return (
         <footer className="relative bg-[#0f172a] text-gray-300 pt-20 pb-10 overflow-hidden z-10">
             {/* Background Glow Effects */}
@@ -60,8 +67,8 @@ const FooterSection = () => {
                             Empowering local retailers with AI-driven inventory management, smart POS, and automated vendor reordering.
                         </p>
                         <div className="flex space-x-4 pt-2">
-                            {[Facebook, Twitter, Instagram, Linkedin].map((Icon, index) => (
-                                <a key={index} href="#" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] hover:-translate-y-1">
+                            {socials.map(({ Icon, href }, index) => (
+                                <a key={index} href={href} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all duration-300 hover:shadow-[0_0_15px_rgba(37,99,235,0.5)] hover:-translate-y-1">
                                     <Icon size={20} />
                                 </a>
                             ))}
