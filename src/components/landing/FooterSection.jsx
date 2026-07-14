@@ -35,7 +35,7 @@ const FooterSection = () => {
     const socials = [
         { Icon: Facebook, href: 'https://www.facebook.com/dharmu689' },
         { Icon: Twitter, href: 'https://www.twitter.com/dharmu689' },
-        { Icon: Instagram, href: 'https://www.instagram.com/dharmu689' },
+        { Icon: Instagram, href: 'https://www.instagram.com/dharmu.689' },
         { Icon: Linkedin, href: 'https://www.linkedin.com/in/dharmu689' }
     ];
 
