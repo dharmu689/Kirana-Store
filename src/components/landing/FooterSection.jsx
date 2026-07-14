@@ -58,11 +58,14 @@ const FooterSection = () => {
                 >
                     {/* Brand Column */}
                     <motion.div variants={itemVariants} className="space-y-6">
-                        <div className="flex items-center gap-2">
+                        {/* <div className="flex items-center gap-2">
                             <span className="text-3xl font-bold tracking-tight text-white">
                                 Kirana<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Smart</span>
                             </span>
-                        </div>
+                        </div> */}
+                    
+                        <img src="/KiranaSmart.svg" alt="KiranaSmart Logo" className="h-16 -ml-4" />
+
                         <p className="text-gray-400 leading-relaxed">
                             Empowering local retailers with AI-driven inventory management, smart POS, and automated vendor reordering.
                         </p>
