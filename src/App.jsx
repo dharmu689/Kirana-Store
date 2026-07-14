@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -65,6 +66,7 @@ function App() {
   return (
     <LanguageProvider>
       <AppContent />
+      <Analytics />
     </LanguageProvider>
   );
 }
