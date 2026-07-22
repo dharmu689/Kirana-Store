@@ -1,13 +1,8 @@
 import API from "../utils/axiosConfig";
 
-// Register user
+// Register user (requires verification, so we don't save token yet)
 const register = async (userData) => {
     const response = await API.post("/auth/register", userData);
-
-    if (response.data) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-    }
-
     return response.data;
 };
 
@@ -15,7 +10,48 @@ const register = async (userData) => {
 const login = async (userData) => {
     const response = await API.post("/auth/login", userData);
 
-    if (response.data) {
+    if (response.data && response.data.token) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+    }
+
+    return response.data;
+};
+
+// Verify email OTP
+const verifyOtp = async (email, otp) => {
+    const response = await API.post("/auth/verify-otp", { email, otp });
+    return response.data;
+};
+
+// Resend verification OTP
+const resendOtp = async (email) => {
+    const response = await API.post("/auth/resend-otp", { email });
+    return response.data;
+};
+
+// Request Forgot Password OTP
+const forgotPassword = async (email) => {
+    const response = await API.post("/auth/forgot-password", { email });
+    return response.data;
+};
+
+// Verify Reset OTP
+const verifyResetOtp = async (email, otp) => {
+    const response = await API.post("/auth/verify-reset-otp", { email, otp });
+    return response.data;
+};
+
+// Reset Password
+const resetPassword = async (email, otp, newPassword, confirmPassword) => {
+    const response = await API.post("/auth/reset-password", { email, otp, newPassword, confirmPassword });
+    return response.data;
+};
+
+// Google OAuth Login
+const googleLogin = async (idToken) => {
+    const response = await API.post("/auth/google-login", { idToken });
+
+    if (response.data && response.data.token) {
         localStorage.setItem("user", JSON.stringify(response.data));
     }
 
@@ -44,9 +80,16 @@ const authService = {
     logout,
     getCurrentUser,
     getProfile,
+    verifyOtp,
+    resendOtp,
+    forgotPassword,
+    verifyResetOtp,
+    resetPassword,
+    googleLogin,
 };
 
 export default authService;
+
 
 
 

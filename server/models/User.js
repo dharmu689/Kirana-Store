@@ -14,12 +14,37 @@ const userSchema = mongoose.Schema(
         },
         password: {
             type: String,
-            required: [true, 'Please add a password'],
+            // Password not required for Google authenticated users
         },
         role: {
             type: String,
             enum: ['admin', 'staff'],
             default: 'staff',
+        },
+        isVerified: {
+            type: Boolean,
+            default: false,
+        },
+        otp: {
+            type: String,
+        },
+        otpExpires: {
+            type: Date,
+        },
+        googleId: {
+            type: String,
+            unique: true,
+            sparse: true,
+        },
+        profileImage: {
+            type: String,
+        },
+        loginAttempts: {
+            type: Number,
+            default: 0,
+        },
+        lockUntil: {
+            type: Date,
         },
         createdAt: {
             type: Date,
@@ -33,17 +58,20 @@ const userSchema = mongoose.Schema(
 
 // Encrypt password using bcrypt
 userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) {
-        next();
+    if (!this.isModified('password') || !this.password) {
+        return next();
     }
 
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    next();
 });
 
 // Match user entered password to hashed password in database
 userSchema.methods.matchPassword = async function (enteredPassword) {
+    if (!this.password) return false;
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
 module.exports = mongoose.model('User', userSchema);
+

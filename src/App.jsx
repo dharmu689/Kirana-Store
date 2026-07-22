@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import Layout from './components/layout/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { LanguageProvider, useLanguage } from './context/LanguageContext';
@@ -8,6 +9,9 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyOtp from './pages/VerifyOtp';
+import ResetPassword from './pages/ResetPassword';
 
 // Lazily Load Heavy Dashboard Routes
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -33,10 +37,39 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      {/* Toast Notifications Container */}
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          style: {
+            borderRadius: '12px',
+            background: '#333',
+            color: '#fff',
+            fontSize: '14px',
+            fontWeight: '500',
+          },
+          success: {
+            duration: 4000,
+            style: {
+              background: '#10B981',
+            }
+          },
+          error: {
+            duration: 5000,
+            style: {
+              background: '#EF4444',
+            }
+          }
+        }}
+      />
+      
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-otp" element={<VerifyOtp />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route path="/" element={<Landing />} />
 
@@ -70,3 +103,4 @@ function App() {
 }
 
 export default App;
+

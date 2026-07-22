@@ -13,17 +13,43 @@ connectDB();
 
 const app = express();
 
+// Secure Headers using Helmet
+const helmet = require('helmet');
+app.use(helmet({
+    contentSecurityPolicy: false, // Disabled to ensure Google Sign-In script & maps run smoothly
+    crossOriginEmbedderPolicy: false
+}));
+
+// Secure CORS Config
+app.use(cors({
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Initialize Passport Authentication
+const passport = require('./config/passport');
+app.use(passport.initialize());
+
+// Rate Limiter for authentication routes
+const rateLimit = require('express-rate-limit');
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 authentication requests per 15 minutes
+    message: { message: 'Too many requests from this IP, please try again after 15 minutes' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.use('/api/auth', authLimiter);
+
 // Middleware
 app.use(express.json());
 
 // Serve PDF INVOICES statically
 app.use('/invoices', express.static(path.join(__dirname, 'temp')));
 
-
-// CORS Configuration
-app.use(cors({
-    origin: "*"
-}));
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
