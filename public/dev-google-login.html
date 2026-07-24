@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in - Google Accounts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #1f1f1f;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 28px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        .logo svg {
+            width: 74px;
+            height: 24px;
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #1f1f1f;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #444746;
+            margin-bottom: 32px;
+        }
+        .account-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e3e3e3;
+        }
+        .account-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid #e3e3e3;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .account-item:hover {
+            background-color: #f7f9fc;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #0b57d0;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 500;
+            font-size: 16px;
+            margin-right: 12px;
+        }
+        .account-details {
+            flex-grow: 1;
+        }
+        .account-name {
+            font-weight: 500;
+            font-size: 14px;
+            color: #1f1f1f;
+        }
+        .account-email {
+            font-size: 12px;
+            color: #444746;
+            margin-top: 2px;
+        }
+        .custom-account-btn {
+            background: none;
+            border: none;
+            color: #0b57d0;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            width: 100%;
+            text-align: left;
+            padding: 8px 4px;
+            border-radius: 4px;
+        }
+        .custom-account-btn:hover {
+            background-color: rgba(11, 87, 208, 0.04);
+        }
+        .custom-form {
+            display: none;
+            text-align: left;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed #cccccc;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #444746;
+            margin-bottom: 4px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #747775;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-group input:focus {
+            border-color: #0b57d0;
+            box-shadow: 0 0 0 1px #0b57d0;
+        }
+        .submit-btn {
+            background-color: #0b57d0;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 8px;
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover {
+            background-color: #0842a0;
+        }
+        .footer {
+            margin-top: 32px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #747775;
+        }
+        .footer a {
+            color: #747775;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <!-- Google Logo SVG -->
+            <svg viewBox="0 0 74 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.7 15.6c-2.4 0-4.5-1.9-4.5-4.6s2-4.6 4.5-4.6c1.3 0 2.4.5 3.2 1.3l2.3-2.3C11.7 3.8 9.9 3 7.7 3 3.4 3 0 6.4 0 11s3.4 8 7.7 8c2.6 0 4.4-1.1 5.6-2.6l-2.4-2.4c-.8.8-1.8 1.6-3.2 1.6z" fill="#4285F4"/>
+                <path d="M19.1 19V4.6h3.2v14.4H19.1z" fill="#34A853"/>
+                <path d="M28.4 15.6c-2.4 0-4.5-1.9-4.5-4.6s2-4.6 4.5-4.6 4.5 1.9 4.5 4.6-2.1 4.6-4.5 4.6zm0-7.2c-1.3 0-2.3 1-2.3 2.6s1 2.6 2.3 2.6 2.3-1 2.3-2.6-1-2.6-2.3-2.6z" fill="#EA4335"/>
+                <path d="M38.8 15.6c-2.4 0-4.5-1.9-4.5-4.6s2-4.6 4.5-4.6 4.5 1.9 4.5 4.6-2.1 4.6-4.5 4.6zm0-7.2c-1.3 0-2.3 1-2.3 2.6s1 2.6 2.3 2.6 2.3-1 2.3-2.6-1-2.6-2.3-2.6z" fill="#FBBC05"/>
+                <path d="M49.2 19c-1.2 0-2.3-.5-2.8-1.2h-.1V18c0 1.8-1 2.7-2.6 2.7-1.3 0-2.1-.9-2.4-1.7l2.8-1.1c.3.7.8 1.2 1.5 1.2 1 0 1.5-.6 1.5-1.6v-1.1h-.1c-.5.7-1.6 1.2-2.8 1.2-2.3 0-4.4-2-4.4-4.6S42.5 8 44.8 8c1.2 0 2.3.5 2.8 1.1h.1V8.4h3.1V18c0 2.7-1.6 4-4.1 4-2.5 0-4.1-1.7-4.7-3.1l2.8-1.2c.5 1.1 1.5 1.7 2.7 1.7zm-2.1-10.6c-1.3 0-2.3 1.1-2.3 2.6s1 2.6 2.3 2.6 2.3-1.1 2.3-2.6-1-2.6-2.3-2.6z" fill="#4285F4"/>
+                <path d="M59.4 15.6c-2.2 0-4.2-1.8-4.2-4.5s1.9-4.6 4.1-4.6c2.2 0 3.9 1.7 3.9 4.3v.7h-6.8c.2 1.4 1.2 2.2 2.5 2.2 1.2 0 2-.6 2.5-1.3l2.5 1.7c-.7 1-2.1 2.1-4.2 2.1zm-3-6.5h4.6c0-1.1-.8-1.9-1.9-1.9-1.1 0-1.9.8-2.3 1.9z" fill="#EA4335"/>
+            </svg>
+        </div>
+        <h1>Choose an account</h1>
+        <div class="subtitle">to continue to KiranaSmart AI</div>
+
+        <ul class="account-list">
+            <li class="account-item" onclick="selectAccount('Dharmu', 'dharmu@kiranasmart.com')">
+                <div class="avatar" style="background-color: #0b57d0;">D</div>
+                <div class="account-details">
+                    <div class="account-name">Dharmu (Owner)</div>
+                    <div class="account-email">dharmu@kiranasmart.com</div>
+                </div>
+            </li>
+            <li class="account-item" onclick="selectAccount('Admin User', 'admin@kiranasmart.com')">
+                <div class="avatar" style="background-color: #b06000;">A</div>
+                <div class="account-details">
+                    <div class="account-name">Admin User</div>
+                    <div class="account-email">admin@kiranasmart.com</div>
+                </div>
+            </li>
+            <li class="account-item" onclick="selectAccount('Staff Member', 'staff@kiranasmart.com')">
+                <div class="avatar" style="background-color: #0f5132;">S</div>
+                <div class="account-details">
+                    <div class="account-name">Staff Member</div>
+                    <div class="account-email">staff@kiranasmart.com</div>
+                </div>
+            </li>
+        </ul>
+
+        <button class="custom-account-btn" onclick="toggleCustomForm()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            Use a custom mock account
+        </button>
+
+        <form id="customForm" class="custom-form" onsubmit="handleCustomSubmit(event)">
+            <div class="form-group">
+                <label for="customName">Full Name</label>
+                <input type="text" id="customName" placeholder="e.g. John Doe" required>
+            </div>
+            <div class="form-group">
+                <label for="customEmail">Email Address</label>
+                <input type="email" id="customEmail" placeholder="e.g. john@example.com" required>
+            </div>
+            <button type="submit" class="submit-btn">Continue</button>
+        </form>
+
+        <div class="footer">
+            <span>English (United States)</span>
+            <div>
+                <a href="#" style="margin-right: 12px;">Help</a>
+                <a href="#" style="margin-right: 12px;">Privacy</a>
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectAccount(name, email) {
+            // Send selected mock user back to main page
+            const idToken = 'test-token-' + email;
+            if (window.opener) {
+                window.opener.postMessage({
+                    type: 'MOCK_GOOGLE_AUTH_SUCCESS',
+                    idToken: idToken
+                }, '*');
+            }
+            window.close();
+        }
+
+        function toggleCustomForm() {
+            const form = document.getElementById('customForm');
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function handleCustomSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('customName').value;
+            const email = document.getElementById('customEmail').value;
+            selectAccount(name, email);
+        }
+    </script>
+</body>
+</html>

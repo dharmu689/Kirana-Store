@@ -13,13 +13,24 @@ passport.use('google-id-token', new CustomStrategy(
                 return done(null, false, { message: 'No Google idToken provided' });
             }
 
-            // Developer fallback for testing locally when GOOGLE_CLIENT_ID is not configured
-            if ((!CLIENT_ID || CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') && idToken.startsWith('test-token-')) {
-                const username = idToken.replace('test-token-', '');
+            const isDev = process.env.NODE_ENV !== 'production';
+
+            // Developer fallback for testing locally when GOOGLE_CLIENT_ID is not configured (disabled in production)
+            if (isDev && (!CLIENT_ID || CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') && idToken.startsWith('test-token-')) {
+                const tokenVal = idToken.replace('test-token-', '');
+                let email, name;
+                if (tokenVal.includes('@')) {
+                    email = tokenVal;
+                    const prefix = tokenVal.split('@')[0];
+                    name = prefix.split(/[\._-]/).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ') + ' Google';
+                } else {
+                    email = `${tokenVal}@gmail.com`;
+                    name = tokenVal.charAt(0).toUpperCase() + tokenVal.slice(1) + ' Google';
+                }
                 const googleUser = {
-                    googleId: `google-id-${username}`,
-                    email: `${username}@gmail.com`,
-                    name: username.charAt(0).toUpperCase() + username.slice(1) + ' Google',
+                    googleId: `google-id-${tokenVal}`,
+                    email: email,
+                    name: name,
                     picture: 'https://lh3.googleusercontent.com/a/default-user=s96-c',
                 };
                 return done(null, googleUser);
@@ -33,8 +44,8 @@ passport.use('google-id-token', new CustomStrategy(
                 });
                 payload = ticket.getPayload();
             } catch (err) {
-                // Another development mock fallback for standard token
-                if ((!CLIENT_ID || CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') && idToken === 'development-test-token') {
+                // Another development mock fallback for standard token (disabled in production)
+                if (isDev && (!CLIENT_ID || CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') && idToken === 'development-test-token') {
                     payload = {
                         sub: 'dev-google-id-123456',
                         email: 'dev-google-user@example.com',

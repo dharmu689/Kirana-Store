@@ -3,10 +3,32 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { sendEmail } = require('../utils/emailService');
 const passport = require('passport');
+const mongoose = require('mongoose');
+
+// ==========================================
+// IN-MEMORY MOCK DATABASE FALLBACK
+// ==========================================
+const mockUsers = new Map();
+
+// Helper to pre-populate default user for testing in mock mode
+const defaultSalt = bcrypt.genSaltSync(10);
+const defaultPasswordHash = bcrypt.hashSync('Dharmu@2026', defaultSalt);
+mockUsers.set('admin@kiranasmart.com', {
+    _id: 'mock-admin-uuid-99999',
+    name: 'Admin User',
+    email: 'admin@kiranasmart.com',
+    password: defaultPasswordHash,
+    role: 'admin',
+    isVerified: true,
+    loginAttempts: 0,
+    lockUntil: null,
+    otp: null,
+    otpExpires: null
+});
 
 // Generate JWT
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+    return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
         expiresIn: '7d',
     });
 };
@@ -23,61 +45,81 @@ const registerUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     try {
-        // Check if user exists
-        const userExists = await User.findOne({ email });
-
-        if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
         const otp = generateOTP();
         const otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
 
-        // Create unverified user
-        const user = await User.create({
-            name,
-            email,
-            password, // pre-save hook handles hashing
-            role: role || 'admin',
-            isVerified: false,
-            otp,
-            otpExpires,
-        });
+        // check if database is disconnected, use mock
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Registering user in-memory: ${email}`);
+            
+            if (mockUsers.has(email)) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
 
-        if (user) {
-            // Send OTP email
-            const emailHtml = `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-                    <h2 style="color: #2563eb; text-align: center; font-size: 24px; margin-bottom: 5px;">KiranaSmart AI</h2>
-                    <p style="color: #6b7280; text-align: center; font-size: 14px; margin-top: 0;">Smart Inventory Management</p>
-                    <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
-                    <p style="font-size: 16px; color: #374151;">Dear ${name},</p>
-                    <p style="font-size: 16px; color: #374151; line-height: 1.5;">Thank you for registering with KiranaSmart AI. To activate your account, please verify your email address using the 6-digit One-Time Password (OTP) below:</p>
-                    <div style="text-align: center; margin: 30px 0;">
-                        <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #f97316; background-color: #fff7ed; padding: 12px 24px; border-radius: 8px; border: 1px dashed #fdba74; display: inline-block;">${otp}</span>
-                    </div>
-                    <p style="color: #dc2626; font-size: 14px; font-weight: 500;">This OTP will expire in 5 minutes.</p>
-                    <p style="color: #6b7280; font-size: 14px; line-height: 1.5;">If you did not request this registration, please ignore this email.</p>
-                    <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
-                    <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">&copy; 2026 KiranaSmart. All rights reserved.</p>
-                </div>
-            `;
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
 
-            await sendEmail({
-                to: email,
-                subject: 'KiranaSmart AI - Verify Your Email Address',
-                text: `Your email OTP is: ${otp}. It will expire in 5 minutes.`,
-                html: emailHtml
-            });
-
-            res.status(201).json({
-                success: true,
-                message: 'Registration Successful. OTP Sent Successfully.',
-                email: user.email,
+            mockUsers.set(email, {
+                _id: 'mock-user-' + Date.now(),
+                name,
+                email,
+                password: hashedPassword,
+                role: role || 'admin',
+                isVerified: false,
+                otp,
+                otpExpires,
+                loginAttempts: 0
             });
         } else {
-            res.status(400).json({ message: 'Invalid user data' });
+            // Check if user exists
+            const userExists = await User.findOne({ email });
+
+            if (userExists) {
+                return res.status(400).json({ message: 'User already exists' });
+            }
+
+            // Create unverified user
+            await User.create({
+                name,
+                email,
+                password, // pre-save hook handles hashing
+                role: role || 'admin',
+                isVerified: false,
+                otp,
+                otpExpires,
+            });
         }
+
+        // Send OTP email
+        const emailHtml = `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h2 style="color: #2563eb; text-align: center; font-size: 24px; margin-bottom: 5px;">KiranaSmart AI</h2>
+                <p style="color: #6b7280; text-align: center; font-size: 14px; margin-top: 0;">Smart Inventory Management</p>
+                <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
+                <p style="font-size: 16px; color: #374151;">Dear ${name},</p>
+                <p style="font-size: 16px; color: #374151; line-height: 1.5;">Thank you for registering with KiranaSmart AI. To activate your account, verify your email address using the One-Time Password (OTP) below:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #f97316; background-color: #fff7ed; padding: 12px 24px; border-radius: 8px; border: 1px dashed #fdba74; display: inline-block;">${otp}</span>
+                </div>
+                <p style="color: #dc2626; font-size: 14px; font-weight: 500;">This OTP will expire in 5 minutes.</p>
+                <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
+                <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">&copy; 2026 KiranaSmart. All rights reserved.</p>
+            </div>
+        `;
+
+        await sendEmail({
+            to: email,
+            subject: 'KiranaSmart AI - Verify Your Email Address',
+            text: `Your email OTP is: ${otp}. It will expire in 5 minutes.`,
+            html: emailHtml
+        });
+
+        res.status(201).json({
+            success: true,
+            message: 'Registration Successful. OTP Sent Successfully.',
+            email: email,
+        });
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -94,25 +136,47 @@ const verifyOtp = async (req, res) => {
             return res.status(400).json({ message: 'Please provide email and OTP' });
         }
 
-        const user = await User.findOne({ email });
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Verifying OTP in-memory: ${email}`);
+            
+            const user = mockUsers.get(email);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            if (user.isVerified) {
+                return res.status(400).json({ message: 'User is already verified' });
+            }
+
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: 'Invalid or expired OTP' });
+            }
+
+            user.isVerified = true;
+            user.otp = null;
+            user.otpExpires = null;
+            mockUsers.set(email, user);
+        } else {
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            if (user.isVerified) {
+                return res.status(400).json({ message: 'User is already verified' });
+            }
+
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: 'Invalid or expired OTP' });
+            }
+
+            // Activate user
+            user.isVerified = true;
+            user.otp = undefined;
+            user.otpExpires = undefined;
+            await user.save();
         }
-
-        if (user.isVerified) {
-            return res.status(400).json({ message: 'User is already verified' });
-        }
-
-        if (user.otp !== otp || user.otpExpires < Date.now()) {
-            return res.status(400).json({ message: 'Invalid or expired OTP' });
-        }
-
-        // Activate user
-        user.isVerified = true;
-        user.otp = undefined;
-        user.otpExpires = undefined;
-        await user.save();
 
         res.status(200).json({
             success: true,
@@ -134,29 +198,47 @@ const resendOtp = async (req, res) => {
             return res.status(400).json({ message: 'Please provide email' });
         }
 
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        if (user.isVerified) {
-            return res.status(400).json({ message: 'User is already verified' });
-        }
-
         const otp = generateOTP();
         const otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
+        let name = '';
 
-        user.otp = otp;
-        user.otpExpires = otpExpires;
-        await user.save();
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Resending OTP in-memory: ${email}`);
+            const user = mockUsers.get(email);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            if (user.isVerified) {
+                return res.status(400).json({ message: 'User is already verified' });
+            }
+
+            user.otp = otp;
+            user.otpExpires = otpExpires;
+            mockUsers.set(email, user);
+            name = user.name;
+        } else {
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            if (user.isVerified) {
+                return res.status(400).json({ message: 'User is already verified' });
+            }
+
+            user.otp = otp;
+            user.otpExpires = otpExpires;
+            await user.save();
+            name = user.name;
+        }
 
         const emailHtml = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 <h2 style="color: #2563eb; text-align: center; font-size: 24px; margin-bottom: 5px;">KiranaSmart AI</h2>
                 <p style="color: #6b7280; text-align: center; font-size: 14px; margin-top: 0;">Smart Inventory Management</p>
                 <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
-                <p style="font-size: 16px; color: #374151;">Dear ${user.name},</p>
+                <p style="font-size: 16px; color: #374151;">Dear ${name},</p>
                 <p style="font-size: 16px; color: #374151; line-height: 1.5;">Here is your requested verification One-Time Password (OTP):</p>
                 <div style="text-align: center; margin: 30px 0;">
                     <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #f97316; background-color: #fff7ed; padding: 12px 24px; border-radius: 8px; border: 1px dashed #fdba74; display: inline-block;">${otp}</span>
@@ -190,6 +272,64 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Authenticating user in-memory: ${email}`);
+            
+            const user = mockUsers.get(email);
+            if (!user) {
+                return res.status(400).json({ message: 'Invalid credentials' });
+            }
+
+            // Lockout check
+            if (user.lockUntil && user.lockUntil > Date.now()) {
+                const timeRemaining = Math.ceil((user.lockUntil - Date.now()) / 1000 / 60);
+                return res.status(403).json({
+                    message: `Account is locked due to multiple failed login attempts. Try again in ${timeRemaining} minute(s).`
+                });
+            }
+
+            // Verification check
+            if (!user.isVerified) {
+                return res.status(400).json({ message: 'Please verify your email.' });
+            }
+
+            // Password check
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                user.loginAttempts = (user.loginAttempts || 0) + 1;
+
+                if (user.loginAttempts >= 5) {
+                    user.lockUntil = Date.now() + 15 * 60 * 1000;
+                    user.loginAttempts = 0;
+                    mockUsers.set(email, user);
+                    return res.status(403).json({
+                        message: 'Account locked for 15 minutes due to 5 failed attempts.'
+                    });
+                } else {
+                    mockUsers.set(email, user);
+                    return res.status(400).json({
+                        message: `Invalid credentials. ${5 - user.loginAttempts} attempt(s) remaining.`
+                    });
+                }
+            }
+
+            // Successful login, clear counters
+            user.loginAttempts = 0;
+            user.lockUntil = null;
+            mockUsers.set(email, user);
+
+            return res.json({
+                success: true,
+                message: 'Login Successful',
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                token: generateToken(user._id),
+            });
+        }
+
+        // Standard MongoDB Logic
         const user = await User.findOne({ email });
 
         if (!user) {
@@ -212,7 +352,6 @@ const loginUser = async (req, res) => {
         // Check password
         const isMatch = await user.matchPassword(password);
         if (!isMatch) {
-            // Track failed attempts
             user.loginAttempts = (user.loginAttempts || 0) + 1;
 
             if (user.loginAttempts >= 5) {
@@ -230,7 +369,7 @@ const loginUser = async (req, res) => {
             }
         }
 
-        // Password is correct, reset lock tracking
+        // Reset lock tracking
         user.loginAttempts = 0;
         user.lockUntil = undefined;
         await user.save();
@@ -261,31 +400,45 @@ const forgotPassword = async (req, res) => {
             return res.status(400).json({ message: 'Please provide email' });
         }
 
-        const user = await User.findOne({ email });
-
-        if (!user) {
-            return res.status(400).json({ message: 'User with this email does not exist' });
-        }
-
         const otp = generateOTP();
         const otpExpires = Date.now() + 5 * 60 * 1000; // 5 minutes
+        let name = '';
 
-        user.otp = otp;
-        user.otpExpires = otpExpires;
-        await user.save();
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Requesting forgot password OTP in-memory: ${email}`);
+            const user = mockUsers.get(email);
+            if (!user) {
+                return res.status(400).json({ message: 'User with this email does not exist' });
+            }
+
+            user.otp = otp;
+            user.otpExpires = otpExpires;
+            mockUsers.set(email, user);
+            name = user.name;
+        } else {
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(400).json({ message: 'User with this email does not exist' });
+            }
+
+            user.otp = otp;
+            user.otpExpires = otpExpires;
+            await user.save();
+            name = user.name;
+        }
 
         const emailHtml = `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 <h2 style="color: #2563eb; text-align: center; font-size: 24px; margin-bottom: 5px;">KiranaSmart AI</h2>
                 <p style="color: #6b7280; text-align: center; font-size: 14px; margin-top: 0;">Smart Inventory Management</p>
                 <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
-                <p style="font-size: 16px; color: #374151;">Dear ${user.name},</p>
-                <p style="font-size: 16px; color: #374151; line-height: 1.5;">We received a request to reset your KiranaSmart password. Please use the following OTP code to proceed:</p>
+                <p style="font-size: 16px; color: #374151;">Dear ${name},</p>
+                <p style="font-size: 16px; color: #374151; line-height: 1.5;">We received a request to reset your password. Use the OTP code below to proceed:</p>
                 <div style="text-align: center; margin: 30px 0;">
                     <span style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #3b82f6; background-color: #eff6ff; padding: 12px 24px; border-radius: 8px; border: 1px dashed #bfdbfe; display: inline-block;">${otp}</span>
                 </div>
                 <p style="color: #dc2626; font-size: 14px; font-weight: 500;">This OTP will expire in 5 minutes.</p>
-                <p style="color: #6b7280; font-size: 14px; line-height: 1.5;">If you did not request a password reset, please ignore this email and secure your account.</p>
                 <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 20px 0;"/>
                 <p style="color: #9ca3af; font-size: 12px; text-align: center; margin: 0;">&copy; 2026 KiranaSmart. All rights reserved.</p>
             </div>
@@ -318,14 +471,25 @@ const verifyResetOtp = async (req, res) => {
             return res.status(400).json({ message: 'Please provide email and OTP' });
         }
 
-        const user = await User.findOne({ email });
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Verifying Reset OTP in-memory: ${email}`);
+            const user = mockUsers.get(email);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: 'Invalid or expired OTP' });
+            }
+        } else {
+            const user = await User.findOne({ email });
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
 
-        if (user.otp !== otp || user.otpExpires < Date.now()) {
-            return res.status(400).json({ message: 'Invalid or expired OTP' });
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: 'Invalid or expired OTP' });
+            }
         }
 
         res.status(200).json({
@@ -344,30 +508,58 @@ const resetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;
 
     try {
-        const user = await User.findOne({ email });
+        if (mongoose.connection.readyState !== 1) {
+            console.log(`[HYBRID MODE] Resetting password in-memory: ${email}`);
+            
+            const user = mockUsers.get(email);
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: 'OTP is expired or invalid. Please request a new one.' });
+            }
+
+            const isSame = await bcrypt.compare(newPassword, user.password);
+            if (isSame) {
+                return res.status(400).json({ message: 'New password cannot be same as previous password' });
+            }
+
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+            user.password = hashedPassword;
+            user.otp = null;
+            user.otpExpires = null;
+            user.loginAttempts = 0;
+            user.lockUntil = null;
+            mockUsers.set(email, user);
+        } else {
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            // Double check OTP
+            if (user.otp !== otp || user.otpExpires < Date.now()) {
+                return res.status(400).json({ message: 'OTP is expired or invalid. Please request a new one.' });
+            }
+
+            // Validate that new password is not same as previous
+            const isSame = await mongoose.model('User').hydrate(user).matchPassword(newPassword);
+            if (isSame) {
+                return res.status(400).json({ message: 'New password cannot be same as previous password' });
+            }
+
+            // Update password and clear OTP fields
+            user.password = newPassword; // pre-save hook handles hashing
+            user.otp = undefined;
+            user.otpExpires = undefined;
+            user.loginAttempts = 0;
+            user.lockUntil = undefined;
+            await user.save();
         }
-
-        // Double check OTP
-        if (user.otp !== otp || user.otpExpires < Date.now()) {
-            return res.status(400).json({ message: 'OTP is expired or invalid. Please request a new one.' });
-        }
-
-        // Validate that new password is not same as previous
-        const isSame = await bcrypt.compare(newPassword, user.password);
-        if (isSame) {
-            return res.status(400).json({ message: 'New password cannot be same as previous password' });
-        }
-
-        // Update password and clear OTP fields
-        user.password = newPassword; // pre-save hook handles hashing
-        user.otp = undefined;
-        user.otpExpires = undefined;
-        user.loginAttempts = 0; // reset failures too
-        user.lockUntil = undefined;
-        await user.save();
 
         res.status(200).json({
             success: true,
@@ -391,42 +583,81 @@ const googleLogin = async (req, res, next) => {
             }
 
             const { googleId, email, name, picture } = googleUser;
+            let finalUser = null;
+            let isNewUser = false;
+            const isDev = process.env.NODE_ENV !== 'production';
 
-            // 1. Try to find user by googleId
-            let user = await User.findOne({ googleId });
-
-            if (!user) {
-                // 2. Try to find user by email (might have registered standard before)
-                user = await User.findOne({ email });
-
-                if (user) {
-                    // Update user with google info
-                    user.googleId = googleId;
-                    if (!user.profileImage) user.profileImage = picture;
-                    user.isVerified = true; // Auto-verify email if google verified it
-                    await user.save();
-                } else {
-                    // 3. Register user automatically
-                    user = await User.create({
+            if (mongoose.connection.readyState !== 1) {
+                if (!isDev) {
+                    return res.status(500).json({ message: 'Database connection is not ready' });
+                }
+                
+                console.log(`[HYBRID MODE] Authenticating Google login in-memory: ${email}`);
+                
+                let user = mockUsers.get(email);
+                if (!user) {
+                    isNewUser = true;
+                    user = {
+                        _id: 'mock-google-' + Date.now(),
                         name,
                         email,
                         googleId,
                         profileImage: picture,
-                        isVerified: true, // Google accounts are auto-verified
-                        role: 'admin', // Auto signups default to store admin
-                    });
+                        provider: 'google',
+                        isVerified: true,
+                        role: 'admin',
+                        loginAttempts: 0
+                    };
+                } else {
+                    user.googleId = googleId;
+                    if (!user.profileImage) user.profileImage = picture;
+                    user.provider = 'google';
+                    user.isVerified = true;
                 }
+                
+                mockUsers.set(email, user);
+                finalUser = user;
+            } else {
+                // 1. Try to find user by googleId
+                let user = await User.findOne({ googleId });
+
+                if (!user) {
+                    // 2. Try to find user by email
+                    user = await User.findOne({ email });
+
+                    if (user) {
+                        user.googleId = googleId;
+                        if (!user.profileImage) user.profileImage = picture;
+                        user.isVerified = true;
+                        user.provider = 'google';
+                        await user.save();
+                    } else {
+                        // 3. Register user automatically
+                        isNewUser = true;
+                        user = await User.create({
+                            name,
+                            email,
+                            googleId,
+                            profileImage: picture,
+                            isVerified: true,
+                            role: 'admin',
+                            provider: 'google',
+                        });
+                    }
+                }
+                finalUser = user;
             }
 
             res.json({
                 success: true,
                 message: 'Google Login Successful',
-                _id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                profileImage: user.profileImage,
-                token: generateToken(user._id),
+                isNewUser,
+                _id: finalUser._id,
+                name: finalUser.name,
+                email: finalUser.email,
+                role: finalUser.role,
+                profileImage: finalUser.profileImage,
+                token: generateToken(finalUser._id),
             });
         } catch (error) {
             res.status(500).json({ message: error.message });
@@ -501,4 +732,6 @@ module.exports = {
     verifyResetOtp,
     resetPassword,
     googleLogin,
+    mockUsers,
 };
+

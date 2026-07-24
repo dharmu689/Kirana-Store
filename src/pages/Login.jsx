@@ -5,53 +5,14 @@ import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import InputField from '../components/InputField';
 import authService from '../services/authService';
+import GoogleAuthButton from '../components/GoogleAuthButton';
 
 const Login = () => {
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [googleInitialized, setGoogleInitialized] = useState(false);
 
     const clearError = () => error && setError('');
-
-    // Dynamically load Google GSI script
-    useEffect(() => {
-        const initializeGoogleSignIn = () => {
-            if (window.google) {
-                const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
-                
-                window.google.accounts.id.initialize({
-                    client_id: clientId,
-                    callback: handleGoogleCredentialResponse,
-                });
-
-                window.google.accounts.id.renderButton(
-                    document.getElementById('googleSignInBtn'),
-                    { 
-                        theme: 'outline', 
-                        size: 'large', 
-                        width: '100%', 
-                        text: 'continue_with', 
-                        shape: 'rectangular',
-                        logo_alignment: 'center'
-                    }
-                );
-                setGoogleInitialized(true);
-            }
-        };
-
-        if (!document.getElementById('google-gsi-client')) {
-            const script = document.createElement('script');
-            script.id = 'google-gsi-client';
-            script.src = 'https://accounts.google.com/gsi/client';
-            script.async = true;
-            script.defer = true;
-            script.onload = initializeGoogleSignIn;
-            document.body.appendChild(script);
-        } else {
-            initializeGoogleSignIn();
-        }
-    }, []);
 
     // Handle standard username/password submit
     const handleSubmit = async (e) => {
@@ -74,39 +35,6 @@ const Login = () => {
             navigate('/dashboard');
         } catch (err) {
             const errMsg = err.response?.data?.message || err.message || err.toString();
-            setError(errMsg);
-            toast.error(errMsg);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Handle Google token credential from API
-    const handleGoogleCredentialResponse = async (response) => {
-        setLoading(true);
-        try {
-            await authService.googleLogin(response.credential);
-            toast.success('Google Login Successful');
-            navigate('/dashboard');
-        } catch (err) {
-            const errMsg = err.response?.data?.message || 'Google Authentication failed';
-            setError(errMsg);
-            toast.error(errMsg);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Developer fallback mock google login
-    const handleDevGoogleMock = async () => {
-        setLoading(true);
-        try {
-            // Using our custom developer fallback token structure
-            await authService.googleLogin('test-token-dharmu');
-            toast.success('Google Login Successful (Developer Fallback)');
-            navigate('/dashboard');
-        } catch (err) {
-            const errMsg = err.response?.data?.message || 'Developer Google Mock login failed';
             setError(errMsg);
             toast.error(errMsg);
         } finally {
@@ -224,26 +152,7 @@ const Login = () => {
                             </div>
                         </div>
 
-                        {/* Google GSI Render Target */}
-                        <div className="flex flex-col gap-3">
-                            <div id="googleSignInBtn" className="w-full"></div>
-                            
-                            {/* Dev mock login button */}
-                            <button
-                                type="button"
-                                onClick={handleDevGoogleMock}
-                                disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 h-11 px-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-semibold transition-all duration-200"
-                            >
-                                <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-                                    <path fill="#EA4335" d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.48 15.01 1 12 1 7.24 1 3.21 3.73 1.29 7.71l3.86 3C6.07 7.78 8.78 5.04 12 5.04z" />
-                                    <path fill="#4285F4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.45h6.45c-.28 1.48-1.11 2.73-2.36 3.58l3.66 2.84c2.14-1.97 3.38-4.87 3.38-8.53z" />
-                                    <path fill="#FBBC05" d="M5.15 10.71c-.24-.71-.38-1.48-.38-2.27s.14-1.56.38-2.27L1.29 3.17C.47 4.87 0 6.78 0 8.8s.47 3.93 1.29 5.63l3.86-3.03v.31z" />
-                                    <path fill="#34A853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.66-2.84c-1.01.68-2.31 1.09-4.3 1.09-3.22 0-5.93-2.74-6.85-5.67l-3.86 3C3.21 20.27 7.24 23 12 23z" />
-                                </svg>
-                                <span>Continue with Google (Local Demo)</span>
-                            </button>
-                        </div>
+                        <GoogleAuthButton />
                     </div>
                 </motion.div>
 

@@ -36,6 +36,10 @@ const userSchema = mongoose.Schema(
             unique: true,
             sparse: true,
         },
+        provider: {
+            type: String,
+            default: 'local',
+        },
         profileImage: {
             type: String,
         },
