@@ -178,7 +178,7 @@ const VendorOrders = () => {
                                                     )}
                                                     {order.invoiceFileUrl && (
                                                         <button
-                                                            onClick={() => window.open(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${order.invoiceFileUrl}`, '_blank')}
+                                                            onClick={() => window.open(`${import.meta.env.VITE_API_URL || 'https://kirana-store-2ykl.onrender.com'}${order.invoiceFileUrl}`, '_blank')}
                                                             className="text-xs bg-indigo-100 text-indigo-700 hover:bg-indigo-200 py-1 px-2 rounded w-full flex items-center justify-center transition-colors"
                                                             title="Download Invoice PDF"
                                                         >

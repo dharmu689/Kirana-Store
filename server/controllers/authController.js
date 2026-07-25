@@ -28,7 +28,7 @@ mockUsers.set('admin@kiranasmart.com', {
 
 // Generate JWT
 const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
+    return jwt.sign({ id }, process.env.JWT_SECRET || 'default_local_dev_jwt_secret_key_12345', {
         expiresIn: '7d',
     });
 };
