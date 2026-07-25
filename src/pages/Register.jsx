@@ -74,7 +74,7 @@ const Register = () => {
 
         setLoading(true);
         try {
-            await authService.register({ name, email, password, role });
+            await authService.register({ name, email, password, confirmPassword, role });
             toast.success('Registration Successful. OTP Sent.');
             // Redirect to OTP verification page with email query param
             navigate(`/verify-otp?email=${encodeURIComponent(email)}`);
