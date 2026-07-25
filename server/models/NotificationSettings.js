@@ -28,14 +28,13 @@ const notificationSettingsSchema = new mongoose.Schema(
 );
 
 // Ensure only one document exists
-notificationSettingsSchema.pre('save', async function (next) {
+notificationSettingsSchema.pre('save', async function () {
     if (this.isNew) {
         const count = await mongoose.models.NotificationSettings.countDocuments();
         if (count > 0) {
-            return next(new Error('Only one notification settings document can exist.'));
+            throw new Error('Only one notification settings document can exist.');
         }
     }
-    next();
 });
 
 const NotificationSettings = mongoose.model('NotificationSettings', notificationSettingsSchema);

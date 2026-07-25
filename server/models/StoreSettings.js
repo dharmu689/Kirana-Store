@@ -23,14 +23,13 @@ const storeSettingsSchema = new mongoose.Schema(
 );
 
 // Ensure only one document exists
-storeSettingsSchema.pre('save', async function (next) {
+storeSettingsSchema.pre('save', async function () {
     if (this.isNew) {
         const count = await mongoose.models.StoreSettings.countDocuments();
         if (count > 0) {
-            return next(new Error('Only one store settings document can exist.'));
+            throw new Error('Only one store settings document can exist.');
         }
     }
-    next();
 });
 
 const StoreSettings = mongoose.model('StoreSettings', storeSettingsSchema);

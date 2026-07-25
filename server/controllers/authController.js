@@ -574,6 +574,7 @@ const resetPassword = async (req, res) => {
 // @route   POST /api/auth/google-login
 // @access  Public
 const googleLogin = async (req, res, next) => {
+    const safeNext = typeof next === 'function' ? next : (err) => { if (err) console.error(err); };
     passport.authenticate('google-id-token', { session: false }, async (err, googleUser, info) => {
         try {
             if (err || !googleUser) {
@@ -662,7 +663,7 @@ const googleLogin = async (req, res, next) => {
         } catch (error) {
             res.status(500).json({ message: error.message });
         }
-    })(req, res, next);
+    })(req, res, safeNext);
 };
 
 // @desc    Get user data
