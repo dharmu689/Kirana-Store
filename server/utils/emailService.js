@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 
 /**
  * Send an email with an optional attachment or HTML content.
+ * Supports Resend API, SendGrid API, and standard Nodemailer SMTP.
  * @param {Object} options - Email options
  * @param {string} options.to - Recipient email
  * @param {string} options.subject - Email subject
@@ -16,7 +17,69 @@ if (typeof require('dns').setDefaultResultOrder === 'function') {
 
 const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
     try {
-        // If credentials are not set up, go straight to fallback
+        // 1. Try Resend API (HTTP-based, doesn't get blocked by Render port restrictions)
+        if (process.env.RESEND_API_KEY) {
+            console.log('[EMAIL SERVICE] Trying Resend API...');
+            const fromEmail = process.env.RESEND_FROM || 'onboarding@resend.dev';
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: `KiranaStore <${fromEmail}>`,
+                    to: [to],
+                    subject: subject,
+                    text: text,
+                    html: html
+                }),
+                signal: AbortSignal.timeout(5000)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log(`[EMAIL SERVICE] Email sent via Resend API. ID: ${data.id}`);
+                return { success: true, provider: 'resend', messageId: data.id };
+            } else {
+                console.error('[EMAIL SERVICE] Resend API returned error:', data);
+                throw new Error(data.message || 'Resend API failed');
+            }
+        }
+
+        // 2. Try SendGrid API (HTTP-based, doesn't get blocked by Render port restrictions)
+        if (process.env.SENDGRID_API_KEY) {
+            console.log('[EMAIL SERVICE] Trying SendGrid API...');
+            const fromEmail = process.env.SENDGRID_FROM || 'onboarding@resend.dev';
+            const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${process.env.SENDGRID_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    personalizations: [{ to: [{ email: to }] }],
+                    from: { email: fromEmail, name: 'KiranaStore' },
+                    subject: subject,
+                    content: [
+                        { type: 'text/plain', value: text },
+                        ...(html ? [{ type: 'text/html', value: html }] : [])
+                    ]
+                }),
+                signal: AbortSignal.timeout(5000)
+            });
+
+            if (response.ok) {
+                console.log('[EMAIL SERVICE] Email sent via SendGrid API successfully.');
+                return { success: true, provider: 'sendgrid' };
+            } else {
+                const data = await response.json();
+                console.error('[EMAIL SERVICE] SendGrid API returned error:', data);
+                throw new Error(data.errors?.[0]?.message || 'SendGrid API failed');
+            }
+        }
+
+        // 3. Fallback to Nodemailer SMTP (default behavior)
         if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
             console.log('=============== DEVELOPMENT MAIL FALLBACK (Credentials Missing) ===============');
             console.log(`To: ${to}`);
@@ -29,6 +92,7 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
             return { success: true, fallback: true };
         }
 
+        console.log('[EMAIL SERVICE] Trying Nodemailer SMTP...');
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
             port: parseInt(process.env.SMTP_PORT) || 587,
@@ -39,7 +103,10 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
             },
             tls: {
                 rejectUnauthorized: false
-            }
+            },
+            connectionTimeout: 5000, // 5 seconds connection timeout
+            greetingTimeout: 5000,   // 5 seconds greeting timeout
+            socketTimeout: 5000      // 5 seconds socket inactivity timeout
         });
 
         // Force the socket to always use IPv4 to avoid ENETUNREACH IPv6 crash.
@@ -68,10 +135,10 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
         }
 
         const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: %s', info.messageId);
-        return { success: true, messageId: info.messageId };
+        console.log('[EMAIL SERVICE] Email sent via SMTP: %s', info.messageId);
+        return { success: true, provider: 'smtp', messageId: info.messageId };
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('[EMAIL SERVICE] Failed to send email:', error.message);
         
         // Print to console so developer can verify the OTP or email text
         console.log('=============== DEVELOPMENT MAIL FALLBACK (Send Failure) ===============');
@@ -90,4 +157,3 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
 module.exports = {
     sendEmail
 };
-

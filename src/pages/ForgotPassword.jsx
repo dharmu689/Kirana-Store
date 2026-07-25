@@ -97,8 +97,13 @@ const ForgotPassword = () => {
 
         setLoading(true);
         try {
-            await authService.forgotPassword(email);
-            toast.success('Reset OTP code sent to your email');
+            const res = await authService.forgotPassword(email);
+            if (res.otp) {
+                toast.success(`OTP Sent. Fallback code: ${res.otp}`, { duration: 8000 });
+                setOtp(res.otp.split(''));
+            } else {
+                toast.success('Reset OTP code sent to your email');
+            }
             setStep(2);
             setTimer(60);
             setCanResend(false);
@@ -135,11 +140,15 @@ const ForgotPassword = () => {
         if (!canResend) return;
         setLoading(true);
         try {
-            await authService.forgotPassword(email);
-            toast.success('A new OTP has been sent successfully');
+            const res = await authService.forgotPassword(email);
+            if (res.otp) {
+                toast.success(`OTP Sent. Fallback code: ${res.otp}`, { duration: 8000 });
+                setOtp(res.otp.split(''));
+            } else {
+                toast.success('A new OTP has been sent successfully');
+            }
             setTimer(60);
             setCanResend(false);
-            setOtp(new Array(6).fill(''));
             otpRefs.current[0].focus();
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed to resend OTP');

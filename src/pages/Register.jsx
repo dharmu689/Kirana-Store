@@ -74,10 +74,14 @@ const Register = () => {
 
         setLoading(true);
         try {
-            await authService.register({ name, email, password, confirmPassword, role });
-            toast.success('Registration Successful. OTP Sent.');
-            // Redirect to OTP verification page with email query param
-            navigate(`/verify-otp?email=${encodeURIComponent(email)}`);
+            const res = await authService.register({ name, email, password, confirmPassword, role });
+            if (res.otp) {
+                toast.success(`Fallback Verification OTP: ${res.otp}`, { duration: 8000 });
+                navigate(`/verify-otp?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(res.otp)}`);
+            } else {
+                toast.success('Registration Successful. OTP Sent.');
+                navigate(`/verify-otp?email=${encodeURIComponent(email)}`);
+            }
         } catch (err) {
             const message = err.response?.data?.message || err.message || err.toString();
             setError(message);

@@ -107,7 +107,7 @@ const registerUser = async (req, res) => {
             </div>
         `;
 
-        await sendEmail({
+        const emailResult = await sendEmail({
             to: email,
             subject: 'KiranaSmart AI - Verify Your Email Address',
             text: `Your email OTP is: ${otp}. It will expire in 5 minutes.`,
@@ -116,8 +116,11 @@ const registerUser = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: 'Registration Successful. OTP Sent Successfully.',
+            message: emailResult.fallback 
+                ? `Registration Successful. (Dev Fallback: OTP is ${otp})` 
+                : 'Registration Successful. OTP Sent Successfully.',
             email: email,
+            otp: emailResult.fallback ? otp : undefined
         });
 
     } catch (error) {
@@ -249,7 +252,7 @@ const resendOtp = async (req, res) => {
             </div>
         `;
 
-        await sendEmail({
+        const emailResult = await sendEmail({
             to: email,
             subject: 'KiranaSmart AI - Resend Email Verification OTP',
             text: `Your email OTP is: ${otp}. It will expire in 5 minutes.`,
@@ -258,7 +261,10 @@ const resendOtp = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'OTP Sent Successfully',
+            message: emailResult.fallback 
+                ? `OTP Sent. (Dev Fallback: OTP is ${otp})` 
+                : 'OTP Sent Successfully',
+            otp: emailResult.fallback ? otp : undefined
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -444,7 +450,7 @@ const forgotPassword = async (req, res) => {
             </div>
         `;
 
-        await sendEmail({
+        const emailResult = await sendEmail({
             to: email,
             subject: 'KiranaSmart AI - Password Reset Request',
             text: `Your password reset OTP is: ${otp}. It will expire in 5 minutes.`,
@@ -453,7 +459,10 @@ const forgotPassword = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'OTP Sent Successfully',
+            message: emailResult.fallback 
+                ? `OTP Sent. (Dev Fallback: OTP is ${otp})` 
+                : 'OTP Sent Successfully',
+            otp: emailResult.fallback ? otp : undefined
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

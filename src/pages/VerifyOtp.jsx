@@ -17,6 +17,14 @@ const VerifyOtp = () => {
     const [canResend, setCanResend] = useState(false);
     const inputRefs = useRef([]);
 
+    // Auto-fill OTP if present in the URL query parameters (fallback helper)
+    useEffect(() => {
+        const queryOtp = searchParams.get('otp') || '';
+        if (queryOtp.length === 6 && /^\d+$/.test(queryOtp)) {
+            setOtp(queryOtp.split(''));
+        }
+    }, [searchParams]);
+
     // Timer countdown for resending OTP
     useEffect(() => {
         if (timer > 0) {
