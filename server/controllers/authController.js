@@ -286,6 +286,12 @@ const loginUser = async (req, res) => {
                 return res.status(400).json({ message: 'Invalid credentials' });
             }
 
+            if (!user.password) {
+                return res.status(400).json({
+                    message: 'This account uses Google Sign-In. Please continue with Google.'
+                });
+            }
+
             // Lockout check
             if (user.lockUntil && user.lockUntil > Date.now()) {
                 const timeRemaining = Math.ceil((user.lockUntil - Date.now()) / 1000 / 60);
@@ -340,6 +346,12 @@ const loginUser = async (req, res) => {
 
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        if (!user.password) {
+            return res.status(400).json({
+                message: 'This account uses Google Sign-In. Please continue with Google.'
+            });
         }
 
         // Check if account is locked
@@ -529,7 +541,7 @@ const resetPassword = async (req, res) => {
                 return res.status(400).json({ message: 'OTP is expired or invalid. Please request a new one.' });
             }
 
-            const isSame = await bcrypt.compare(newPassword, user.password);
+            const isSame = user.password ? await bcrypt.compare(newPassword, user.password) : false;
             if (isSame) {
                 return res.status(400).json({ message: 'New password cannot be same as previous password' });
             }
@@ -619,6 +631,7 @@ const googleLogin = async (req, res, next) => {
                         loginAttempts: 0
                     };
                 } else {
+                    console.log(`[MERGE] Merging local mock user account with Google OAuth provider for email: ${email}`);
                     user.googleId = googleId;
                     if (!user.profileImage) user.profileImage = picture;
                     user.provider = 'google';
@@ -636,6 +649,7 @@ const googleLogin = async (req, res, next) => {
                     user = await User.findOne({ email });
 
                     if (user) {
+                        console.log(`[MERGE] Merging local user account with Google OAuth provider for email: ${email}`);
                         user.googleId = googleId;
                         if (!user.profileImage) user.profileImage = picture;
                         user.isVerified = true;
@@ -702,13 +716,15 @@ const updateProfile = async (req, res) => {
 
         // If password is provided, verify old password before updating
         if (req.body.newPassword) {
-            if (!req.body.oldPassword) {
+            if (user.password && !req.body.oldPassword) {
                 return res.status(400).json({ message: 'Please provide old password' });
             }
 
-            const isMatch = await user.matchPassword(req.body.oldPassword);
-            if (!isMatch) {
-                return res.status(400).json({ message: 'Invalid old password' });
+            if (user.password) {
+                const isMatch = await user.matchPassword(req.body.oldPassword);
+                if (!isMatch) {
+                    return res.status(400).json({ message: 'Invalid old password' });
+                }
             }
 
             user.password = req.body.newPassword;
