@@ -22,7 +22,8 @@ app.use(helmet({
 
 // Secure CORS Config
 let allowedOrigins = [
-    'https://kirana-store-oq3u.vercel.app'
+    'https://kirana-store-oq3u.vercel.app',
+    'https://kiranasmart.dharmu689.me'
 ];
 
 if (process.env.CLIENT_URL) {
