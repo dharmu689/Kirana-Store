@@ -1,4 +1,14 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Fallback to public DNS servers in development if local router fails to resolve SRV records
+if (process.env.NODE_ENV !== 'production') {
+    try {
+        dns.setServers(['8.8.8.8', '1.1.1.1']);
+    } catch (e) {
+        console.warn('DNS fallback initialization failed:', e.message);
+    }
+}
 
 const connectDB = async () => {
     try {
