@@ -16,6 +16,7 @@ export const translations = {
         lowStock: "Low Stock",
 
         addProduct: "Add Product",
+        scanProduct: "Scan Product",
         save: "Save",
         cancel: "Cancel",
         delete: "Delete",
@@ -50,6 +51,7 @@ export const translations = {
         lowStock: "कम स्टॉक",
 
         addProduct: "उत्पाद जोड़ें",
+        scanProduct: "उत्पाद स्कैन करें",
         save: "सेव करें",
         cancel: "रद्द करें",
         delete: "हटाएँ",

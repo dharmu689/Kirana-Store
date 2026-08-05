@@ -7,7 +7,19 @@ const { createNotification } = require('../utils/notificationService');
 // @route   POST /api/products
 // @access  Private/Admin
 const createProduct = asyncHandler(async (req, res) => {
-    const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime, purchasePrice, sellingPrice, margin, unit } = req.body;
+    const { name, category, price, quantity, reorderLevel, expiryDate, supplierLeadTime, purchasePrice, sellingPrice, margin, unit, barcode } = req.body;
+
+    // Check for duplicate barcode scoped to the current user
+    if (barcode && barcode.trim() !== '') {
+        const existingProduct = await Product.findOne({
+            userId: req.user.id,
+            barcode: barcode.trim()
+        });
+        if (existingProduct) {
+            res.status(400);
+            throw new Error('Product with this barcode already exists');
+        }
+    }
 
     // Generate unique productId like PROD-0001
     const lastProduct = await Product.findOne({}, {}, { sort: { 'createdAt': -1 } });
@@ -23,7 +35,7 @@ const createProduct = asyncHandler(async (req, res) => {
     const product = await Product.create({
         userId: req.user.id,
         productId: newProductId,
-        barcode: newProductId, // using productId as barcode content
+        barcode: (barcode && barcode.trim() !== '') ? barcode.trim() : newProductId,
         name,
         category,
         price,

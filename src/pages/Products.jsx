@@ -5,6 +5,8 @@ import StockAdjustmentModal from '../components/StockAdjustmentModal';
 import CategoryManager from '../components/CategoryManager';
 import BarcodePreview from '../components/BarcodePreview';
 import BarcodeGrid from '../components/BarcodeGrid';
+import RestockModal from '../components/RestockModal';
+import ScanProductModal from '../components/ScanProductModal';
 import productService from '../services/productService';
 import authService from '../services/authService';
 import {
@@ -13,7 +15,8 @@ import {
     FunnelIcon,
     ArrowDownTrayIcon,
     ArrowUpTrayIcon,
-    FolderIcon
+    FolderIcon,
+    VideoCameraIcon
 } from '@heroicons/react/24/outline';
 import * as XLSX from 'xlsx';
 import { useLanguage } from '../context/LanguageContext';
@@ -46,6 +49,12 @@ const Products = () => {
     const [stockAdjustmentProduct, setStockAdjustmentProduct] = useState(null);
     const [latestProduct, setLatestProduct] = useState(null);
     const [isBarcodePreviewOpen, setIsBarcodePreviewOpen] = useState(false);
+
+    // Scan & Restock States
+    const [scannedBarcode, setScannedBarcode] = useState('');
+    const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+    const [isRestockModalOpen, setIsRestockModalOpen] = useState(false);
+    const [restockProduct, setRestockProduct] = useState(null);
 
     // Bulk Print State
     const [selectedProductIds, setSelectedProductIds] = useState([]);
@@ -111,8 +120,33 @@ const Products = () => {
     };
 
     const handleAddProduct = () => {
+        setScannedBarcode('');
         setCurrentProduct(null);
         setIsProductModalOpen(true);
+    };
+
+    const handleScanProductClick = () => {
+        setIsScanModalOpen(true);
+    };
+
+    const handleBarcodeScan = async (barcode) => {
+        setIsScanModalOpen(false);
+        try {
+            const product = await productService.getProductByBarcode(barcode);
+            if (product) {
+                setRestockProduct(product);
+                setIsRestockModalOpen(true);
+            }
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                setScannedBarcode(barcode);
+                setCurrentProduct(null);
+                setIsProductModalOpen(true);
+            } else {
+                console.error("Barcode scan lookup failed", err);
+                alert(err.response?.data?.message || 'Error checking product barcode');
+            }
+        }
     };
 
     const handleEditProduct = (product) => {
@@ -316,6 +350,12 @@ const Products = () => {
                             </button>
                         )}
                         <button
+                            onClick={handleScanProductClick}
+                            className="flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow-lg shadow-indigo-500/30 transition-all text-sm hover-mac-folder"
+                        >
+                            <VideoCameraIcon className="h-5 w-5 mr-2" /> {t.scanProduct || "Scan Product"}
+                        </button>
+                        <button
                             onClick={handleAddProduct}
                             className="flex items-center px-4 py-2 bg-[var(--color-brand-blue)] text-white font-bold rounded-lg shadow-lg shadow-blue-500/30 dark:shadow-[var(--color-brand-blue)]/30 transition-all text-sm hover-mac-folder"
                         >
@@ -438,10 +478,35 @@ const Products = () => {
             {/* Modals */}
             <ProductForm
                 isOpen={isProductModalOpen}
-                onClose={() => setIsProductModalOpen(false)}
+                onClose={() => {
+                    setIsProductModalOpen(false);
+                    setScannedBarcode('');
+                }}
                 onSubmit={handleProductSubmit}
                 initialData={currentProduct}
-                categories={categories} // Pass categories to form if needed/updated
+                categories={categories}
+                prefilledBarcode={scannedBarcode}
+            />
+
+            <RestockModal
+                isOpen={isRestockModalOpen}
+                onClose={() => setIsRestockModalOpen(false)}
+                product={restockProduct}
+                onConfirm={async (id, qty) => {
+                    try {
+                        await productService.adjustStock(id, qty);
+                        fetchProducts();
+                        setIsRestockModalOpen(false);
+                    } catch (err) {
+                        alert(err.response?.data?.message || 'Failed to restock product');
+                    }
+                }}
+            />
+
+            <ScanProductModal
+                isOpen={isScanModalOpen}
+                onClose={() => setIsScanModalOpen(false)}
+                onScanSuccess={handleBarcodeScan}
             />
 
             <StockAdjustmentModal

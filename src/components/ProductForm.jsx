@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }) => {
+const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [], prefilledBarcode = '' }) => {
     const [formData, setFormData] = useState({
         name: '',
         category: '',
@@ -10,7 +10,8 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
         unit: '',
         quantity: '',
         reorderLevel: '',
-        expiryDate: ''
+        expiryDate: '',
+        barcode: ''
     });
 
     useEffect(() => {
@@ -28,7 +29,8 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                 unit: initialData.unit || '',
                 quantity: initialData.quantity || '',
                 reorderLevel: initialData.reorderLevel || '',
-                expiryDate: formattedDate
+                expiryDate: formattedDate,
+                barcode: initialData.barcode || ''
             });
         } else {
             setFormData({
@@ -39,10 +41,11 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
                 unit: '',
                 quantity: '',
                 reorderLevel: '',
-                expiryDate: ''
+                expiryDate: '',
+                barcode: prefilledBarcode || ''
             });
         }
-    }, [initialData, isOpen]);
+    }, [initialData, isOpen, prefilledBarcode]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -80,6 +83,18 @@ const ProductForm = ({ isOpen, onClose, onSubmit, initialData, categories = [] }
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {formData.barcode && (
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Barcode</label>
+                                <input
+                                    type="text"
+                                    name="barcode"
+                                    value={formData.barcode}
+                                    readOnly
+                                    className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed shadow-sm focus:outline-none sm:text-sm border p-2"
+                                />
+                            </div>
+                        )}
                         <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
                             <input
