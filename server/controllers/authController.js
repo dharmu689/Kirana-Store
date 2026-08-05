@@ -116,11 +116,11 @@ const registerUser = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            message: emailResult.fallback 
+            message: (emailResult.fallback && process.env.NODE_ENV !== 'production')
                 ? `Registration Successful. (Dev Fallback: OTP is ${otp})` 
                 : 'Registration Successful. OTP Sent Successfully.',
             email: email,
-            otp: emailResult.fallback ? otp : undefined
+            otp: (emailResult.fallback && process.env.NODE_ENV !== 'production') ? otp : undefined
         });
 
     } catch (error) {
@@ -261,10 +261,10 @@ const resendOtp = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: emailResult.fallback 
+            message: (emailResult.fallback && process.env.NODE_ENV !== 'production')
                 ? `OTP Sent. (Dev Fallback: OTP is ${otp})` 
                 : 'OTP Sent Successfully',
-            otp: emailResult.fallback ? otp : undefined
+            otp: (emailResult.fallback && process.env.NODE_ENV !== 'production') ? otp : undefined
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -471,10 +471,10 @@ const forgotPassword = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: emailResult.fallback 
+            message: (emailResult.fallback && process.env.NODE_ENV !== 'production')
                 ? `OTP Sent. (Dev Fallback: OTP is ${otp})` 
                 : 'OTP Sent Successfully',
-            otp: emailResult.fallback ? otp : undefined
+            otp: (emailResult.fallback && process.env.NODE_ENV !== 'production') ? otp : undefined
         });
     } catch (error) {
         res.status(500).json({ message: error.message });

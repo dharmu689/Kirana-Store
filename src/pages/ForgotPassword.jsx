@@ -102,7 +102,7 @@ const ForgotPassword = () => {
                 toast.success(`OTP Sent. Fallback code: ${res.otp}`, { duration: 8000 });
                 setOtp(res.otp.split(''));
             } else {
-                toast.success('Reset OTP code sent to your email');
+                toast.success('OTP sent to your email. Please check your inbox (and spam folder).');
             }
             setStep(2);
             setTimer(60);
@@ -145,7 +145,7 @@ const ForgotPassword = () => {
                 toast.success(`OTP Sent. Fallback code: ${res.otp}`, { duration: 8000 });
                 setOtp(res.otp.split(''));
             } else {
-                toast.success('A new OTP has been sent successfully');
+                toast.success('A new OTP has been sent successfully. Please check your inbox.');
             }
             setTimer(60);
             setCanResend(false);
