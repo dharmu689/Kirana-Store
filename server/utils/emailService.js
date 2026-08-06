@@ -20,7 +20,7 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
         // 1. Try Resend API (HTTP-based, doesn't get blocked by Render port restrictions)
         if (process.env.RESEND_API_KEY) {
             console.log('[EMAIL SERVICE] Trying Resend API...');
-            const fromEmail = process.env.RESEND_FROM || 'onboarding@resend.dev';
+            const fromEmail = process.env.RESEND_FROM || 'kiranasmart.dharmu689.me';
             const response = await fetch('https://api.resend.com/emails', {
                 method: 'POST',
                 headers: {
@@ -50,7 +50,7 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
         // 2. Try SendGrid API (HTTP-based, doesn't get blocked by Render port restrictions)
         if (process.env.SENDGRID_API_KEY) {
             console.log('[EMAIL SERVICE] Trying SendGrid API...');
-            const fromEmail = process.env.SENDGRID_FROM || 'onboarding@resend.dev';
+            const fromEmail = process.env.SENDGRID_FROM || 'kiranasmart.dharmu689.me';
             const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
                 method: 'POST',
                 headers: {
@@ -110,7 +110,7 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
         });
 
         // Force the socket to always use IPv4 to avoid ENETUNREACH IPv6 crash.
-        transporter.getSocket = function(options, callback) {
+        transporter.getSocket = function (options, callback) {
             options.family = 4; // Force IPv4
             return require('net').connect(options, callback);
         };
@@ -139,7 +139,7 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
         return { success: true, provider: 'smtp', messageId: info.messageId };
     } catch (error) {
         console.error('[EMAIL SERVICE] Failed to send email:', error.message);
-        
+
         // Print to console so developer can verify the OTP or email text
         console.log('=============== DEVELOPMENT MAIL FALLBACK (Send Failure) ===============');
         console.log(`To: ${to}`);
@@ -149,7 +149,7 @@ const sendEmail = async ({ to, subject, text, html, attachmentPath }) => {
             console.log(`HTML: ${html}`);
         }
         console.log('========================================================================');
-        
+
         return { success: true, fallback: true, error: error.message };
     }
 };
